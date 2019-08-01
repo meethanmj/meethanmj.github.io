@@ -11,7 +11,7 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 初探CSS+JS\n\n\n\n\n1. CSS全程是Cascading Style Sheets\n引入方式：\n\n行内样式\n1&lt;p style=\"display:none\"&gt;我是段落&lt;/p&gt;\n\n优先级最高\n\n内嵌式\n12345678910&lt;head&gt;    &lt;style type=\"text/css\"&gt;        body&#123;            background-color: red        &#125;        p&#123;            margin-left: 20px        &#125;\t&lt;/style&gt;&lt;/head&gt;\n\n外链式\n1&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"css/login.css\"&gt;\n\n优先级：行内＞内嵌＞外链\n更多内容请访问w3cschool\n\n\n2. JSgetElementById用法：\n12345678#“查找”id=\"demo\"的HTML元素，并修改元素内容document.getElementById('demo').innerHTML = \"hello world\";#改变HTML元素的样式，是改变HTML属性的一种变种document.getElementById(\"demo\").style.fontSize=\"25px\";#通过改变display样式来隐藏HTML元素document.getElementById(\"demo\").style.display=\"none\";#通过改变display样式来显示隐藏HTML元素document.getElementById(\"demo\").style.display=\"block\";\n\n​    JS显示方案\n​    使用window.alert()写入警告框\n​    使用document.write()写入HTML输出\n​    使用innerHTML写入HTML元素\n​    使用console.log()写入浏览器控制台\nJS HTML DOM文档1* 查找HTML元素\n\n123456#通过元素id查找元素document.getElementById(id)#通过标签名来查找元素document.getElementByTagName(name)#通过类名来查找元素document.getElementByClassName(name)\n\n1* 改变HTML元素\n\n123456#改变元素的inner HTMLelement.innerHTML= new html content#改变HTML元素的属性值element.attribute = new value#改变HTML元素的样式element.style.property = new style\n\n1* 添加和删除元素\n\n12345678910#创建HTML元素document.createElement(element)#创建HTML元素document.removeChild(element)#添加HTML元素document.appendChild(element)#替换HTML元素document.replaceChile(element)#写入HTML输出流document.write(text)\n\n1* 添加事件处理程序\n\n12#向onclick事件添加事件处理程序document.getElementById(id).onclick = function()&#123;code&#125;\n\n源码：\n1234567891011121314151617181920&lt;html&gt;    &lt;title&gt;JS&lt;/title&gt;    &lt;body&gt;        &lt;div id=\"div1\"&gt;            &lt;p id=\"p1\"&gt;这是一个段落。&lt;/p&gt;            &lt;p id=\"p2\"&gt;这是第二段落。&lt;/p&gt;        &lt;/div&gt;        &lt;script&gt;            //新建&lt;p&gt;&lt;/p&gt;标签        \tvar para = document.createElement(\"p\");            //新建文档            var node = document.createTextNode(\"这是用js加的新段落。\");            //将node添加到para中 → &lt;p&gt;文档&lt;/p&gt;            para.appendChild(node);            var element = document.getElementById(\"div1\");            //将p加入到div中            element.appendChild(para);        &lt;/script&gt;    &lt;/body&gt;&lt;/html&gt;\n\n","dateCreated":"2019-08-01T00:08:18+08:00","dateModified":"2019-08-01T00:23:38+08:00","datePublished":"2019-08-01T00:08:18+08:00","description":"Abstract: 初探CSS+JS","headline":"note13","image":["https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/01/note13/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/01/note13/","keywords":"CSS","thumbnailUrl":"https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 初探CSS+JS\n\n\n\n\n1. CSS全程是Cascading Style Sheets\n引入方式：\n\n行内样式\n1&lt;p style=\"display:none\"&gt;我是段落&lt;/p&gt;\n\n优先级最高\n\n内嵌式\n12345678910&lt;head&gt;    &lt;style type=\"text/css\"&gt;        body&#123;            background-color: red        &#125;        p&#123;            margin-left: 20px        &#125;\t&lt;/style&gt;&lt;/head&gt;\n\n外链式\n1&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"css/login.css\"&gt;\n\n优先级：行内＞内嵌＞外链\n更多内容请访问w3cschool\n\n\n2. JSgetElementById用法：\n12345678#“查找”id=\"demo\"的HTML元素，并修改元素内容document.getElementById('demo').innerHTML = \"hello world\";#改变HTML元素的样式，是改变HTML属性的一种变种document.getElementById(\"demo\").style.fontSize=\"25px\";#通过改变display样式来隐藏HTML元素document.getElementById(\"demo\").style.display=\"none\";#通过改变display样式来显示隐藏HTML元素document.getElementById(\"demo\").style.display=\"block\";\n\n​    JS显示方案\n​    使用window.alert()写入警告框\n​    使用document.write()写入HTML输出\n​    使用innerHTML写入HTML元素\n​    使用console.log()写入浏览器控制台\nJS HTML DOM文档\n查找HTML元素 \n\n123456#通过元素id查找元素document.getElementById(id)#通过标签名来查找元素document.getElementByTagName(name)#通过类名来查找元素document.getElementByClassName(name)\n\n\n改变HTML元素 \n\n123456#改变元素的inner HTMLelement.innerHTML= new html content#改变HTML元素的属性值element.attribute = new value#改变HTML元素的样式element.style.property = new style\n\n\n添加和删除元素 \n\n12345678910#创建HTML元素document.createElement(element)#创建HTML元素document.removeChild(element)#添加HTML元素document.appendChild(element)#替换HTML元素document.replaceChile(element)#写入HTML输出流document.write(text)\n\n\n添加事件处理程序 \n\n12#向onclick事件添加事件处理程序document.getElementById(id).onclick = function()&#123;code&#125;\n\n源码：\n1234567891011121314151617181920&lt;html&gt;    &lt;title&gt;JS&lt;/title&gt;    &lt;body&gt;        &lt;div id=\"div1\"&gt;            &lt;p id=\"p1\"&gt;这是一个段落。&lt;/p&gt;            &lt;p id=\"p2\"&gt;这是第二段落。&lt;/p&gt;        &lt;/div&gt;        &lt;script&gt;            //新建&lt;p&gt;&lt;/p&gt;标签        \tvar para = document.createElement(\"p\");            //新建文档            var node = document.createTextNode(\"这是用js加的新段落。\");            //将node添加到para中 → &lt;p&gt;文档&lt;/p&gt;            para.appendChild(node);            var element = document.getElementById(\"div1\");            //将p加入到div中            element.appendChild(para);        &lt;/script&gt;    &lt;/body&gt;&lt;/html&gt;\n\n","dateCreated":"2019-08-01T00:08:18+08:00","dateModified":"2019-08-01T20:37:18+08:00","datePublished":"2019-08-01T00:08:18+08:00","description":"Abstract: 初探CSS+JS","headline":"note13","image":["https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/01/note13/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/01/note13/","keywords":"CSS","thumbnailUrl":"https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"}</script>
     <meta name="description" content="Abstract: 初探CSS+JS">
 <meta name="keywords" content="CSS">
 <meta property="og:type" content="blog">
@@ -20,7 +20,7 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 初探CSS+JS">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-31T16:23:38.828Z">
+<meta property="og:updated_time" content="2019-08-01T12:37:18.674Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="note13">
 <meta name="twitter:description" content="Abstract: 初探CSS+JS">
@@ -315,20 +315,24 @@
 <p>​    使用<code>document.write()</code>写入HTML输出</p>
 <p>​    使用<code>innerHTML</code>写入HTML元素</p>
 <p>​    使用<code>console.log()</code>写入浏览器控制台</p>
-<h4 id="JS-HTML-DOM文档"><a href="#JS-HTML-DOM文档" class="headerlink" title="JS HTML DOM文档"></a>JS HTML DOM文档</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* 查找HTML元素</span><br></pre></td></tr></table></figure>
-
+<h4 id="JS-HTML-DOM文档"><a href="#JS-HTML-DOM文档" class="headerlink" title="JS HTML DOM文档"></a>JS HTML DOM文档</h4><ul>
+<li>查找HTML元素 </li>
+</ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#通过元素id查找元素</span><br><span class="line"><span class="built_in">document</span>.getElementById(id)</span><br><span class="line">#通过标签名来查找元素</span><br><span class="line"><span class="built_in">document</span>.getElementByTagName(name)</span><br><span class="line">#通过类名来查找元素</span><br><span class="line"><span class="built_in">document</span>.getElementByClassName(name)</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* 改变HTML元素</span><br></pre></td></tr></table></figure>
-
+<ul>
+<li>改变HTML元素 </li>
+</ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#改变元素的inner HTML</span><br><span class="line">element.innerHTML= <span class="keyword">new</span> html content</span><br><span class="line">#改变HTML元素的属性值</span><br><span class="line">element.attribute = <span class="keyword">new</span> value</span><br><span class="line">#改变HTML元素的样式</span><br><span class="line">element.style.property = <span class="keyword">new</span> style</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* 添加和删除元素</span><br></pre></td></tr></table></figure>
-
+<ul>
+<li>添加和删除元素 </li>
+</ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#创建HTML元素</span><br><span class="line"><span class="built_in">document</span>.createElement(element)</span><br><span class="line">#创建HTML元素</span><br><span class="line"><span class="built_in">document</span>.removeChild(element)</span><br><span class="line">#添加HTML元素</span><br><span class="line"><span class="built_in">document</span>.appendChild(element)</span><br><span class="line">#替换HTML元素</span><br><span class="line"><span class="built_in">document</span>.replaceChile(element)</span><br><span class="line">#写入HTML输出流</span><br><span class="line"><span class="built_in">document</span>.write(text)</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* 添加事件处理程序</span><br></pre></td></tr></table></figure>
-
+<ul>
+<li>添加事件处理程序 </li>
+</ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#向onclick事件添加事件处理程序</span><br><span class="line"><span class="built_in">document</span>.getElementById(id).onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;code&#125;</span><br></pre></td></tr></table></figure>
 
 <p>源码：</p>
@@ -358,9 +362,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/01/welcome/"
-                    data-tooltip="welcome"
-                    aria-label="PREVIOUS: welcome"
+                    href="/2019/08/01/note14/"
+                    data-tooltip="note14"
+                    aria-label="PREVIOUS: note14"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -473,9 +477,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/01/welcome/"
-                    data-tooltip="welcome"
-                    aria-label="PREVIOUS: welcome"
+                    href="/2019/08/01/note14/"
+                    data-tooltip="note14"
+                    aria-label="PREVIOUS: note14"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -941,8 +945,41 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/08/01/welcome/"
-                            aria-label=": welcome"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/welcome1/"
+                            aria-label=": welcome1"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg" width="90" height="90"/>
                         </a>
@@ -951,10 +988,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/08/01/welcome/"
-                            aria-label=": welcome"
+                            href="http://yoursite.com/2019/08/01/welcome1/"
+                            aria-label=": welcome1"
                         >
-                            <h3 class="media-heading">welcome</h3>
+                            <h3 class="media-heading">welcome1</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -978,7 +1015,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                9 posts found
+                10 posts found
             </p>
         </div>
     </div>

