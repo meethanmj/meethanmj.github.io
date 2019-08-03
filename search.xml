@@ -2,8 +2,32 @@
 <search>
   <entry>
     <title><![CDATA[welcome1]]></title>
-    <url>%2F2019%2F08%2F01%2Fwelcome1%2F</url>
+    <url>%2F2019%2F08%2F03%2Fwelcome1%2F</url>
     <content type="text"><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[practice1]]></title>
+    <url>%2F2019%2F08%2F03%2Fpractice1%2F</url>
+    <content type="text"><![CDATA[Abstract: PHP简单实战 实战一 ：根据之前学习的HTML知识，使用PHP来编写一个页面，页面内容显示出浏览器的信息。包括浏览器信息，系统信息，文件位置信息，PHP版本，文件行数。同时保证页面的美观。 123456789101112131415161718192021&lt;html&gt;&lt;head&gt; &lt;title&gt;显示浏览器信息&lt;/title&gt; &lt;meta charset=&quot;UTF-8&quot;&gt;&lt;/head&gt;&lt;body&gt; &lt;?php echo $_SERVER[&quot;HTTP_USER_AGENT&quot;]; echo &quot;&lt;br&gt;&quot;; echo PHP_OS; echo &quot;&lt;br&gt;&quot;; echo __DIR__; echo &quot;&lt;br&gt;&quot;; echo PHP_VERSION; echo &quot;&lt;br&gt;&quot;; echo __LINE__; echo &quot;&lt;br&gt;&quot;; echo __FILE__; ?&gt;&lt;/body&gt;&lt;/html&gt; 效果显示： 实战二 ：根据页面的行数，生成一个不同颜色的页面，0-3红色背景，4-6蓝色背景，7-9绿色背景，10-12黑色背景，13-15紫色背景，超过为白色。 1234&lt;?php echo &quot;&lt;body bgcolor=\&quot;white\&quot;&gt;&lt;/body&gt; &lt;div style =&apos;background-color:red;&apos;&gt;&lt;font color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;; echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;; echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;?&gt; 效果显示： 缺点：刚开始的想法是使用for循环+__LINE__实现，但并实现，目前方法过于死板，有改进空间。]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+        <tag>实战</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[note15]]></title>
+    <url>%2F2019%2F08%2F03%2Fnote15%2F</url>
+    <content type="text"><![CDATA[Abstract: php基础语法和变量 1. 基础规范 PHP脚本形式&lt;?php ?&gt; PHP脚本可以单独存在，也可以与htm页面结合 PHP文件扩展名规范，一般是.php结尾，但可以使用其他命名，例如.phtm等 2. PHP三种运行方式 CLI就是命令行 1php -f index.php CGI模式： Common Gateway Interface，公共网关接口，程序须运行在网络服务器上 module模式： 3. 扩展加讲解 apache服务器或nginx php运行环境 数据库 4. PHP中的数据类型12345678910#### 变量的数据类型： * 布尔类型 * 整型 * 浮点型 * 字符串 * 资源 * 空类型 * 数组 * 对象 使用var_dump()来查看类型 PHP中的变量： 变量以$符号开始，后面跟着变量的名称 变量名必须以字母或者下划线字符开始 变量民只能包含字母数字字符以及下划线（A-z、0-9和_） 变量名不能包含空格 变量名是区分大小写的 STDOUT是客户端，只能在终端显示，不能在网页显示 PHP中的常量：123* 常量一旦赋值不会改变，尽量使用大写* 常量分为系统常量和自定义常量* 系统常量可以理解为值不会有改变的亮 定义常量：12* 使用PHP中的函数define()来定义常量* 常量在使用的时候，不需要$符 常用的系统常量：123456789101112//php程序文件名/绝对路径__FILE__//被调用的文件脚本所在的目录__DIR__//函数名__FUNCTION__//php程序文件行数__LINE__//当前解析器的版本号PHP_VERSION//执行当前PHP版本的操作系统名称PHP_OS ​ php靠点连接字符串 12345&lt;?php $a = "name"; $b = "zs"; $c = $a . $b;?&gt; &lt;&lt;&lt;EOF EOF1234567&lt;?p echo &lt;&lt;&lt;EOF &lt;h1&gt;标题&lt;/h1&gt; &lt;p&gt;段落&lt;/p&gt;EOF;//结束需要独立一行且前后不能空格?&gt; php中除了单引号，任意字符放在单引号中将没有任何意义 php中双引号输入特殊字符，将有特殊意义 EOF中变量有意义，其他特殊字符，都没有意义 转移\普通字符变为特殊字符，特殊字符为普通字符]]></content>
+      <categories>
+        <category>Web Security</category>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+      </tags>
   </entry>
   <entry>
     <title><![CDATA[note14]]></title>

