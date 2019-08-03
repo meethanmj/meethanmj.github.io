@@ -6,6 +6,19 @@
     <content type="text"><![CDATA[]]></content>
   </entry>
   <entry>
+    <title><![CDATA[week3points]]></title>
+    <url>%2F2019%2F08%2F03%2Fweek3points%2F</url>
+    <content type="text"><![CDATA[Abstract: 对第三周学习内容的扫盲 1. EOF用下面的例子对EOF会有更深的理解 123456789&lt;?php $name=&quot;变量会被解析&quot;; $a=&lt;&lt;&lt;EOF $name&lt;br&gt;&lt;a&gt;html格式会被解析&lt;/a&gt;&lt;br/&gt;双引号和html格式外的其他内容都不会被解析 &quot;双引号外所有被排列好的格式都会被保留&quot; &quot;但是双引号内会保留转义符的转义效果，比如table:\t和换行:\n下一行&quot;EOF; echo $a;?&gt; 若把table:\t和换行:\n下一行换成table:\\t和换行:\\n效果如下： 2. PHP $_SERVER$_SERVER是一个包含了诸如头信息(header)、路径(path)、以及脚本位置(script locations)等等信息的数组PHP SERVER 3. GET vs POST GET和POST都创建数组，此数组包含键/值对，其中的键是表单控件名称，值是来自用户输入数据 GET和POST被视作$GET和$_POST，它们超全局变量，这意味着对它们的访问无需考虑作用域—无需任何特殊代码，就能够访问它们。 $_GET通过URL参数传递到当前脚本的变量数组； $_POST是通过HTTP POST传递到当前脚本变量数组 处理方式 不同点 GET 1. 所有变量名和值显示在URL中 2. 对发送的信息数量有限制 POST 1. 发送信息不可见，信息嵌入到HTTP请求主题中 2. 所发送信息数量无限制 此外，POST支持高阶功能，比如在向服务器上传文件时进行multi-part二进制输入。]]></content>
+      <categories>
+        <category>Web Security</category>
+        <category>笔记</category>
+        <category>知识盲点</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[practice1]]></title>
     <url>%2F2019%2F08%2F03%2Fpractice1%2F</url>
     <content type="text"><![CDATA[Abstract: PHP简单实战 实战一 ：根据之前学习的HTML知识，使用PHP来编写一个页面，页面内容显示出浏览器的信息。包括浏览器信息，系统信息，文件位置信息，PHP版本，文件行数。同时保证页面的美观。 123456789101112131415161718192021&lt;html&gt;&lt;head&gt; &lt;title&gt;显示浏览器信息&lt;/title&gt; &lt;meta charset=&quot;UTF-8&quot;&gt;&lt;/head&gt;&lt;body&gt; &lt;?php echo $_SERVER[&quot;HTTP_USER_AGENT&quot;]; echo &quot;&lt;br&gt;&quot;; echo PHP_OS; echo &quot;&lt;br&gt;&quot;; echo __DIR__; echo &quot;&lt;br&gt;&quot;; echo PHP_VERSION; echo &quot;&lt;br&gt;&quot;; echo __LINE__; echo &quot;&lt;br&gt;&quot;; echo __FILE__; ?&gt;&lt;/body&gt;&lt;/html&gt; 效果显示： 实战二 ：根据页面的行数，生成一个不同颜色的页面，0-3红色背景，4-6蓝色背景，7-9绿色背景，10-12黑色背景，13-15紫色背景，超过为白色。 1234&lt;?php echo &quot;&lt;body bgcolor=\&quot;white\&quot;&gt;&lt;/body&gt; &lt;div style =&apos;background-color:red;&apos;&gt;&lt;font color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;; echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;; echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;?&gt; 效果显示： 缺点：刚开始的想法是使用for循环+__LINE__实现，但并实现，目前方法过于死板，有改进空间。]]></content>

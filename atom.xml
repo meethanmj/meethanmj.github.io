@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-08-03T02:19:23.730Z</updated>
+  <updated>2019-08-03T12:22:03.358Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,8 +20,8 @@
     <title>welcome1</title>
     <link href="http://yoursite.com/2019/08/03/welcome1/"/>
     <id>http://yoursite.com/2019/08/03/welcome1/</id>
-    <published>2019-08-03T02:10:10.000Z</published>
-    <updated>2019-08-03T02:19:23.730Z</updated>
+    <published>2019-08-03T12:20:10.000Z</published>
+    <updated>2019-08-03T12:22:03.358Z</updated>
     
     <content type="html"><![CDATA[<!-- excerpt -->]]></content>
     
@@ -32,6 +32,32 @@
     
     </summary>
     
+    
+  </entry>
+  
+  <entry>
+    <title>week3points</title>
+    <link href="http://yoursite.com/2019/08/03/week3points/"/>
+    <id>http://yoursite.com/2019/08/03/week3points/</id>
+    <published>2019-08-03T12:18:19.000Z</published>
+    <updated>2019-08-03T12:21:04.523Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Abstract</strong>: 对第三周学习内容的扫盲</p><a id="more"></a><!--export--><h3 id="1-EOF"><a href="#1-EOF" class="headerlink" title="1. EOF"></a>1. EOF</h3><p>用下面的例子对<code>EOF</code>会有更深的理解</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">$name=&quot;变量会被解析&quot;;</span><br><span class="line">$a=&lt;&lt;&lt;EOF</span><br><span class="line">        $name&lt;br&gt;&lt;a&gt;html格式会被解析&lt;/a&gt;&lt;br/&gt;双引号和html格式外的其他内容都不会被解析</span><br><span class="line">        &quot;双引号外所有被排列好的格式都会被保留&quot;</span><br><span class="line">        &quot;但是双引号内会保留转义符的转义效果，比如table:\t和换行:\n下一行&quot;</span><br><span class="line">EOF;</span><br><span class="line">echo $a;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure><p><img src="D:/mydocuments/web_note/note/images/EOF1.png" alt></p><p>若把<code>table:\t和换行:\n下一行</code>换成<code>table:\\t和换行:\\n</code>效果如下：</p><p><img src="D:/mydocuments/web_note/note/images/EOF2.png" alt></p><h3 id="2-PHP-SERVER"><a href="#2-PHP-SERVER" class="headerlink" title="2. PHP $_SERVER"></a>2. PHP $_SERVER</h3><p>$_SERVER是一个包含了诸如头信息(header)、路径(path)、以及脚本位置(script locations)等等信息的数组<a href="https://www.runoob.com/php/php-superglobals.html" target="_blank" rel="noopener">PHP SERVER</a></p><h3 id="3-GET-vs-POST"><a href="#3-GET-vs-POST" class="headerlink" title="3. GET vs POST"></a>3. GET vs POST</h3><ul><li><p>GET和POST都创建数组，此数组包含键/值对，其中的键是表单控件名称，值是来自用户输入数据</p></li><li><p>GET和POST被视作$GET和$_POST，它们超全局变量，这意味着对它们的访问无需考虑作用域—无需任何特殊代码，就能够访问它们。</p></li><li><p>$_GET通过URL参数传递到当前脚本的变量数组；</p><p>$_POST是通过HTTP POST传递到当前脚本变量数组</p></li></ul><table><thead><tr><th align="center">处理方式</th><th align="center">不同点</th></tr></thead><tbody><tr><td align="center">GET</td><td align="center">1. 所有变量名和值显示在URL中</td></tr><tr><td align="center"></td><td align="center">2. 对发送的信息数量有限制</td></tr><tr><td align="center">POST</td><td align="center">1. 发送信息不可见，信息嵌入到HTTP请求主题中</td></tr><tr><td align="center"></td><td align="center">2. 所发送信息数量无限制</td></tr></tbody></table><p>此外，POST支持高阶功能，比如在向服务器上传文件时进行multi-part二进制输入。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;Abstract&lt;/strong&gt;: 对第三周学习内容的扫盲&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Web Security" scheme="http://yoursite.com/categories/Web-Security/"/>
+    
+      <category term="笔记" scheme="http://yoursite.com/categories/Web-Security/%E7%AC%94%E8%AE%B0/"/>
+    
+      <category term="知识盲点" scheme="http://yoursite.com/categories/Web-Security/%E7%AC%94%E8%AE%B0/%E7%9F%A5%E8%AF%86%E7%9B%B2%E7%82%B9/"/>
+    
+    
+      <category term="PHP" scheme="http://yoursite.com/tags/PHP/"/>
     
   </entry>
   
