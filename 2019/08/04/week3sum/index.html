@@ -1,0 +1,1258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>week3sum - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 对第三周学习内容的总结\n\n\n\n\n1. HTML123456789101112131415161718&lt;!--&lt;!DOCTYPE html&gt;声明为HTML5文档--&gt;&lt;!--HTML超文本标记语言--&gt;&lt;!--HTML文档也叫做web页面--&gt;&lt;!DOCTYPE html&gt;&lt;html&gt;    &lt;head&gt;    \t&lt;meta charset=\"utf-8\"&gt;        &lt;title&gt;HTML&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;h1&gt;            标题        &lt;/h1&gt;        &lt;p&gt;            段落        &lt;/p&gt;    &lt;/body&gt;&lt;/html&gt;\n\n文本域、密码字段和提交按钮\n12345&lt;form name=\"input\" action=\"htmlFormAction.php\" method=\"get\"&gt;    Name: &lt;input type=\"text\" name=\"name\"&gt;&lt;br&gt;    Password: &lt;input type=\"password\" name=\"password\"&gt; \t&lt;input type=\"submit\"value=\"Submit\"&gt;   &lt;/form&gt;\n\n单选按钮\n1234&lt;form&gt;    &lt;input type=\"radio\" name=\"sex\" value=\"male\"&gt;Male&lt;br&gt;    &lt;input type=\"radio\" name=\"sex\" value=\"female\"&gt;Female&lt;br&gt;&lt;/form&gt;\n\n复选框\n1234&lt;form&gt;    &lt;input type=\"checkbox\" name=\"vehicle\" value=\"Bike\"&gt; I have a bike&lt;br&gt;    &lt;input type=\"checkbox\" name=\"vehicle\" value=\"Car\"&gt;I have acar&lt;/form&gt;\n\n附：HTML速查列表\n​        HTML参考手册\n\nHTML测验\n测试网址：HTML测验\n\n产生粗体字的HTML标签是&lt;b&gt;。\n\n电子邮件链接：&lt;a href=&quot;mailto:xxx@yyy&quot;&gt;。\n\n产生下拉列表的是&lt;select&gt;。\n12345678&lt;form action=\"\"&gt;    &lt;select name=\"cars\"&gt;    \t&lt;option value=\"volvo\"&gt;Volvo&lt;/option&gt;        &lt;option value=\"saab\"&gt;Saab&lt;/option&gt;        &lt;option value=\"fiat\"&gt;Fiat&lt;/option&gt;        &lt;option value=\"audi\" selected&gt; Audi&lt;/option&gt;    &lt;/select&gt;&lt;/form&gt;\n\nXML和HTML的区别：HTML不要求标记的嵌套，配对等，不要求标记间具有一定的顺序，而XML则是严格要求嵌套，配对。\n\nDOM代表文档对象模型，DTD是文档类型定义。\n\ndiv标签的作用是：按逻辑划分页面文档。\n\nmeta标签作用用于：存储与浏览器和搜索引擎相关的信息。\n\n对于HTML中的框架(Iframe/frameset)如何指定屏幕的其余部分：使用*。\n\n当前文档和链接文档之间的关系是使用属性rel指定的。\n\ntarget的默认属性值在HTML中为_self\n\nHTML标记用于定义图像映射中的可单击区域是&lt;area&gt;\n\n\n\n\n2. CSS\n选择器\nCSS中id选择器以&quot;#&quot;来定义，类选择器以&quot;.&quot;来定义。\n\n插入样式表三种方法\n\n外部样式表\n123&lt;head&gt;    &lt;link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\"&gt;&lt;/head&gt;\n\n内部样式表\n1234567&lt;head&gt;&lt;style&gt;    hr &#123;color: sienna;&#125;     p &#123;margin-left: 20px;&#125;    body&#123;background-img: url(\"images/back40.gif\");&#125;&lt;/style&gt;&lt;/head&gt;\n\n内联样式\n123&lt;p style=\"color:sienna; margin-left:20px\"&gt;\t段落    &lt;/p&gt;\n\n优先级：内联 &gt; 内部 &gt; 外联\n\n\n\nCSS测试\n测试网址：CSS测试\n\n外部样式表正确引用的方法：\n1&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\"&gt;\n\n\nHTML文档中，引用外部样式表正确位置是在&lt;head&gt;部分。\nbackgroud-color属性可用于改变背景颜色，color可改变某个元素的文本颜色。\n测试二中实例\n\n12345678910111213/*粗体*/p &#123;font-weight: bold&#125;/*超链接无下划线*/a &#123;text-decoration: none&#125;/*文本以大写字母开头*/text-transform: capitalize/*改变元素字体*/font-family/*边框上10 下5 左20 右1*//*上右下左*/border-widrh: 10 1 5 20/*产生带有正方形标记的项目列表*/list-style-type: square\n\n\n测试三—五中实例\n\n123456789101112/*使用CSS3创建圆角*/border-radius: 30px;/*CSS3中元素添加阴影*/box-shadow: 10px 10px 5px grey;/*使用CSS3强制换行*/word-wrap: break-word;/*CSS用于盒子居中*/margin: 0 auto;/*盒子内内联元素居中*/text-align: center;/*CSS中导入样式表正确语法*/@import url(css/example.css);\n\n\n\n\n\n3. JavaScript​        HTML定义网页内容，CSS描述网页布局，JS介绍网页行为\n\nJavaScript用法\n123&lt;script&gt;\talert(\"My First JavaScript\");&lt;/script&gt;\n\nJavaScript输出\n12345678&lt;!--弹出警告框--&gt;window.alert()&lt;!--将内容写到HTML文档中--&gt;document.write()&lt;!--写入到HTML元素--&gt;innerHTML&lt;!--写入到浏览器的控制台--&gt;console.log()\n\n12345678910//单行注释/*多行注释*///JavaScript使用关键字var定义变量var x, lengthx = 5length = 6//JavaScript对大小写是敏感的\n\nJavaScript事件\n12345678910111213&lt;html&gt;    &lt;head&gt;        &lt;meta charset=\"utf-8\"&gt;        &lt;title&gt;JavaScript事件&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;button onclick=\"getElementById('demo').innerHTML=Date()\"&gt;            现在时间        &lt;/button&gt;        &lt;p id=\"demo\"&gt;        &lt;/p&gt;    &lt;/body&gt;&lt;/html&gt;\n\n​    常见的HTML事件\n\n\n\n事件\n描述\n\n\n\nonchange\nHTML元素改变\n\n\nonclick\n用户点击HTML元素\n\n\nonmouseover\n用户在一个HTML元素上移动鼠标\n\n\nonmouseout\n用户从一个HTML元素上移开鼠标\n\n\nonkeydown\n用户按下键盘按键\n\n\nonload\n浏览器已完成页面的加载\n\n\n\nJavaScript HTML DOM\n\n改变HTML\n\n123456//修改时间document.write(Date());//修改HTML内容document.getElementById(\"id\").innerHTML=\"new text\";//改变HTML属性document.getElementById(\"id\").attribute=\"new attribute\";\n\n\n改变CSS\n12//改变HTML样式document.getElementById(id).style.property=\"new style\"\n\n1234567891011&lt;!--使用事件修改HTML样式--&gt;&lt;html&gt;    &lt;body&gt;        &lt;h1 id='id1'&gt;            标题        &lt;/h1&gt;        &lt;button type=\"button\" onclick=\"document.getElementById('id1').style.color='red'\"&gt;           点我！点我！！         &lt;/button&gt;    &lt;/body&gt;&lt;/html&gt;\n\n\nEventListener\n\n1234element.addEventListener(event, function, useCapture)//第一个参数是事件的类型（\"click\"和\"mousedown\"）//第二个参数是事件触发后调用的函数//第三个参数是布尔值用于描述事件是冒泡还是捕获，该参数可选\n\n1234567891011121314151617181920&lt;html&gt;    &lt;head&gt;        &lt;meta charset=\"utf-8\"&gt;        &lt;title&gt;EventListener&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;p&gt;            使用addEventListener()方法在用户点击按钮时执行函数        &lt;/p&gt;        &lt;button id=\"myBtn\"&gt;          \t点我！        &lt;/button&gt;        &lt;script&gt;        \tdocument.getElementById('myBtn').addEventListener(\"click\", myFunction);            function myFunction()&#123;                alert(\"Hello World!\");            &#125;        &lt;/script&gt;    &lt;/body&gt;&lt;/html&gt;\n\n\n创建新的HTML元素-appendChild()\n\n123456789101112131415161718192021222324&lt;html&gt;    &lt;head&gt;        &lt;title&gt;创建新元素&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;div id=\"div1\"&gt;            &lt;p id=\"p1\"&gt;                第一个段落            &lt;/p&gt;            &lt;p id=\"p2\"&gt;                第二个段落            &lt;/p&gt;        &lt;/div&gt;        &lt;script&gt;        \tvar para=document.createElement(\"p\");            var node=document.createTextNode(\"第三个段落\")            para.appendChile(node);                        var element=document.getElementById(\"div1\");            var chile=document.getElementById(\"p1\");            element.appendChild(para, child);        &lt;/script&gt;    &lt;/body&gt;&lt;/html&gt;\n\n\n\nBOM\n常用函数\n\n\n\n函数\n作用\n\n\n\nwindow.open()/close()\n打开新窗口/关闭当前串口\n\n\nwindow.moveTo()\n移动当前窗口\n\n\nwindow.resizeTo()\n调整当前窗口的尺寸\n\n\nlocation.hostname\nweb主机的域名\n\n\nlocation.pathname\n当前页面的路径和文件名\n\n\nlocation.port\nweb主机的端口（80/443）\n\n\nlocation.protocol\nweb协议\n\n\nlocation.href\n当前页面的URL\n\n\nloaction.assign()\n加载新文档\n\n\n更多BOM函数请访问BOM\n\nJavaScript测试\n测试网址\n\n外部脚本不能包含&lt;script&gt;标签。\n\n如何在浏览器的状态栏放入一条消息？\n1window.status=\"put your message here\"\n\n预测以下JavaScript输出\n1234&lt;script type=\"text/javascript\"&gt;\ta = 8 + \"8\"; \tdocument.write(a);&lt;/script&gt;\n\n88。\n\nJavaScript中没有float/integer/double等数据类型。\n\nJavaScript的.length属性用于计算任意字符串中的字符数。\n\ntrim()方法用于删除字符串开头和结尾的空格。\n\n\n\n\n4. PHP\nPHP变量\n以$符号开始，必须以字母和下划线开始，变量名只能包含字母数字字符以及下划线。\nNote: 变量名是区分大小写的\n\necho和print语句\necho可以输出一个或多个字符串，输出速度比print快\nprint只允许输出一个字符串，返回值总为1\n\nEOF使用说明\n123456789&lt;?php$name=&quot;变量会被解析&quot;;$a=&lt;&lt;&lt;EOF$name&lt;br&gt;&lt;a&gt;html格式会被解析&lt;/a&gt;&lt;/br&gt;双引号和HTML格式外的其他内容都不会被解析   &quot;双引号外所有被排列好的格式都会被保留&quot;&quot;但是双引号内会保留转义符的转移效果，比如table:\\t和换行:\\n下一行&quot;EOF;echo $a;?&gt;\n\nPHP三种工作模式\n\n\n\n\n\n工作模式\n特点\n\n\n\nCLI模式\n命令行运行模式\n\n\nCGI模式\n通过CGI接口从HTTP服务器取得输入，然后把运行的结果通过CGI接口交给HTTP服务器，而HTTP服务器把结果送给浏览器\n\n\nmodule模式\nLAMP体系最常用的工作方式，php被编译为apache一个内置模块，启动时加载，当有一个php请求过来时，直接在httpd进程完成php解释运行，将结果返回。\n\n\n","dateCreated":"2019-08-04T19:10:14+08:00","dateModified":"2019-08-04T19:23:27+08:00","datePublished":"2019-08-04T19:10:14+08:00","description":"Abstract: 对第三周学习内容的总结","headline":"week3sum","image":["https://images.unsplash.com/photo-1562760157-a1a28713c862?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/04/week3sum/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/04/week3sum/","keywords":"summary","thumbnailUrl":"https://images.unsplash.com/photo-1562760157-a1a28713c862?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
+    <meta name="description" content="Abstract: 对第三周学习内容的总结">
+<meta name="keywords" content="summary">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="week3sum">
+<meta property="og:url" content="http://yoursite.com/2019/08/04/week3sum/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 对第三周学习内容的总结">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-08-04T11:23:27.483Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="week3sum">
+<meta name="twitter:description" content="Abstract: 对第三周学习内容的总结">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.unsplash.com/photo-1562760157-a1a28713c862?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1562760157-a1a28713c862?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            week3sum
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-04T19:10:14+08:00">
+	
+		    Aug 04, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 对第三周学习内容的总结</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h3 id="1-HTML"><a href="#1-HTML" class="headerlink" title="1. HTML"></a>1. HTML</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--&lt;!DOCTYPE html&gt;声明为HTML5文档--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--HTML超文本标记语言--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--HTML文档也叫做web页面--&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>HTML<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span></span><br><span class="line">            标题</span><br><span class="line">        <span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">            段落</span><br><span class="line">        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>文本域、密码字段和提交按钮</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">name</span>=<span class="string">"input"</span> <span class="attr">action</span>=<span class="string">"htmlFormAction.php"</span> <span class="attr">method</span>=<span class="string">"get"</span>&gt;</span></span><br><span class="line">    Name: <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"name"</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    Password: <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">name</span>=<span class="string">"password"</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span><span class="attr">value</span>=<span class="string">"Submit"</span>&gt;</span>   </span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>单选按钮</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"radio"</span> <span class="attr">name</span>=<span class="string">"sex"</span> <span class="attr">value</span>=<span class="string">"male"</span>&gt;</span>Male<span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"radio"</span> <span class="attr">name</span>=<span class="string">"sex"</span> <span class="attr">value</span>=<span class="string">"female"</span>&gt;</span>Female<span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>复选框</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">name</span>=<span class="string">"vehicle"</span> <span class="attr">value</span>=<span class="string">"Bike"</span>&gt;</span> I have a bike<span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">name</span>=<span class="string">"vehicle"</span> <span class="attr">value</span>=<span class="string">"Car"</span>&gt;</span>I have acar</span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>附：<a href="https://www.runoob.com/html/html-quicklist.html" target="_blank" rel="noopener">HTML速查列表</a></p>
+<p>​        <a href="https://www.runoob.com/tags/html-reference.html" target="_blank" rel="noopener">HTML参考手册</a></p>
+<ul>
+<li><p>HTML测验</p>
+<p>测试网址：<a href="https://www.runoob.com/quiz/html-quiz.html" target="_blank" rel="noopener">HTML测验</a></p>
+<ol>
+<li><p>产生粗体字的HTML标签是<code>&lt;b&gt;</code>。</p>
+</li>
+<li><p>电子邮件链接：<code>&lt;a href=&quot;mailto:xxx@yyy&quot;&gt;</code>。</p>
+</li>
+<li><p>产生下拉列表的是<code>&lt;select&gt;</code>。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">name</span>=<span class="string">"cars"</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"volvo"</span>&gt;</span>Volvo<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"saab"</span>&gt;</span>Saab<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"fiat"</span>&gt;</span>Fiat<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"audi"</span> <span class="attr">selected</span>&gt;</span> Audi<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>XML和HTML的区别：HTML不要求标记的嵌套，配对等，不要求标记间具有一定的顺序，而XML则是严格要求嵌套，配对。</p>
+</li>
+<li><p>DOM代表文档对象模型，DTD是文档类型定义。</p>
+</li>
+<li><p>div标签的作用是：按逻辑划分页面文档。</p>
+</li>
+<li><p>meta标签作用用于：存储与浏览器和搜索引擎相关的信息。</p>
+</li>
+<li><p>对于HTML中的框架(Iframe/frameset)如何指定屏幕的其余部分：使用*。</p>
+</li>
+<li><p>当前文档和链接文档之间的关系是使用<code>属性rel</code>指定的。</p>
+</li>
+<li><p><code>target</code>的默认属性值在HTML中为<code>_self</code></p>
+</li>
+<li><p>HTML标记用于定义图像映射中的可单击区域是<code>&lt;area&gt;</code></p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-CSS"><a href="#2-CSS" class="headerlink" title="2. CSS"></a>2. CSS</h3><ul>
+<li><p>选择器</p>
+<p>CSS中id选择器以<code>&quot;#&quot;</code>来定义，类选择器以<code>&quot;.&quot;</code>来定义。</p>
+</li>
+<li><p>插入样式表三种方法</p>
+<ul>
+<li><p>外部样式表</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"mystyle.css"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>内部样式表</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">    hr &#123;color: sienna;&#125; </span><br><span class="line">    p &#123;margin-left: 20px;&#125;</span><br><span class="line">    body&#123;background-img: url("images/back40.gif");&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>内联样式</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span> <span class="attr">style</span>=<span class="string">"color:sienna; margin-left:20px"</span>&gt;</span></span><br><span class="line">	段落    </span><br><span class="line"><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>优先级：内联 &gt; 内部 &gt; 外联</p>
+</li>
+</ul>
+</li>
+<li><p>CSS测试</p>
+<p>测试网址：<a href="https://www.runoob.com/quiz/css-quiz.html" target="_blank" rel="noopener">CSS测试</a></p>
+<ol>
+<li><p>外部样式表正确引用的方法：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"mystyle.css"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>HTML文档中，引用外部样式表正确位置是在<code>&lt;head&gt;</code>部分。</li>
+<li><code>backgroud-color</code>属性可用于改变背景颜色，<code>color</code>可改变某个元素的文本颜色。</li>
+<li>测试二中实例</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*粗体*/</span></span><br><span class="line"><span class="selector-tag">p</span> &#123;<span class="attribute">font-weight</span>: bold&#125;</span><br><span class="line"><span class="comment">/*超链接无下划线*/</span></span><br><span class="line"><span class="selector-tag">a</span> &#123;<span class="attribute">text-decoration</span>: none&#125;</span><br><span class="line"><span class="comment">/*文本以大写字母开头*/</span></span><br><span class="line"><span class="selector-tag">text-transform</span>: <span class="selector-tag">capitalize</span></span><br><span class="line"><span class="comment">/*改变元素字体*/</span></span><br><span class="line"><span class="selector-tag">font-family</span></span><br><span class="line"><span class="comment">/*边框上10 下5 左20 右1*/</span></span><br><span class="line"><span class="comment">/*上右下左*/</span></span><br><span class="line"><span class="selector-tag">border-widrh</span>: 10 1 5 20</span><br><span class="line"><span class="comment">/*产生带有正方形标记的项目列表*/</span></span><br><span class="line"><span class="selector-tag">list-style-type</span>: <span class="selector-tag">square</span></span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>测试三—五中实例</li>
+</ol>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*使用CSS3创建圆角*/</span></span><br><span class="line"><span class="selector-tag">border-radius</span>: 30<span class="selector-tag">px</span>;</span><br><span class="line"><span class="comment">/*CSS3中元素添加阴影*/</span></span><br><span class="line"><span class="selector-tag">box-shadow</span>: 10<span class="selector-tag">px</span> 10<span class="selector-tag">px</span> 5<span class="selector-tag">px</span> <span class="selector-tag">grey</span>;</span><br><span class="line"><span class="comment">/*使用CSS3强制换行*/</span></span><br><span class="line"><span class="selector-tag">word-wrap</span>: <span class="selector-tag">break-word</span>;</span><br><span class="line"><span class="comment">/*CSS用于盒子居中*/</span></span><br><span class="line"><span class="selector-tag">margin</span>: 0 <span class="selector-tag">auto</span>;</span><br><span class="line"><span class="comment">/*盒子内内联元素居中*/</span></span><br><span class="line"><span class="selector-tag">text-align</span>: <span class="selector-tag">center</span>;</span><br><span class="line"><span class="comment">/*CSS中导入样式表正确语法*/</span></span><br><span class="line">@<span class="keyword">import</span> url(css/example.css);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-JavaScript"><a href="#3-JavaScript" class="headerlink" title="3. JavaScript"></a>3. JavaScript</h3><p>​        <em>HTML定义网页内容，CSS描述网页布局，JS介绍网页行为</em></p>
+<ul>
+<li><p>JavaScript用法</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">	alert(<span class="string">"My First JavaScript"</span>);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>JavaScript输出</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--弹出警告框--&gt;</span></span><br><span class="line">window.alert()</span><br><span class="line"><span class="comment">&lt;!--将内容写到HTML文档中--&gt;</span></span><br><span class="line">document.write()</span><br><span class="line"><span class="comment">&lt;!--写入到HTML元素--&gt;</span></span><br><span class="line">innerHTML</span><br><span class="line"><span class="comment">&lt;!--写入到浏览器的控制台--&gt;</span></span><br><span class="line">console.log()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//单行注释</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">多行</span></span><br><span class="line"><span class="comment">注释</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//JavaScript使用关键字var定义变量</span></span><br><span class="line"><span class="keyword">var</span> x, length</span><br><span class="line">x = <span class="number">5</span></span><br><span class="line">length = <span class="number">6</span></span><br><span class="line"><span class="comment">//JavaScript对大小写是敏感的</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>JavaScript事件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>JavaScript事件<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"getElementById('demo').innerHTML=Date()"</span>&gt;</span></span><br><span class="line">            现在时间</span><br><span class="line">        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">"demo"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>​    常见的HTML事件</p>
+<table>
+<thead>
+<tr>
+<th align="left">事件</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">onchange</td>
+<td>HTML元素改变</td>
+</tr>
+<tr>
+<td align="left">onclick</td>
+<td>用户点击HTML元素</td>
+</tr>
+<tr>
+<td align="left">onmouseover</td>
+<td>用户在一个HTML元素上移动鼠标</td>
+</tr>
+<tr>
+<td align="left">onmouseout</td>
+<td>用户从一个HTML元素上移开鼠标</td>
+</tr>
+<tr>
+<td align="left">onkeydown</td>
+<td>用户按下键盘按键</td>
+</tr>
+<tr>
+<td align="left">onload</td>
+<td>浏览器已完成页面的加载</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>JavaScript HTML DOM</p>
+<ol>
+<li>改变HTML</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//修改时间</span></span><br><span class="line"><span class="built_in">document</span>.write(<span class="built_in">Date</span>());</span><br><span class="line"><span class="comment">//修改HTML内容</span></span><br><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"id"</span>).innerHTML=<span class="string">"new text"</span>;</span><br><span class="line"><span class="comment">//改变HTML属性</span></span><br><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"id"</span>).attribute=<span class="string">"new attribute"</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>改变CSS</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//改变HTML样式</span></span><br><span class="line"><span class="built_in">document</span>.getElementById(id).style.property=<span class="string">"new style"</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--使用事件修改HTML样式--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">h1</span> <span class="attr">id</span>=<span class="string">'id1'</span>&gt;</span></span><br><span class="line">            标题</span><br><span class="line">        <span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">onclick</span>=<span class="string">"document.getElementById('id1').style.color='red'"</span>&gt;</span></span><br><span class="line">           点我！点我！！ </span><br><span class="line">        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>EventListener</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">element.addEventListener(event, <span class="function"><span class="keyword">function</span>, <span class="title">useCapture</span>)</span></span><br><span class="line"><span class="function">//第一个参数是事件的类型（"<span class="title">click</span>"和"<span class="title">mousedown</span>"）</span></span><br><span class="line"><span class="function">//第二个参数是事件触发后调用的函数</span></span><br><span class="line"><span class="function">//第三个参数是布尔值用于描述事件是冒泡还是捕获，该参数可选</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>EventListener<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">            使用addEventListener()方法在用户点击按钮时执行函数</span><br><span class="line">        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">"myBtn"</span>&gt;</span></span><br><span class="line">          	点我！</span><br><span class="line">        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">        	<span class="built_in">document</span>.getElementById(<span class="string">'myBtn'</span>).addEventListener(<span class="string">"click"</span>, myFunction);</span></span><br><span class="line"><span class="javascript">            <span class="function"><span class="keyword">function</span> <span class="title">myFunction</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">                alert(<span class="string">"Hello World!"</span>);</span></span><br><span class="line">            &#125;</span><br><span class="line">        <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>创建新的HTML元素-appendChild()</li>
+</ol>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>创建新元素<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"div1"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">"p1"</span>&gt;</span></span><br><span class="line">                第一个段落</span><br><span class="line">            <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">"p2"</span>&gt;</span></span><br><span class="line">                第二个段落</span><br><span class="line">            <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">        	<span class="keyword">var</span> para=<span class="built_in">document</span>.createElement(<span class="string">"p"</span>);</span></span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> node=<span class="built_in">document</span>.createTextNode(<span class="string">"第三个段落"</span>)</span></span><br><span class="line">            para.appendChile(node);</span><br><span class="line">            </span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> element=<span class="built_in">document</span>.getElementById(<span class="string">"div1"</span>);</span></span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> chile=<span class="built_in">document</span>.getElementById(<span class="string">"p1"</span>);</span></span><br><span class="line">            element.appendChild(para, child);</span><br><span class="line">        <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>BOM</p>
+<p>常用函数</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>window.open()/close()</td>
+<td>打开新窗口/关闭当前串口</td>
+</tr>
+<tr>
+<td>window.moveTo()</td>
+<td>移动当前窗口</td>
+</tr>
+<tr>
+<td>window.resizeTo()</td>
+<td>调整当前窗口的尺寸</td>
+</tr>
+<tr>
+<td>location.hostname</td>
+<td>web主机的域名</td>
+</tr>
+<tr>
+<td>location.pathname</td>
+<td>当前页面的路径和文件名</td>
+</tr>
+<tr>
+<td>location.port</td>
+<td>web主机的端口（80/443）</td>
+</tr>
+<tr>
+<td>location.protocol</td>
+<td>web协议</td>
+</tr>
+<tr>
+<td>location.href</td>
+<td>当前页面的URL</td>
+</tr>
+<tr>
+<td>loaction.assign()</td>
+<td>加载新文档</td>
+</tr>
+</tbody></table>
+<p>更多BOM函数请访问<a href="https://www.runoob.com/js/js-window.html" target="_blank" rel="noopener">BOM</a></p>
+</li>
+<li><p>JavaScript测试</p>
+<p><a href="https://www.runoob.com/quiz/javascript-quiz.html" target="_blank" rel="noopener">测试网址</a></p>
+<ol>
+<li><p>外部脚本不能包含<code>&lt;script&gt;</code>标签。</p>
+</li>
+<li><p>如何在浏览器的状态栏放入一条消息？</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">window.status="put your message here"</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>预测以下JavaScript输出</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript">	a = <span class="number">8</span> + <span class="string">"8"</span>;</span></span><br><span class="line"><span class="javascript"> 	<span class="built_in">document</span>.write(a);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>88</code>。</p>
+</li>
+<li><p>JavaScript中没有float/integer/double等数据类型。</p>
+</li>
+<li><p>JavaScript的.length属性用于计算任意字符串中的字符数。</p>
+</li>
+<li><p>trim()方法用于删除字符串开头和结尾的空格。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="4-PHP"><a href="#4-PHP" class="headerlink" title="4. PHP"></a>4. PHP</h3><ul>
+<li><p>PHP变量</p>
+<p>以$符号开始，必须以字母和下划线开始，变量名只能包含字母数字字符以及下划线。</p>
+<p><strong>Note</strong>: 变量名是区分大小写的</p>
+</li>
+<li><p>echo和print语句</p>
+<p>echo可以输出一个或多个字符串，输出速度比print快</p>
+<p>print只允许输出一个字符串，返回值总为1</p>
+</li>
+<li><p>EOF使用说明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$name=&quot;变量会被解析&quot;;</span><br><span class="line">$a=&lt;&lt;&lt;EOF</span><br><span class="line">$name&lt;br&gt;&lt;a&gt;html格式会被解析&lt;/a&gt;&lt;/br&gt;双引号和HTML格式外的其他内容都不会被解析   </span><br><span class="line">&quot;双引号外所有被排列好的格式都会被保留&quot;</span><br><span class="line">&quot;但是双引号内会保留转义符的转移效果，比如table:\t和换行:\n下一行&quot;</span><br><span class="line">EOF;</span><br><span class="line">echo $a;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>PHP三种工作模式</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">工作模式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CLI模式</td>
+<td>命令行运行模式</td>
+</tr>
+<tr>
+<td align="center">CGI模式</td>
+<td>通过CGI接口从HTTP服务器取得输入，然后把运行的结果通过CGI接口交给HTTP服务器，而HTTP服务器把结果送给浏览器</td>
+</tr>
+<tr>
+<td align="center">module模式</td>
+<td>LAMP体系最常用的工作方式，php被编译为apache一个内置模块，启动时加载，当有一个php请求过来时，直接在httpd进程完成php解释运行，将结果返回。</td>
+</tr>
+</tbody></table>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/summary/">summary</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/04/welcome/"
+                    data-tooltip="welcome"
+                    aria-label="PREVIOUS: welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/04/practice1Update/"
+                    data-tooltip="practice1Update"
+                    aria-label="NEXT: practice1Update"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/04/week3sum/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/04/week3sum/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/04/week3sum/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/04/welcome/"
+                    data-tooltip="welcome"
+                    aria-label="PREVIOUS: welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/04/practice1Update/"
+                    data-tooltip="practice1Update"
+                    aria-label="NEXT: practice1Update"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/04/week3sum/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/04/week3sum/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/04/week3sum/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/04/week3sum/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/04/week3sum/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/04/week3sum/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <h3 class="media-heading">dvwa-deploy</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <h3 class="media-heading">phpmyadmin-bug</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <h3 class="media-heading">note11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <h3 class="media-heading">week2sum</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <h3 class="media-heading">note12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <h3 class="media-heading">note13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <h3 class="media-heading">note15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                15 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
