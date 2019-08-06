@@ -6,29 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>练习1 - han个人博客</title>
+    <title>练习2 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: PHP简单实战\n\n\n\n\n实战一 ：根据之前学习的HTML知识，使用PHP来编写一个页面，页面内容显示出浏览器的信息。包括浏览器信息，系统信息，文件位置信息，PHP版本，文件行数。同时保证页面的美观。\n123456789101112131415161718192021&lt;html&gt;&lt;head&gt;\t&lt;title&gt;显示浏览器信息&lt;/title&gt;    &lt;meta charset=&quot;UTF-8&quot;&gt;&lt;/head&gt;&lt;body&gt;    &lt;?php     \techo $_SERVER[&quot;HTTP_USER_AGENT&quot;];    \techo &quot;&lt;br&gt;&quot;;    \techo PHP_OS;    \techo &quot;&lt;br&gt;&quot;;    \techo __DIR__;    \techo &quot;&lt;br&gt;&quot;;    \techo PHP_VERSION;    \techo &quot;&lt;br&gt;&quot;;    \techo __LINE__;    \techo &quot;&lt;br&gt;&quot;;    \techo __FILE__;    ?&gt;&lt;/body&gt;&lt;/html&gt;\n\n效果显示：\n\n实战二 ：根据页面的行数，生成一个不同颜色的页面，0-3红色背景，4-6蓝色背景，7-9绿色背景，10-12黑色背景，13-15紫色背景，超过为白色。\n1234&lt;?php \techo &quot;&lt;body bgcolor=\\&quot;white\\&quot;&gt;&lt;/body&gt; &lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\\&quot;red\\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;; \t\techo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\\&quot;red\\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;    \techo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\\&quot;red\\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;?&gt;\n\n效果显示：\n\n缺点：刚开始的想法是使用for循环+__LINE__实现，但并实现，目前方法过于死板，有改进空间。\n","dateCreated":"2019-08-03T09:31:17+08:00","dateModified":"2019-08-06T18:44:35+08:00","datePublished":"2019-08-03T09:31:17+08:00","description":"Abstract: PHP简单实战","headline":"练习1","image":["https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/03/practice1/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/03/practice1/","keywords":"PHP, 实战","thumbnailUrl":"https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
-    <meta name="description" content="Abstract: PHP简单实战">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: PHP语言if-else/switch-case和while练习\n\n\n\n\n题目一：输入年月日，计算是该年的多少天。\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061&lt;?php//form: year.month.day$date = fgets(STDIN);$Date = explode(&apos;.&apos;, $date);echo $Date;$year = $Date[0];$month = $Date[1];$day = $Date[2];echo &quot;&lt;br&gt;&quot;;echo $year;echo &quot;&lt;br&gt;&quot;;echo $month;echo &quot;&lt;br&gt;&quot;;echo $day;if(($year%4==0 &amp;&amp; $year%100!=0)||($year%400==0))&#123;    $flag=1;&#125;else&#123;    $flag=0;&#125;switch($month)&#123;    case($month&lt;=2):        $days = 31*($month-1)+$day;        break;    case(3&lt;=$month&amp;&amp;$month&lt;=8):        if($flag==1)&#123;            if($month%2==1) &#123;                $days = 31 * (intval($month - 1) / 2) + 29 + 30 * (intval($month / 2) - 1) + $day;            &#125;            else&#123;                $days = 31 * (intval($month) / 2) + 29 + 30 * (intval($month/ 2)-2) + $day;            &#125;        &#125;else&#123;            if($month%2==1) &#123;                $days = 31 * (intval($month - 1) / 2) + 28 + 30 * (intval($month / 2) - 1) + $day;            &#125;            else&#123;                $days = 31 * (intval($month) / 2) + 28 + 30 * (intval(($month) / 2)-2) + $day;            &#125;        &#125;        break;    default:        if($flag==1)&#123;            if($month%2==1) &#123;                $days = 31 * (intval($month + 1) / 2) + 29 + 30 * (intval($month / 2) - 2) + $day;            &#125;            else&#123;                $days = 31 * (intval($month) / 2) + 29 + 30 * (intval($month/ 2)-2) + $day;            &#125;        &#125;else&#123;            if($month%2==1) &#123;                $days = 31 * (intval($month + 1) / 2) + 28 + 30 * (intval($month / 2) - 2) + $day;            &#125;            else&#123;                $days = 31 * (intval($month) / 2) + 28 + 30 * (intval($month/ 2)-2) + $day;            &#125;        &#125;        break;&#125;echo $days;?&gt;\n\n代码缺点：可以看出来代码有些地方重复使用，没有达到简洁的目的，瑞年和平年在二月相差一天，完全可以通过flag这个标识来弥补。改进思路：设置一个FebDays的变量，把值设为28，在case里面不需要再次判断瑞年平年，计算days时，把flag加上，这样就可以把瑞平年分开。\n改进版：\n1234567891011121314151617181920212223242526272829303132333435363738394041424344&lt;?php//year-month-day$date = fgets(STDIN);$Date = explode(&apos;.&apos;, $date);echo $Date;$year = $Date[0];$month = $Date[1];$day = $Date[2];echo &quot;&lt;br&gt;&quot;;echo $year;echo &quot;&lt;br&gt;&quot;;echo $month;echo &quot;&lt;br&gt;&quot;;echo $day;if(($year%4==0 &amp;&amp; $year%100!=0)||($year%400==0))&#123;    $flag=1;&#125;else&#123;    $flag=0;&#125;$FebDays = 28;switch($month)&#123;    case($month&lt;=2):        $days = 31*($month-1)+$day;        break;    case(3&lt;=$month&amp;&amp;$month&lt;=8):        if($month%2==1) &#123;            $days = 31 * (intval($month - 1) / 2) + $FebDays + $flag + 30 * (intval($month / 2) - 1) + $day;        &#125;        else&#123;            $days = 31 * (intval($month) / 2) + $FebDays + $flag + 30 * (intval($month/ 2)-2) + $day;        &#125;        break;    default:        if($month%2==1) &#123;            $days = 31 * (intval($month + 1) / 2) + $FebDays + $flag + 30 * (intval($month / 2) - 2) + $day;        &#125;        else&#123;            $days = 31 * (intval($month) / 2) + $FebDays + $flag + 30 * (intval($month/ 2)-2) + $day;        &#125;        break;&#125;echo $days;?&gt;\n\n两段代码对比可以发现，计算天数的代码量较少的将近一半。\n题目二：可以一直输入学生成绩，知道输入q/exit/quit退出程序\n思路一：在死循环里面执行代码，符合退出条件时break\n12345678910111213141516171819202122232425262728293031323334&lt;?phpwhile(1)&#123;    echo &quot;Please Input Your Mes: &quot;;    $inMes = fgets(STDIN);    var_dump($inMes);    if((trim($inMes)==&quot;q&quot;)||(trim($inMes)==&quot;quit&quot;)||(trim($inMes)==&quot;exit&quot;))&#123;        break;    &#125;    else &#123;            switch ($inMes) &#123;                case(90 &lt;= $inMes &amp;&amp; $inMes &lt;= 100):                    echo &quot;Your Grade is A&quot;;                    break;                case(80 &lt;= $inMes &amp;&amp; $inMes &lt; 90):                    echo &quot;YourGrade is B&quot;;                    break;                case(70 &lt;= $inMes &amp;&amp; $inMes &lt; 80):                    echo &quot;Your Grade is C&quot;;                    break;                case(60 &lt;= $inMes &amp;&amp; $inMes &lt; 70):                    echo &quot;YourGrade is D&quot;;                    break;                case($inMes &lt; 60):                    echo &quot;YourGrade is E&quot;;                    break;                default:                    break;            &#125;            echo PHP_EOL;        &#125;&#125;?&gt;\n\n问题与解决：\n* 退出不成功，用`var_dump($inMes)`查看发现，系统会在输入字符后加`\\n`,用`trim()`函数解决\n* 输入其他字符，php会把字符转换成数字，然后进行比较思路二：把退出逻辑写在while()括号内\n12345678910111213141516171819202122&lt;?php$Grade = fgets(STDIN);$sss = array(&quot;q&quot;,&quot;exit&quot;,&quot;quit&quot;);//如果$Grade不在$sss数组中就继续执行程序while(!in_array(trim($Grade), $sss))&#123;    switch($Grade)&#123;        case $Grade&gt;=90 &amp;&amp; $Grade&lt;100;            echo &quot;A&quot;;            break;        case $Grade&gt;=60 &amp;&amp; $Grade&lt;90;            echo &quot;B&quot;;            break;        case $Grade&lt;60 &amp;&amp; $Grade&gt;=0;            echo &quot;C&quot;;            break;        default:            echo &apos;ERROR!&apos;;    &#125;    echo PHP_EOL;    $Grade = fgets(STDIN);&#125;?&gt;\n\n问题与解决：\n* 在处理`$Grade`与`$sss`时，想另辟蹊径，在数组`$sss`里面字符后加上`\\n`但始终没有成功，最终还是对`$Grade`进行`trim()`处理。​    \n","dateCreated":"2019-08-06T18:30:59+08:00","dateModified":"2019-08-06T18:44:53+08:00","datePublished":"2019-08-06T18:30:59+08:00","description":"Abstract: PHP语言if-else/switch-case和while练习","headline":"练习2","image":["https://images.unsplash.com/photo-1557474295-714ea5fc2557?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/06/practice2/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/06/practice2/","keywords":"PHP, 实战","thumbnailUrl":"https://images.unsplash.com/photo-1557474295-714ea5fc2557?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
+    <meta name="description" content="Abstract: PHP语言if-else/switch-case和while练习">
 <meta name="keywords" content="PHP,实战">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="练习1">
-<meta property="og:url" content="http://yoursite.com/2019/08/03/practice1/index.html">
+<meta property="og:title" content="练习2">
+<meta property="og:url" content="http://yoursite.com/2019/08/06/practice2/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="Abstract: PHP简单实战">
+<meta property="og:description" content="Abstract: PHP语言if-else/switch-case和while练习">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://yoursite.com/images/localhostBrowser.png">
-<meta property="og:image" content="http://yoursite.com/images/browserColor.png">
-<meta property="og:updated_time" content="2019-08-06T10:44:35.838Z">
+<meta property="og:updated_time" content="2019-08-06T10:44:53.921Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="练习1">
-<meta name="twitter:description" content="Abstract: PHP简单实战">
-<meta name="twitter:image" content="http://yoursite.com/images/localhostBrowser.png">
+<meta name="twitter:title" content="练习2">
+<meta name="twitter:description" content="Abstract: PHP语言if-else/switch-case和while练习">
     
     
         
@@ -37,8 +34,8 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+        <meta property="og:image" content="https://images.unsplash.com/photo-1557474295-714ea5fc2557?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1557474295-714ea5fc2557?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
     
     
     
@@ -264,14 +261,14 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            练习1
+            练习2
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2019-08-03T09:31:17+08:00">
+    <time datetime="2019-08-06T18:30:59+08:00">
 	
-		    Aug 03, 2019
+		    Aug 06, 2019
     	
     </time>
     
@@ -289,22 +286,30 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <p><strong>Abstract</strong>: PHP简单实战</p>
+            <p><strong>Abstract</strong>: PHP语言<code>if-else</code>/<code>switch-case</code>和<code>while</code>练习</p>
 <a id="more"></a>
 
 <!--export-->
 
-<h3 id="实战一-："><a href="#实战一-：" class="headerlink" title="实战一 ："></a>实战一 ：</h3><p>根据之前学习的HTML知识，使用PHP来编写一个页面，页面内容显示出浏览器的信息。包括浏览器信息，系统信息，文件位置信息，PHP版本，文件行数。同时保证页面的美观。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;title&gt;显示浏览器信息&lt;/title&gt;</span><br><span class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;?php </span><br><span class="line">    	echo $_SERVER[&quot;HTTP_USER_AGENT&quot;];</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo PHP_OS;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo __DIR__;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo PHP_VERSION;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo __LINE__;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo __FILE__;</span><br><span class="line">    ?&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>题目一</strong>：输入年月日，计算是该年的多少天。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//form: year.month.day</span><br><span class="line">$date = fgets(STDIN);</span><br><span class="line">$Date = explode(&apos;.&apos;, $date);</span><br><span class="line">echo $Date;</span><br><span class="line">$year = $Date[0];</span><br><span class="line">$month = $Date[1];</span><br><span class="line">$day = $Date[2];</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">echo $year;</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">echo $month;</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">echo $day;</span><br><span class="line">if(($year%4==0 &amp;&amp; $year%100!=0)||($year%400==0))&#123;</span><br><span class="line">    $flag=1;</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">    $flag=0;</span><br><span class="line">&#125;</span><br><span class="line">switch($month)&#123;</span><br><span class="line">    case($month&lt;=2):</span><br><span class="line">        $days = 31*($month-1)+$day;</span><br><span class="line">        break;</span><br><span class="line">    case(3&lt;=$month&amp;&amp;$month&lt;=8):</span><br><span class="line">        if($flag==1)&#123;</span><br><span class="line">            if($month%2==1) &#123;</span><br><span class="line">                $days = 31 * (intval($month - 1) / 2) + 29 + 30 * (intval($month / 2) - 1) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                $days = 31 * (intval($month) / 2) + 29 + 30 * (intval($month/ 2)-2) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            if($month%2==1) &#123;</span><br><span class="line">                $days = 31 * (intval($month - 1) / 2) + 28 + 30 * (intval($month / 2) - 1) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                $days = 31 * (intval($month) / 2) + 28 + 30 * (intval(($month) / 2)-2) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        if($flag==1)&#123;</span><br><span class="line">            if($month%2==1) &#123;</span><br><span class="line">                $days = 31 * (intval($month + 1) / 2) + 29 + 30 * (intval($month / 2) - 2) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                $days = 31 * (intval($month) / 2) + 29 + 30 * (intval($month/ 2)-2) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            if($month%2==1) &#123;</span><br><span class="line">                $days = 31 * (intval($month + 1) / 2) + 28 + 30 * (intval($month / 2) - 2) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                $days = 31 * (intval($month) / 2) + 28 + 30 * (intval($month/ 2)-2) + $day;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br><span class="line">echo $days;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
-<p>效果显示：</p>
-<p><img src="/images/localhostBrowser.png" alt></p>
-<h3 id="实战二-："><a href="#实战二-：" class="headerlink" title="实战二 ："></a>实战二 ：</h3><p>根据页面的行数，生成一个不同颜色的页面，0-3红色背景，4-6蓝色背景，7-9绿色背景，10-12黑色背景，13-15紫色背景，超过为白色。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php 	echo &quot;&lt;body bgcolor=\&quot;white\&quot;&gt;&lt;/body&gt; &lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;</span><br><span class="line"> 		echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;</span><br><span class="line">    	echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>代码缺点</strong>：可以看出来代码有些地方重复使用，没有达到简洁的目的，瑞年和平年在二月相差一天，完全可以通过flag这个标识来弥补。改进思路：设置一个<code>FebDays</code>的变量，把值设为28，在<code>case</code>里面不需要再次判断瑞年平年，计算days时，把flag加上，这样就可以把瑞平年分开。</p>
+<p>改进版：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//year-month-day</span><br><span class="line">$date = fgets(STDIN);</span><br><span class="line">$Date = explode(&apos;.&apos;, $date);</span><br><span class="line">echo $Date;</span><br><span class="line">$year = $Date[0];</span><br><span class="line">$month = $Date[1];</span><br><span class="line">$day = $Date[2];</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">echo $year;</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">echo $month;</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">echo $day;</span><br><span class="line">if(($year%4==0 &amp;&amp; $year%100!=0)||($year%400==0))&#123;</span><br><span class="line">    $flag=1;</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">    $flag=0;</span><br><span class="line">&#125;</span><br><span class="line">$FebDays = 28;</span><br><span class="line">switch($month)&#123;</span><br><span class="line">    case($month&lt;=2):</span><br><span class="line">        $days = 31*($month-1)+$day;</span><br><span class="line">        break;</span><br><span class="line">    case(3&lt;=$month&amp;&amp;$month&lt;=8):</span><br><span class="line">        if($month%2==1) &#123;</span><br><span class="line">            $days = 31 * (intval($month - 1) / 2) + $FebDays + $flag + 30 * (intval($month / 2) - 1) + $day;</span><br><span class="line">        &#125;</span><br><span class="line">        else&#123;</span><br><span class="line">            $days = 31 * (intval($month) / 2) + $FebDays + $flag + 30 * (intval($month/ 2)-2) + $day;</span><br><span class="line">        &#125;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        if($month%2==1) &#123;</span><br><span class="line">            $days = 31 * (intval($month + 1) / 2) + $FebDays + $flag + 30 * (intval($month / 2) - 2) + $day;</span><br><span class="line">        &#125;</span><br><span class="line">        else&#123;</span><br><span class="line">            $days = 31 * (intval($month) / 2) + $FebDays + $flag + 30 * (intval($month/ 2)-2) + $day;</span><br><span class="line">        &#125;</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br><span class="line">echo $days;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
-<p>效果显示：</p>
-<p><img src="/images/browserColor.png" alt></p>
-<p>缺点：刚开始的想法是使用<code>for循环</code>+<code>__LINE__</code>实现，但并实现，目前方法过于死板，有改进空间。</p>
+<p>两段代码对比可以发现，计算天数的代码量较少的将近一半。</p>
+<p><strong>题目二</strong>：可以一直输入学生成绩，知道输入<code>q</code>/<code>exit</code>/<code>quit</code>退出程序</p>
+<p>思路一：在死循环里面执行代码，符合退出条件时<code>break</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">while(1)&#123;</span><br><span class="line">    echo &quot;Please Input Your Mes: &quot;;</span><br><span class="line">    $inMes = fgets(STDIN);</span><br><span class="line">    var_dump($inMes);</span><br><span class="line">    if((trim($inMes)==&quot;q&quot;)||(trim($inMes)==&quot;quit&quot;)||(trim($inMes)==&quot;exit&quot;))&#123;</span><br><span class="line">        break;</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">            switch ($inMes) &#123;</span><br><span class="line">                case(90 &lt;= $inMes &amp;&amp; $inMes &lt;= 100):</span><br><span class="line">                    echo &quot;Your Grade is A&quot;;</span><br><span class="line">                    break;</span><br><span class="line">                case(80 &lt;= $inMes &amp;&amp; $inMes &lt; 90):</span><br><span class="line">                    echo &quot;YourGrade is B&quot;;</span><br><span class="line">                    break;</span><br><span class="line">                case(70 &lt;= $inMes &amp;&amp; $inMes &lt; 80):</span><br><span class="line">                    echo &quot;Your Grade is C&quot;;</span><br><span class="line">                    break;</span><br><span class="line">                case(60 &lt;= $inMes &amp;&amp; $inMes &lt; 70):</span><br><span class="line">                    echo &quot;YourGrade is D&quot;;</span><br><span class="line">                    break;</span><br><span class="line">                case($inMes &lt; 60):</span><br><span class="line">                    echo &quot;YourGrade is E&quot;;</span><br><span class="line">                    break;</span><br><span class="line">                default:</span><br><span class="line">                    break;</span><br><span class="line">            &#125;</span><br><span class="line">            echo PHP_EOL;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>问题与解决：</p>
+<pre><code>* 退出不成功，用`var_dump($inMes)`查看发现，系统会在输入字符后加`\n`,用`trim()`函数解决
+* 输入其他字符，php会把字符转换成数字，然后进行比较</code></pre><p>思路二：把退出逻辑写在while()括号内</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$Grade = fgets(STDIN);</span><br><span class="line">$sss = array(&quot;q&quot;,&quot;exit&quot;,&quot;quit&quot;);</span><br><span class="line">//如果$Grade不在$sss数组中就继续执行程序</span><br><span class="line">while(!in_array(trim($Grade), $sss))&#123;</span><br><span class="line">    switch($Grade)&#123;</span><br><span class="line">        case $Grade&gt;=90 &amp;&amp; $Grade&lt;100;</span><br><span class="line">            echo &quot;A&quot;;</span><br><span class="line">            break;</span><br><span class="line">        case $Grade&gt;=60 &amp;&amp; $Grade&lt;90;</span><br><span class="line">            echo &quot;B&quot;;</span><br><span class="line">            break;</span><br><span class="line">        case $Grade&lt;60 &amp;&amp; $Grade&gt;=0;</span><br><span class="line">            echo &quot;C&quot;;</span><br><span class="line">            break;</span><br><span class="line">        default:</span><br><span class="line">            echo &apos;ERROR!&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">    echo PHP_EOL;</span><br><span class="line">    $Grade = fgets(STDIN);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>问题与解决：</p>
+<pre><code>* 在处理`$Grade`与`$sss`时，想另辟蹊径，在数组`$sss`里面字符后加上`\n`但始终没有成功，最终还是对`$Grade`进行`trim()`处理。</code></pre><p>​    </p>
 
             
 
@@ -329,9 +334,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/week3points/"
-                    data-tooltip="week3points"
-                    aria-label="PREVIOUS: week3points"
+                    href="/2019/08/06/note17/"
+                    data-tooltip="note17"
+                    aria-label="PREVIOUS: note17"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -343,9 +348,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/note15/"
-                    data-tooltip="note15"
-                    aria-label="NEXT: note15"
+                    href="/2019/08/06/note16/"
+                    data-tooltip="note16"
+                    aria-label="NEXT: note16"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -370,7 +375,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/practice2/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -383,7 +388,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/practice2/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -396,7 +401,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/practice2/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -444,9 +449,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/week3points/"
-                    data-tooltip="week3points"
-                    aria-label="PREVIOUS: week3points"
+                    href="/2019/08/06/note17/"
+                    data-tooltip="note17"
+                    aria-label="PREVIOUS: note17"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -458,9 +463,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/note15/"
-                    data-tooltip="note15"
-                    aria-label="NEXT: note15"
+                    href="/2019/08/06/note16/"
+                    data-tooltip="note16"
+                    aria-label="NEXT: note16"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -485,7 +490,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/practice2/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -498,7 +503,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/practice2/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -511,7 +516,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/practice2/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -545,7 +550,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/03/practice1/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/practice2/"
                         aria-label="Share on Facebook"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
@@ -558,7 +563,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/03/practice1/"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/practice2/"
                         aria-label="Share on Twitter"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
@@ -571,7 +576,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/03/practice1/"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/practice2/"
                         aria-label="Share on Google+"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>

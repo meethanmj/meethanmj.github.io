@@ -6,29 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>练习1 - han个人博客</title>
+    <title>note16 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: PHP简单实战\n\n\n\n\n实战一 ：根据之前学习的HTML知识，使用PHP来编写一个页面，页面内容显示出浏览器的信息。包括浏览器信息，系统信息，文件位置信息，PHP版本，文件行数。同时保证页面的美观。\n123456789101112131415161718192021&lt;html&gt;&lt;head&gt;\t&lt;title&gt;显示浏览器信息&lt;/title&gt;    &lt;meta charset=&quot;UTF-8&quot;&gt;&lt;/head&gt;&lt;body&gt;    &lt;?php     \techo $_SERVER[&quot;HTTP_USER_AGENT&quot;];    \techo &quot;&lt;br&gt;&quot;;    \techo PHP_OS;    \techo &quot;&lt;br&gt;&quot;;    \techo __DIR__;    \techo &quot;&lt;br&gt;&quot;;    \techo PHP_VERSION;    \techo &quot;&lt;br&gt;&quot;;    \techo __LINE__;    \techo &quot;&lt;br&gt;&quot;;    \techo __FILE__;    ?&gt;&lt;/body&gt;&lt;/html&gt;\n\n效果显示：\n\n实战二 ：根据页面的行数，生成一个不同颜色的页面，0-3红色背景，4-6蓝色背景，7-9绿色背景，10-12黑色背景，13-15紫色背景，超过为白色。\n1234&lt;?php \techo &quot;&lt;body bgcolor=\\&quot;white\\&quot;&gt;&lt;/body&gt; &lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\\&quot;red\\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;; \t\techo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\\&quot;red\\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;    \techo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\\&quot;red\\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;?&gt;\n\n效果显示：\n\n缺点：刚开始的想法是使用for循环+__LINE__实现，但并实现，目前方法过于死板，有改进空间。\n","dateCreated":"2019-08-03T09:31:17+08:00","dateModified":"2019-08-06T18:44:35+08:00","datePublished":"2019-08-03T09:31:17+08:00","description":"Abstract: PHP简单实战","headline":"练习1","image":["https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/03/practice1/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/03/practice1/","keywords":"PHP, 实战","thumbnailUrl":"https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
-    <meta name="description" content="Abstract: PHP简单实战">
-<meta name="keywords" content="PHP,实战">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: PHP中的运算符、字符串操作和流程控制\n\n\n\n\n1. PHP运算符字符串和数字进行比较时，把字符串转成数字，然后比较。\nNULL  False    ‘’     []       0      布尔值均为False\n2. PHP常用函数\n\n\n函数名称\n作用\n\n\n\naddslashes($string)\n‘  “  空  \\    前添加\\，转移特殊字符，防御SQL注入\n\n\nbin2hex()\n计算ASCII码\n\n\nchr(ascii: 0x)\nASCII码转换成字符\n\n\ncrypt(‘passwd’ , salt)\n加密函数\n\n\nmd5($str)\nhash计算\n\n\nexplode(‘.’, $str)\n根据提供的字符，来切割字符串，结果是一个数组\n\n\nhtmlspecialchars($payload)\n‘ “ &lt; &gt; &amp; 转义特殊字符为html实体编码，防御xss\n\n\nimplode(‘.’, $str )\n返回一个由数组元素组合成的字符串\n\n\nstr_ireplace(sear,rep, subj)\n替换字符串\n\n\nstrchr(haystack, needle)\n查找字符串，并返回字符串之后的所有内容\n\n\nstrcmp(str1, str2)\n比较字符串，区分大小写\n\n\nstrlen($str)\n计算字符串长度\n\n\nsubstr(str, start, length)\n字符串截取，按“位”截取\n\n\nmb_substr(str, start, length)\n同上，按“字”截取\n\n\ntrim($str)\n去除两侧空白字符\n\n\nPHP String函数\n\naddslashes()函数返回在预定义的字符前添加反斜杠的字符串\n预定义字符是：\n1234* 单引号(&apos;)* 双引号(&quot;)* 反斜杠(\\)* NULL\n\n\n\n12345678910111213&lt;?php$str = addslashes(&quot;what does &quot;yolo&quot; mean?&quot;);echo $str;echo PHP_EOL;$str = addslashes(&quot;what does &apos;yolo&apos; mean?&quot;);echo $str;echo PHP_EOL;$str = addslashes(&quot;what does \\yolo\\ mean?&quot;);echo $str;echo PHP_EOL;$str = addslashes(&quot;what does \\x00 mean?&quot;);echo $str;?&gt;\n\nOUT\n123456/*what does \\\"yolo\\\" mean?what does \\'yolo\\' mean?what does \\\\yolo\\\\ mean?What does \\0 mean?*/\n\n\nbin2hex()把ASCII值返回字符；chr()把指定ASCII值返回字符。\n\n12345678&lt;?phpecho bin2hex(&quot;\\n&quot;);echo PHP_EOL;echo chr(0x61);echo PHP_EOL;$str = bin2hex(&quot;Hello World!&quot;);echo($str);?&gt;\n\nOUT\n12345/*0aa48656c6c6f20576f726c6421*/\n\n\ncrypt(str, salt)返回使用DES、Blowfish或MD5算法加密的字符串\nmd5()计算字符串的MD5散列\n\n1234567&lt;?phpecho crypt('123456', 'rl');$str = 'hello';echo md5($str);?&gt;\n\n1* explode(separator, string, limit)使用一个字符串分割另一个字符串，并返回字符串组成的数组\n\n123456789101112131415&lt;?php$a = array();$url = &apos;https://www.baidu.com&apos;;$url = explode(&apos;.&apos;, $url);$host = $url[0];$name = $url[1];$or = $url[2];echo $host;echo PHP_EOL;echo $name;echo PHP_EOL;echo $or;echo PHP_EOL;echo ($a==0);?&gt;\n\nOUT\n12345/*https://wwwbaiducom*/\n\n1* htmlentities()函数把字符转换为HTML实体\n\n1234&lt;?php$str = &quot;&lt;© W3CSçh°°¦§&gt;&quot;;echo htmlentities($str);?&gt;\n\nOUT\n123/*&amp;lt;&amp;copy; W3CS&amp;ccedil;h&amp;deg;&amp;deg;&amp;brvbar;&amp;sect;&amp;gt;*/\n\n\nhtmlspecialchars(string, flags, character-set, double_encode) 函数把一些预定义的字符转换为 HTML 实体\n&amp;        —&gt;       $amp\n“         —&gt;       &amp;quot\n\n\n‘          —&gt;       ‘\n&lt;         —&gt;       &amp;lt\n&gt;         —&gt;       &amp;gt\n\n\n\n12345678910111213&lt;?php$payload = &apos;&lt;img src=&quot;a&quot; onerror=&quot;alert(1)&quot;&gt;&apos;;echo htmlspecialchars($payload);$str = &quot;This is some &lt;b&gt;bold&lt;/b&gt; text.&quot;;echo htmlspecialchars($str);echo array()==null;echo PHP_EOL;$str = &quot;&lt;© W3CSçh°°¦§&gt;&quot;;echo htmlentities($str);?&gt;\n\nOUT\n1234567/*&amp;lt;img src=&amp;quot;a&amp;quot; onerror=&amp;quot;alert(1)&amp;quot;&amp;gt;This is some &amp;lt;b&amp;gt;bold&amp;lt;/b&amp;gt; text.1&amp;lt;&amp;copy; W3CS&amp;ccedil;h&amp;deg;&amp;deg;&amp;brvbar;&amp;sect;&amp;gt;*/\n\n1* import(separator, array)返回一个由数组元素组成字符串\n\n123456&lt;?php$arr = array(&apos;Hello&apos;,&apos;World!&apos;,&apos;Beautiful&apos;,&apos;Day!&apos;);echo implode(&quot; &quot;,$arr);?&gt;\n\nOUT\n123/*Hello World! Beautiful Day!*/\n\n12* str_ireplace(find, replace, string, count)替换字符串中一些字符(不区分大小写) * strchr(string, search,before_search)搜索字符串在另一字符串中第一次出现\n\n\nstrcmp(sting1, string2)比较两个字符串\n返回0  - 如果两个字符相等\n返回&lt;0 - string1&lt;string2\n返回&gt;0 - string1&gt;string2\n\n\ntrim()移除字符串两侧空白字符或其他预定义字符\n\n1234567891011&lt;?phpecho str_ireplace(&quot;WORLD&quot;, &quot;Peter&quot;, &quot;Hello world!&quot;);echo PHP_EOL;echo strchr(&quot;Hello world!&quot;,&quot;world&quot;);echo PHP_EOL;echo strcmp(&quot;Hello world!&quot;,&quot;Hello world!&quot;);echo PHP_EOL;$str = &quot;Hello World!&quot;;echo $str . &quot;&lt;br&gt;&quot;;echo trim($str,&quot;Hed!&quot;);?&gt;\n\nOUT\n123456/*Hello Peter!world!0Hello World!&lt;br&gt;llo Worl*/\n\n\nsubstr(str, start, length)函数返回字符串的一部分；按”位“截取\n\nmb_substr(str, start, length)函数返回字符串的一部分，按”字“截取\n\nstart\n正数—字符串指定位置开始\n负数—从字符串结尾指定位置开始\n0     —字符串第一个字符处开始\n\nlength\n正数—从start参数所在位置返回\n负数—从字符串末端返回\n\n\n\n\n1234&lt;?phpecho substr(&quot;Hello World !&quot;,0, 5);  // 字符串截取，按照`位`截取echo mb_substr(&quot;abc你好!菜鸟！&quot;,0, 4);   // 字符串截取，按照`字`截取?&gt;\n\n","dateCreated":"2019-08-06T18:28:35+08:00","dateModified":"2019-08-06T18:30:31+08:00","datePublished":"2019-08-06T18:28:35+08:00","description":"Abstract: PHP中的运算符、字符串操作和流程控制","headline":"note16","image":["https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/06/note16/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/06/note16/","keywords":"PHP","thumbnailUrl":"https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
+    <meta name="description" content="Abstract: PHP中的运算符、字符串操作和流程控制">
+<meta name="keywords" content="PHP">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="练习1">
-<meta property="og:url" content="http://yoursite.com/2019/08/03/practice1/index.html">
+<meta property="og:title" content="note16">
+<meta property="og:url" content="http://yoursite.com/2019/08/06/note16/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="Abstract: PHP简单实战">
+<meta property="og:description" content="Abstract: PHP中的运算符、字符串操作和流程控制">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://yoursite.com/images/localhostBrowser.png">
-<meta property="og:image" content="http://yoursite.com/images/browserColor.png">
-<meta property="og:updated_time" content="2019-08-06T10:44:35.838Z">
+<meta property="og:updated_time" content="2019-08-06T10:30:31.860Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="练习1">
-<meta name="twitter:description" content="Abstract: PHP简单实战">
-<meta name="twitter:image" content="http://yoursite.com/images/localhostBrowser.png">
+<meta name="twitter:title" content="note16">
+<meta name="twitter:description" content="Abstract: PHP中的运算符、字符串操作和流程控制">
     
     
         
@@ -37,8 +34,8 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://images.pexels.com/photos/1670187/pexels-photo-1670187.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+        <meta property="og:image" content="https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
     
     
     
@@ -264,20 +261,20 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            练习1
+            note16
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2019-08-03T09:31:17+08:00">
+    <time datetime="2019-08-06T18:28:35+08:00">
 	
-		    Aug 03, 2019
+		    Aug 06, 2019
     	
     </time>
     
         <span>in </span>
         
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
 
 
     
@@ -289,22 +286,181 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <p><strong>Abstract</strong>: PHP简单实战</p>
+            <p><strong>Abstract</strong>: PHP中的运算符、字符串操作和流程控制</p>
 <a id="more"></a>
 
 <!--export-->
 
-<h3 id="实战一-："><a href="#实战一-：" class="headerlink" title="实战一 ："></a>实战一 ：</h3><p>根据之前学习的HTML知识，使用PHP来编写一个页面，页面内容显示出浏览器的信息。包括浏览器信息，系统信息，文件位置信息，PHP版本，文件行数。同时保证页面的美观。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;title&gt;显示浏览器信息&lt;/title&gt;</span><br><span class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;?php </span><br><span class="line">    	echo $_SERVER[&quot;HTTP_USER_AGENT&quot;];</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo PHP_OS;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo __DIR__;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo PHP_VERSION;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo __LINE__;</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    	echo __FILE__;</span><br><span class="line">    ?&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="1-PHP运算符"><a href="#1-PHP运算符" class="headerlink" title="1. PHP运算符"></a>1. PHP运算符</h3><p>字符串和数字进行比较时，把字符串转成数字，然后比较。</p>
+<p>NULL  False    ‘’     []       0      布尔值均为False</p>
+<h3 id="2-PHP常用函数"><a href="#2-PHP常用函数" class="headerlink" title="2. PHP常用函数"></a>2. PHP常用函数</h3><table>
+<thead>
+<tr>
+<th>函数名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>addslashes($string)</td>
+<td>‘  “  空  \    前添加\，转移特殊字符，防御SQL注入</td>
+</tr>
+<tr>
+<td>bin2hex()</td>
+<td>计算ASCII码</td>
+</tr>
+<tr>
+<td>chr(ascii: 0x)</td>
+<td>ASCII码转换成字符</td>
+</tr>
+<tr>
+<td>crypt(‘passwd’ , salt)</td>
+<td>加密函数</td>
+</tr>
+<tr>
+<td>md5($str)</td>
+<td>hash计算</td>
+</tr>
+<tr>
+<td>explode(‘.’, $str)</td>
+<td>根据提供的字符，来切割字符串，结果是一个数组</td>
+</tr>
+<tr>
+<td>htmlspecialchars($payload)</td>
+<td>‘ “ &lt; &gt; &amp; 转义特殊字符为html实体编码，防御xss</td>
+</tr>
+<tr>
+<td>implode(‘.’, $str )</td>
+<td>返回一个由数组元素组合成的字符串</td>
+</tr>
+<tr>
+<td>str_ireplace(sear,rep, subj)</td>
+<td>替换字符串</td>
+</tr>
+<tr>
+<td>strchr(haystack, needle)</td>
+<td>查找字符串，并返回字符串之后的所有内容</td>
+</tr>
+<tr>
+<td>strcmp(str1, str2)</td>
+<td>比较字符串，区分大小写</td>
+</tr>
+<tr>
+<td>strlen($str)</td>
+<td>计算字符串长度</td>
+</tr>
+<tr>
+<td>substr(str, start, length)</td>
+<td>字符串截取，按“位”截取</td>
+</tr>
+<tr>
+<td>mb_substr(str, start, length)</td>
+<td>同上，按“字”截取</td>
+</tr>
+<tr>
+<td>trim($str)</td>
+<td>去除两侧空白字符</td>
+</tr>
+</tbody></table>
+<p><a href="https://www.runoob.com/php/php-ref-string.html" target="_blank" rel="noopener">PHP String函数</a></p>
+<ul>
+<li><p>addslashes()函数返回在预定义的字符前添加反斜杠的字符串</p>
+<p>预定义字符是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* 单引号(&apos;)</span><br><span class="line">* 双引号(&quot;)</span><br><span class="line">* 反斜杠(\)</span><br><span class="line">* NULL</span><br></pre></td></tr></table></figure>
 
-<p>效果显示：</p>
-<p><img src="/images/localhostBrowser.png" alt></p>
-<h3 id="实战二-："><a href="#实战二-：" class="headerlink" title="实战二 ："></a>实战二 ：</h3><p>根据页面的行数，生成一个不同颜色的页面，0-3红色背景，4-6蓝色背景，7-9绿色背景，10-12黑色背景，13-15紫色背景，超过为白色。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php 	echo &quot;&lt;body bgcolor=\&quot;white\&quot;&gt;&lt;/body&gt; &lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;</span><br><span class="line"> 		echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;</span><br><span class="line">    	echo &quot;&lt;div style =&apos;background-color:red;&apos;&gt;&lt;font  color=\&quot;red\&quot;&gt;This is some text!&lt;/font&gt;&lt;/div&gt;&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$str = addslashes(&quot;what does &quot;yolo&quot; mean?&quot;);</span><br><span class="line">echo $str;</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">$str = addslashes(&quot;what does &apos;yolo&apos; mean?&quot;);</span><br><span class="line">echo $str;</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">$str = addslashes(&quot;what does \yolo\ mean?&quot;);</span><br><span class="line">echo $str;</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">$str = addslashes(&quot;what does \x00 mean?&quot;);</span><br><span class="line">echo $str;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
-<p>效果显示：</p>
-<p><img src="/images/browserColor.png" alt></p>
-<p>缺点：刚开始的想法是使用<code>for循环</code>+<code>__LINE__</code>实现，但并实现，目前方法过于死板，有改进空间。</p>
+<p>OUT</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">what does \"yolo\" mean?</span></span><br><span class="line"><span class="comment">what does \'yolo\' mean?</span></span><br><span class="line"><span class="comment">what does \\yolo\\ mean?</span></span><br><span class="line"><span class="comment">What does \0 mean?</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>bin2hex()把ASCII值返回字符；chr()把指定ASCII值返回字符。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo bin2hex(&quot;\n&quot;);</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">echo chr(0x61);</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">$str = bin2hex(&quot;Hello World!&quot;);</span><br><span class="line">echo($str);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>OUT</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">0a</span></span><br><span class="line"><span class="comment">a</span></span><br><span class="line"><span class="comment">48656c6c6f20576f726c6421</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>crypt(str, salt)返回使用DES、Blowfish或MD5算法加密的字符串</li>
+<li>md5()计算字符串的MD5散列</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> crypt(<span class="string">'123456'</span>, <span class="string">'rl'</span>);</span><br><span class="line">$str = <span class="string">'hello'</span>;</span><br><span class="line"><span class="keyword">echo</span> md5($str);</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* explode(separator, string, limit)使用一个字符串分割另一个字符串，并返回字符串组成的数组</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = array();</span><br><span class="line">$url = &apos;https://www.baidu.com&apos;;</span><br><span class="line">$url = explode(&apos;.&apos;, $url);</span><br><span class="line">$host = $url[0];</span><br><span class="line">$name = $url[1];</span><br><span class="line">$or = $url[2];</span><br><span class="line">echo $host;</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">echo $name;</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">echo $or;</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">echo ($a==0);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>OUT</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">https://www</span></span><br><span class="line"><span class="comment">baidu</span></span><br><span class="line"><span class="comment">com</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* htmlentities()函数把字符转换为HTML实体</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$str = &quot;&lt;© W3CSçh°°¦§&gt;&quot;;</span><br><span class="line">echo htmlentities($str);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>OUT</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">&amp;lt;&amp;copy; W3CS&amp;ccedil;h&amp;deg;&amp;deg;&amp;brvbar;&amp;sect;&amp;gt;</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>htmlspecialchars(string, flags, character-set, double_encode) 函数把一些预定义的字符转换为 HTML 实体<ul>
+<li>&amp;        —&gt;       $amp<ul>
+<li>“         —&gt;       &amp;quot</li>
+</ul>
+</li>
+<li>‘          —&gt;       ‘</li>
+<li>&lt;         —&gt;       &amp;lt</li>
+<li>&gt;         —&gt;       &amp;gt</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$payload = &apos;&lt;img src=&quot;a&quot; onerror=&quot;alert(1)&quot;&gt;&apos;;</span><br><span class="line">echo htmlspecialchars($payload);</span><br><span class="line"></span><br><span class="line">$str = &quot;This is some &lt;b&gt;bold&lt;/b&gt; text.&quot;;</span><br><span class="line">echo htmlspecialchars($str);</span><br><span class="line">echo array()==null;</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">$str = &quot;&lt;© W3CSçh°°¦§&gt;&quot;;</span><br><span class="line">echo htmlentities($str);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>OUT</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">&amp;lt;img src=&amp;quot;a&amp;quot; onerror=&amp;quot;alert(1)&amp;quot;&amp;gt;</span></span><br><span class="line"><span class="comment">This is some &amp;lt;b&amp;gt;bold&amp;lt;/b&amp;gt; text.</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">&amp;lt;&amp;copy; W3CS&amp;ccedil;h&amp;deg;&amp;deg;&amp;brvbar;&amp;sect;&amp;gt;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* import(separator, array)返回一个由数组元素组成字符串</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$arr = array(&apos;Hello&apos;,&apos;World!&apos;,&apos;Beautiful&apos;,&apos;Day!&apos;);</span><br><span class="line">echo implode(&quot; &quot;,$arr);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>OUT</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Hello World! Beautiful Day!</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* str_ireplace(find, replace, string, count)替换字符串中一些字符(不区分大小写) </span><br><span class="line">* strchr(string, search,before_search)搜索字符串在另一字符串中第一次出现</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>strcmp(sting1, string2)比较两个字符串<ul>
+<li>返回0  - 如果两个字符相等</li>
+<li>返回&lt;0 - string1&lt;string2</li>
+<li>返回&gt;0 - string1&gt;string2</li>
+</ul>
+</li>
+<li>trim()移除字符串两侧空白字符或其他预定义字符</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo str_ireplace(&quot;WORLD&quot;, &quot;Peter&quot;, &quot;Hello world!&quot;);</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">echo strchr(&quot;Hello world!&quot;,&quot;world&quot;);</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">echo strcmp(&quot;Hello world!&quot;,&quot;Hello world!&quot;);</span><br><span class="line">echo PHP_EOL;</span><br><span class="line">$str = &quot;Hello World!&quot;;</span><br><span class="line">echo $str . &quot;&lt;br&gt;&quot;;</span><br><span class="line">echo trim($str,&quot;Hed!&quot;);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>OUT</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">Hello Peter!</span><br><span class="line">world!</span><br><span class="line">0</span><br><span class="line">Hello World!&lt;br&gt;llo Worl</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>substr(str, start, length)函数返回字符串的一部分；按”位“截取</p>
+</li>
+<li><p>mb_substr(str, start, length)函数返回字符串的一部分，按”字“截取</p>
+<ul>
+<li><p>start</p>
+<p>正数—字符串指定位置开始</p>
+<p>负数—从字符串结尾指定位置开始</p>
+<p>0     —字符串第一个字符处开始</p>
+</li>
+<li><p>length</p>
+<p>正数—从start参数所在位置返回</p>
+<p>负数—从字符串末端返回</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo substr(&quot;Hello World !&quot;,0, 5);  // 字符串截取，按照`位`截取</span><br><span class="line">echo mb_substr(&quot;abc你好!菜鸟！&quot;,0, 4);   // 字符串截取，按照`字`截取</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
 
             
 
@@ -316,7 +472,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/PHP/">PHP</a> <a class="tag tag--primary tag--small t-link" href="/tags/实战/">实战</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/PHP/">PHP</a>
 
             </div>
         
@@ -329,9 +485,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/week3points/"
-                    data-tooltip="week3points"
-                    aria-label="PREVIOUS: week3points"
+                    href="/2019/08/06/practice2/"
+                    data-tooltip="练习2"
+                    aria-label="PREVIOUS: 练习2"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -343,9 +499,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/note15/"
-                    data-tooltip="note15"
-                    aria-label="NEXT: note15"
+                    href="/2019/08/04/week3sum/"
+                    data-tooltip="week3sum"
+                    aria-label="NEXT: week3sum"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -370,7 +526,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/note16/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -383,7 +539,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/note16/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -396,7 +552,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/note16/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -444,9 +600,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/week3points/"
-                    data-tooltip="week3points"
-                    aria-label="PREVIOUS: week3points"
+                    href="/2019/08/06/practice2/"
+                    data-tooltip="练习2"
+                    aria-label="PREVIOUS: 练习2"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -458,9 +614,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/03/note15/"
-                    data-tooltip="note15"
-                    aria-label="NEXT: note15"
+                    href="/2019/08/04/week3sum/"
+                    data-tooltip="week3sum"
+                    aria-label="NEXT: week3sum"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -485,7 +641,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/note16/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -498,7 +654,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/note16/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -511,7 +667,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/03/practice1/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/note16/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -545,7 +701,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/03/practice1/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/note16/"
                         aria-label="Share on Facebook"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
@@ -558,7 +714,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/03/practice1/"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/note16/"
                         aria-label="Share on Twitter"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
@@ -571,7 +727,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/03/practice1/"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/note16/"
                         aria-label="Share on Google+"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>

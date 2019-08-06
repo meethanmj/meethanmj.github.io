@@ -6,24 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>Tag: docker - han个人博客</title>
+    <title>note17 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{}</script>
-    <meta name="description" content="爱生活，爱编程">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: PHP语言中while和for的用法，以及PHP数组的用法。\n\n\n\n\n1. PHP三种工作模式(文件后缀解析时有何区别)1.1 module模式LAMP — Linux Apache Php Mysql\nphp作为apache模块运行，apache遇到一个php文件，，就相当于执行系统命令 php a.php，文件后缀解析以apache配置文件为主，如果apache认为.xxx文件时php脚本，就当作php执行。\n1.2 CGI模式LNMP — Linux Nginx Php Mysql\nphp会监听一个端口，nginx/phpstorm/iis等中间件遇到一个php文件时，会把请求转发给php监听的端口。\n有两个配置文件，一个是中间件，一个是php服务的，nginx/iis认为.xxx后缀文件是php脚本，交给php处理，但在php配置文件中，会有一个限制php5/php3/phtml/php能够被识别。\n第三周总结 最底部有三种模式的对比。\n2. PHP数组#### 2.1 数值数组​    自动分配ID键（ID键总是从0开始）\n123456&lt;?php\t$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);\techo $cars[0];\t\t//输出&quot;Volvo&quot;\techo $cars[1];\t\t//输出&quot;BMW&quot;\techo $cars[2];\t\t//输出&quot;Toyota&quot;?&gt;\n\n​    count()函数—获取数组的长度\n1234&lt;?php\t$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);\techo count($cars);?&gt;\n\n​    遍历数值数组\n12345678&lt;?php\t$cars=array(&quot;Volvo&quot;,&quot;BMW&quot;,&quot;Toyota&quot;);\t$arrlength=count($cars); \tfor($x=0;$x&lt;$arrlength;$x++)&#123;    \techo $cars[$x];    \techo &quot;&lt;br&gt;&quot;;   \t&#125;?&gt;\n\n为一个数组增加一位，不适合用上述这种方法遍历。\n12345678910111213141516171819&lt;?php    $arr = array(&apos;name&apos;=&gt;&apos;zs&apos;, 2, &apos;age&apos;=&gt;18, 1);    echo $arr[&apos;name&apos;];\t\t\t//zs    echo PHP_EOL;\t\t\t\t    echo $arr[0];\t\t\t\t//2    echo PHP_EOL;    echo $arr[&apos;age&apos;];\t\t\t//18    echo PHP_EOL;    echo $arr[1];\t\t\t\t//1    $arr1 = array(1,2,3,4,5);    $arr1[0] = 6;    echo PHP_EOL;    $arr1[100] = 100;    echo PHP_EOL;    echo $arr1[0], $arr1[100];    for($i=0; $i&lt;=100; $i++)&#123;\t//610062345 报错，直到i=100时把100输出        echo $arr1[$i];    &#125;?&gt;\n\n使用foreach就不会报错，数值数组和关联数组混合时，关联数组并不影响数值数组的下标。\n2.2 关联数组关联数组可以指定键的数组\n1234&lt;?php    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);    echo &quot;Peter is &quot; . $age[&apos;Peter&apos;] . &quot; years old.&quot;;?&gt;\n\n遍历关联数组\n123456789&lt;?php    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);    foreach($age as $x=&gt;$x_value)    &#123;        echo &quot;Key=&quot; . $x . &quot;, Value=&quot; . $x_value;        echo &quot;&lt;br&gt;&quot;;    &#125;?&gt;\n\n1234567891011121314151617&lt;?php    $arr = array(1, 2, 3, 4, 5);    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125;    $arr[5]=709;    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125;    $arr[100] = 100;    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125; ?&gt;\n\n","dateCreated":"2019-08-06T18:40:25+08:00","dateModified":"2019-08-06T19:31:57+08:00","datePublished":"2019-08-06T18:40:25+08:00","description":"Abstract: PHP语言中while和for的用法，以及PHP数组的用法。","headline":"note17","image":["https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/06/note17/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/06/note17/","keywords":"PHP","thumbnailUrl":"https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
+    <meta name="description" content="Abstract: PHP语言中while和for的用法，以及PHP数组的用法。">
+<meta name="keywords" content="PHP">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="han个人博客">
-<meta property="og:url" content="http://yoursite.com/tags/docker/index.html">
+<meta property="og:title" content="note17">
+<meta property="og:url" content="http://yoursite.com/2019/08/06/note17/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="爱生活，爱编程">
+<meta property="og:description" content="Abstract: PHP语言中while和for的用法，以及PHP数组的用法。">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-08-06T11:31:57.569Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="han个人博客">
-<meta name="twitter:description" content="爱生活，爱编程">
+<meta name="twitter:title" content="note17">
+<meta name="twitter:description" content="Abstract: PHP语言中while和for的用法，以及PHP数组的用法。">
     
     
         
@@ -31,6 +33,9 @@
     
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
+    
+        <meta property="og:image" content="https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
     
     
     
@@ -41,6 +46,8 @@
 
     
 
+    
+        
     
 </head>
 
@@ -55,7 +62,7 @@
         
     
 
-<header id="header" data-behavior="2">
+<header id="header" data-behavior="5">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a
@@ -88,7 +95,7 @@
         
     
 
-<nav id="sidebar" data-behavior="2">
+<nav id="sidebar" data-behavior="5">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -243,33 +250,25 @@
 </nav>
 
             
-            <div id="main" data-behavior="2"
+            <div id="main" data-behavior="5"
                  class="
                         hasCoverMetaIn
                         ">
                 
-    <section class="postShorten-group main-content-wrap">
+<article class="post">
     
     
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/07/29/noteday11/"
-                            aria-label=": note11"
-                        >
-                            note11
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-07-29T14:03:49+08:00">
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            note17
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-06T18:40:25+08:00">
 	
-		    Jul 29, 2019
+		    Aug 06, 2019
     	
     </time>
     
@@ -281,46 +280,164 @@
     
 </div>
 
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
-<a id="more"></a>
-                    
-                        <a
-                            href="/2019/07/29/noteday11/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": note11"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/07/29/noteday11/"
-                aria-label=": note11"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg"/>
-                </div>
-            </a>
-            
-        
-    </article>
     
-    <div class="pagination-bar">
-    <ul class="pagination">
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: PHP语言中<code>while</code>和<code>for</code>的用法，以及PHP数组的用法。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h3 id="1-PHP三种工作模式-文件后缀解析时有何区别"><a href="#1-PHP三种工作模式-文件后缀解析时有何区别" class="headerlink" title="1. PHP三种工作模式(文件后缀解析时有何区别)"></a>1. PHP三种工作模式(文件后缀解析时有何区别)</h3><h4 id="1-1-module模式"><a href="#1-1-module模式" class="headerlink" title="1.1 module模式"></a>1.1 module模式</h4><p>LAMP — Linux Apache Php Mysql</p>
+<p>php作为apache模块运行，apache遇到一个php文件，，就相当于执行系统命令 <code>php a.php</code>，文件后缀解析以apache配置文件为主，如果apache认为.xxx文件时php脚本，就当作php执行。</p>
+<h4 id="1-2-CGI模式"><a href="#1-2-CGI模式" class="headerlink" title="1.2 CGI模式"></a>1.2 CGI模式</h4><p>LNMP — Linux Nginx Php Mysql</p>
+<p>php会监听一个端口，nginx/phpstorm/iis等中间件遇到一个php文件时，会把请求转发给php监听的端口。</p>
+<p>有两个配置文件，一个是中间件，一个是php服务的，nginx/iis认为.xxx后缀文件是php脚本，交给php处理，但在php配置文件中，会有一个限制php5/php3/phtml/php能够被识别。</p>
+<p><a href="https://meethanmj.github.io/2019/08/04/week3sum/" target="_blank" rel="noopener">第三周总结</a> 最底部有三种模式的对比。</p>
+<h3 id="2-PHP数组"><a href="#2-PHP数组" class="headerlink" title="2. PHP数组"></a>2. PHP数组</h3><pre><code>#### 2.1 数值数组</code></pre><p>​    自动分配ID键（ID键总是从0开始）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);</span><br><span class="line">	echo $cars[0];		//输出&quot;Volvo&quot;</span><br><span class="line">	echo $cars[1];		//输出&quot;BMW&quot;</span><br><span class="line">	echo $cars[2];		//输出&quot;Toyota&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>​    count()函数—获取数组的长度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);</span><br><span class="line">	echo count($cars);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>​    遍历数值数组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$cars=array(&quot;Volvo&quot;,&quot;BMW&quot;,&quot;Toyota&quot;);</span><br><span class="line">	$arrlength=count($cars); </span><br><span class="line">	for($x=0;$x&lt;$arrlength;$x++)&#123;</span><br><span class="line">    	echo $cars[$x];</span><br><span class="line">    	echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">   	&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>为一个数组增加一位，不适合用上述这种方法遍历。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    $arr = array(&apos;name&apos;=&gt;&apos;zs&apos;, 2, &apos;age&apos;=&gt;18, 1);</span><br><span class="line">    echo $arr[&apos;name&apos;];			//zs</span><br><span class="line">    echo PHP_EOL;				</span><br><span class="line">    echo $arr[0];				//2</span><br><span class="line">    echo PHP_EOL;</span><br><span class="line">    echo $arr[&apos;age&apos;];			//18</span><br><span class="line">    echo PHP_EOL;</span><br><span class="line">    echo $arr[1];				//1</span><br><span class="line">    $arr1 = array(1,2,3,4,5);</span><br><span class="line">    $arr1[0] = 6;</span><br><span class="line">    echo PHP_EOL;</span><br><span class="line">    $arr1[100] = 100;</span><br><span class="line">    echo PHP_EOL;</span><br><span class="line">    echo $arr1[0], $arr1[100];</span><br><span class="line">    for($i=0; $i&lt;=100; $i++)&#123;	//610062345 报错，直到i=100时把100输出</span><br><span class="line">        echo $arr1[$i];</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>foreach</code>就不会报错，数值数组和关联数组混合时，关联数组并不影响数值数组的下标。</p>
+<h4 id="2-2-关联数组"><a href="#2-2-关联数组" class="headerlink" title="2.2 关联数组"></a>2.2 关联数组</h4><p>关联数组可以指定键的数组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);</span><br><span class="line">    echo &quot;Peter is &quot; . $age[&apos;Peter&apos;] . &quot; years old.&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>遍历关联数组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);</span><br><span class="line"></span><br><span class="line">    foreach($age as $x=&gt;$x_value)</span><br><span class="line">    &#123;</span><br><span class="line">        echo &quot;Key=&quot; . $x . &quot;, Value=&quot; . $x_value;</span><br><span class="line">        echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    $arr = array(1, 2, 3, 4, 5);</span><br><span class="line">    foreach($arr as $key =&gt; $value)&#123;</span><br><span class="line">        echo $key.&quot;=&gt;&quot;.$value;</span><br><span class="line">        echo PHP_EOL;</span><br><span class="line">    &#125;</span><br><span class="line">    $arr[5]=709;</span><br><span class="line">    foreach($arr as $key =&gt; $value)&#123;</span><br><span class="line">        echo $key.&quot;=&gt;&quot;.$value;</span><br><span class="line">        echo PHP_EOL;</span><br><span class="line">    &#125;</span><br><span class="line">    $arr[100] = 100;</span><br><span class="line">    foreach($arr as $key =&gt; $value)&#123;</span><br><span class="line">        echo $key.&quot;=&gt;&quot;.$value;</span><br><span class="line">        echo PHP_EOL;</span><br><span class="line">    &#125;</span><br><span class="line"> ?&gt;</span><br></pre></td></tr></table></figure>
+
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/PHP/">PHP</a>
+
+            </div>
         
         
-        <li class="pagination-number">page 1 of 1</li>
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/06/welcome/"
+                    data-tooltip="welcome"
+                    aria-label="PREVIOUS: welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/06/practice2/"
+                    data-tooltip="练习2"
+                    aria-label="NEXT: 练习2"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/note17/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/note17/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/note17/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
     </ul>
 </div>
 
-</section>
+
+        
+        
+            
+        
+    </div>
+</article>
+
 
 
                 <footer id="footer" class="main-content-wrap">
@@ -330,6 +447,154 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/06/welcome/"
+                    data-tooltip="welcome"
+                    aria-label="PREVIOUS: welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/06/practice2/"
+                    data-tooltip="练习2"
+                    aria-label="NEXT: 练习2"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/note17/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/note17/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/note17/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/06/note17/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/06/note17/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/06/note17/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -741,6 +1006,8 @@
 <script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
 <!--SCRIPTS END-->
 
+
+    
 
 
 
