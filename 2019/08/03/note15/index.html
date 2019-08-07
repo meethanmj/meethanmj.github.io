@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: php基础语法和变量\n\n\n\n\n1. 基础规范\nPHP脚本形式&lt;?php ?&gt;\nPHP脚本可以单独存在，也可以与htm页面结合\nPHP文件扩展名规范，一般是.php结尾，但可以使用其他命名，例如.phtm等\n\n2. PHP三种运行方式\nCLI就是命令行\n1php -f index.php\n\nCGI模式： Common Gateway Interface，公共网关接口，程序须运行在网络服务器上\n\nmodule模式：\n\n\n3. 扩展加讲解\napache服务器或nginx\nphp运行环境\n数据库\n\n4. PHP中的数据类型12345678910#### 变量的数据类型：\t* 布尔类型\t* 整型\t* 浮点型\t* 字符串\t* 资源\t* 空类型\t* 数组\t* 对象\n\n使用var_dump()来查看类型\nPHP中的变量：\n变量以$符号开始，后面跟着变量的名称\n\n变量名必须以字母或者下划线字符开始\n\n变量民只能包含字母数字字符以及下划线（A-z、0-9和_）\n\n变量名不能包含空格\n\n变量名是区分大小写的\nSTDOUT是客户端，只能在终端显示，不能在网页显示\n\n\nPHP中的常量：123* 常量一旦赋值不会改变，尽量使用大写* 常量分为系统常量和自定义常量* 系统常量可以理解为值不会有改变的亮\n\n定义常量：12* 使用PHP中的函数define()来定义常量* 常量在使用的时候，不需要$符\n\n常用的系统常量：123456789101112//php程序文件名/绝对路径__FILE__//被调用的文件脚本所在的目录__DIR__//函数名__FUNCTION__//php程序文件行数__LINE__//当前解析器的版本号PHP_VERSION//执行当前PHP版本的操作系统名称PHP_OS\n\n​    php靠点连接字符串\n12345&lt;?php \t$a = \"name\";        $b = \"zs\";\t$c = $a . $b;?&gt;\n\n&lt;&lt;&lt;EOF EOF1234567&lt;?p    echo &lt;&lt;&lt;EOF\t&lt;h1&gt;标题&lt;/h1&gt;    &lt;p&gt;段落&lt;/p&gt;EOF;//结束需要独立一行且前后不能空格?&gt;\n\n\nphp中除了单引号，任意字符放在单引号中将没有任何意义\n\nphp中双引号输入特殊字符，将有特殊意义\n\nEOF中变量有意义，其他特殊字符，都没有意义\n\n转移\\普通字符变为特殊字符，特殊字符为普通字符\n\n\n","dateCreated":"2019-08-03T09:30:55+08:00","dateModified":"2019-08-03T10:21:16+08:00","datePublished":"2019-08-03T09:30:55+08:00","description":"Abstract: php基础语法和变量","headline":"note15","image":["http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/03/note15/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/03/note15/","keywords":"PHP","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: php基础语法和变量\n\n\n\n\n1. 基础规范\nPHP脚本形式&lt;?php ?&gt;\nPHP脚本可以单独存在，也可以与htm页面结合\nPHP文件扩展名规范，一般是.php结尾，但可以使用其他命名，例如.phtm等\n\n2. PHP三种运行方式\nCLI就是命令行\n1php -f index.php\n\nCGI模式： Common Gateway Interface，公共网关接口，程序须运行在网络服务器上\n\nmodule模式：\n\n\n3. 扩展加讲解\napache服务器或nginx\nphp运行环境\n数据库\n\n4. PHP中的数据类型变量的数据类型：\n布尔类型 \n整型\n浮点型\n字符串\n资源\n空类型\n数组\n对象\n\n使用var_dump()来查看类型\nPHP中的变量：\n变量以$符号开始，后面跟着变量的名称\n\n变量名必须以字母或者下划线字符开始\n\n变量民只能包含字母数字字符以及下划线（A-z、0-9和_）\n\n变量名不能包含空格\n\n变量名是区分大小写的\nSTDOUT是客户端，只能在终端显示，不能在网页显示\n\n\nPHP中的常量：\n常量一旦赋值不会改变，尽量使用大写\n常量分为系统常量和自定义常量\n系统常量可以理解为值不会有改变的亮\n\n定义常量：\n使用PHP中的函数define()来定义常量\n常量在使用的时候，不需要$符\n\n常用的系统常量：123456789101112//php程序文件名/绝对路径__FILE__//被调用的文件脚本所在的目录__DIR__//函数名__FUNCTION__//php程序文件行数__LINE__//当前解析器的版本号PHP_VERSION//执行当前PHP版本的操作系统名称PHP_OS\n\n​    php靠点连接字符串\n12345&lt;?php \t$a = \"name\";        $b = \"zs\";\t$c = $a . $b;?&gt;\n\n&lt;&lt;&lt;EOF EOF1234567&lt;?p    echo &lt;&lt;&lt;EOF\t&lt;h1&gt;标题&lt;/h1&gt;    &lt;p&gt;段落&lt;/p&gt;EOF;//结束需要独立一行且前后不能空格?&gt;\n\n\nphp中除了单引号，任意字符放在单引号中将没有任何意义\n\nphp中双引号输入特殊字符，将有特殊意义\n\nEOF中变量有意义，其他特殊字符，都没有意义\n\n转移\\普通字符变为特殊字符，特殊字符为普通字符\n\n\n","dateCreated":"2019-08-03T09:30:55+08:00","dateModified":"2019-08-07T23:49:04+08:00","datePublished":"2019-08-03T09:30:55+08:00","description":"Abstract: php基础语法和变量","headline":"note15","image":["http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/03/note15/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/03/note15/","keywords":"PHP","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"}</script>
     <meta name="description" content="Abstract: php基础语法和变量">
 <meta name="keywords" content="PHP">
 <meta property="og:type" content="blog">
@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: php基础语法和变量">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-03T02:21:16.367Z">
+<meta property="og:updated_time" content="2019-08-07T15:49:04.164Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="note15">
 <meta name="twitter:description" content="Abstract: php基础语法和变量">
@@ -310,8 +310,16 @@
 <li>php运行环境</li>
 <li>数据库</li>
 </ul>
-<h3 id="4-PHP中的数据类型"><a href="#4-PHP中的数据类型" class="headerlink" title="4. PHP中的数据类型"></a>4. PHP中的数据类型</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#### 变量的数据类型：</span><br><span class="line"></span><br><span class="line">	* 布尔类型</span><br><span class="line">	* 整型</span><br><span class="line">	* 浮点型</span><br><span class="line">	* 字符串</span><br><span class="line">	* 资源</span><br><span class="line">	* 空类型</span><br><span class="line">	* 数组</span><br><span class="line">	* 对象</span><br></pre></td></tr></table></figure>
-
+<h3 id="4-PHP中的数据类型"><a href="#4-PHP中的数据类型" class="headerlink" title="4. PHP中的数据类型"></a>4. PHP中的数据类型</h3><h4 id="变量的数据类型："><a href="#变量的数据类型：" class="headerlink" title="变量的数据类型："></a>变量的数据类型：</h4><ul>
+<li>布尔类型 </li>
+<li>整型</li>
+<li>浮点型</li>
+<li>字符串</li>
+<li>资源</li>
+<li>空类型</li>
+<li>数组</li>
+<li>对象</li>
+</ul>
 <p>使用var_dump()来查看类型</p>
 <h4 id="PHP中的变量："><a href="#PHP中的变量：" class="headerlink" title="PHP中的变量："></a>PHP中的变量：</h4><ul>
 <li><p>变量以$符号开始，后面跟着变量的名称</p>
@@ -326,10 +334,15 @@
 <p>STDOUT是客户端，只能在终端显示，不能在网页显示</p>
 </li>
 </ul>
-<h4 id="PHP中的常量："><a href="#PHP中的常量：" class="headerlink" title="PHP中的常量："></a>PHP中的常量：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* 常量一旦赋值不会改变，尽量使用大写</span><br><span class="line">* 常量分为系统常量和自定义常量</span><br><span class="line">* 系统常量可以理解为值不会有改变的亮</span><br></pre></td></tr></table></figure>
-
-<h4 id="定义常量："><a href="#定义常量：" class="headerlink" title="定义常量："></a>定义常量：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 使用PHP中的函数define()来定义常量</span><br><span class="line">* 常量在使用的时候，不需要$符</span><br></pre></td></tr></table></figure>
-
+<h4 id="PHP中的常量："><a href="#PHP中的常量：" class="headerlink" title="PHP中的常量："></a>PHP中的常量：</h4><ul>
+<li>常量一旦赋值不会改变，尽量使用大写</li>
+<li>常量分为系统常量和自定义常量</li>
+<li>系统常量可以理解为值不会有改变的亮</li>
+</ul>
+<h4 id="定义常量："><a href="#定义常量：" class="headerlink" title="定义常量："></a>定义常量：</h4><ul>
+<li>使用PHP中的函数define()来定义常量</li>
+<li>常量在使用的时候，不需要$符</li>
+</ul>
 <h4 id="常用的系统常量："><a href="#常用的系统常量：" class="headerlink" title="常用的系统常量："></a>常用的系统常量：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//php程序文件名/绝对路径</span></span><br><span class="line"><span class="keyword">__FILE__</span></span><br><span class="line"><span class="comment">//被调用的文件脚本所在的目录</span></span><br><span class="line"><span class="keyword">__DIR__</span></span><br><span class="line"><span class="comment">//函数名</span></span><br><span class="line"><span class="keyword">__FUNCTION__</span></span><br><span class="line"><span class="comment">//php程序文件行数</span></span><br><span class="line"><span class="keyword">__LINE__</span></span><br><span class="line"><span class="comment">//当前解析器的版本号</span></span><br><span class="line">PHP_VERSION</span><br><span class="line"><span class="comment">//执行当前PHP版本的操作系统名称</span></span><br><span class="line">PHP_OS</span><br></pre></td></tr></table></figure>
 
 <p>​    php靠点连接字符串</p>
@@ -1022,7 +1035,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                18 posts found
+                20 posts found
             </p>
         </div>
     </div>

@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: PHP语言中while和for的用法，以及PHP数组的用法。\n\n\n\n\n1. PHP三种工作模式(文件后缀解析时有何区别)1.1 module模式LAMP — Linux Apache Php Mysql\nphp作为apache模块运行，apache遇到一个php文件，，就相当于执行系统命令 php a.php，文件后缀解析以apache配置文件为主，如果apache认为.xxx文件时php脚本，就当作php执行。\n1.2 CGI模式LNMP — Linux Nginx Php Mysql\nphp会监听一个端口，nginx/phpstorm/iis等中间件遇到一个php文件时，会把请求转发给php监听的端口。\n有两个配置文件，一个是中间件，一个是php服务的，nginx/iis认为.xxx后缀文件是php脚本，交给php处理，但在php配置文件中，会有一个限制php5/php3/phtml/php能够被识别。\n第三周总结 最底部有三种模式的对比。\n2. PHP数组#### 2.1 数值数组​    自动分配ID键（ID键总是从0开始）\n123456&lt;?php\t$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);\techo $cars[0];\t\t//输出&quot;Volvo&quot;\techo $cars[1];\t\t//输出&quot;BMW&quot;\techo $cars[2];\t\t//输出&quot;Toyota&quot;?&gt;\n\n​    count()函数—获取数组的长度\n1234&lt;?php\t$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);\techo count($cars);?&gt;\n\n​    遍历数值数组\n12345678&lt;?php\t$cars=array(&quot;Volvo&quot;,&quot;BMW&quot;,&quot;Toyota&quot;);\t$arrlength=count($cars); \tfor($x=0;$x&lt;$arrlength;$x++)&#123;    \techo $cars[$x];    \techo &quot;&lt;br&gt;&quot;;   \t&#125;?&gt;\n\n为一个数组增加一位，不适合用上述这种方法遍历。\n12345678910111213141516171819&lt;?php    $arr = array(&apos;name&apos;=&gt;&apos;zs&apos;, 2, &apos;age&apos;=&gt;18, 1);    echo $arr[&apos;name&apos;];\t\t\t//zs    echo PHP_EOL;\t\t\t\t    echo $arr[0];\t\t\t\t//2    echo PHP_EOL;    echo $arr[&apos;age&apos;];\t\t\t//18    echo PHP_EOL;    echo $arr[1];\t\t\t\t//1    $arr1 = array(1,2,3,4,5);    $arr1[0] = 6;    echo PHP_EOL;    $arr1[100] = 100;    echo PHP_EOL;    echo $arr1[0], $arr1[100];    for($i=0; $i&lt;=100; $i++)&#123;\t//610062345 报错，直到i=100时把100输出        echo $arr1[$i];    &#125;?&gt;\n\n使用foreach就不会报错，数值数组和关联数组混合时，关联数组并不影响数值数组的下标。\n2.2 关联数组关联数组可以指定键的数组\n1234&lt;?php    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);    echo &quot;Peter is &quot; . $age[&apos;Peter&apos;] . &quot; years old.&quot;;?&gt;\n\n遍历关联数组\n123456789&lt;?php    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);    foreach($age as $x=&gt;$x_value)    &#123;        echo &quot;Key=&quot; . $x . &quot;, Value=&quot; . $x_value;        echo &quot;&lt;br&gt;&quot;;    &#125;?&gt;\n\n1234567891011121314151617&lt;?php    $arr = array(1, 2, 3, 4, 5);    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125;    $arr[5]=709;    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125;    $arr[100] = 100;    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125; ?&gt;\n\n","dateCreated":"2019-08-06T18:40:25+08:00","dateModified":"2019-08-06T19:31:57+08:00","datePublished":"2019-08-06T18:40:25+08:00","description":"Abstract: PHP语言中while和for的用法，以及PHP数组的用法。","headline":"note17","image":["https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/06/note17/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/06/note17/","keywords":"PHP","thumbnailUrl":"https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: PHP语言中while和for的用法，以及PHP数组的用法。\n\n\n\n\n1. PHP三种工作模式(文件后缀解析时有何区别)1.1 module模式LAMP — Linux Apache Php Mysql\nphp作为apache模块运行，apache遇到一个php文件，，就相当于执行系统命令 php a.php，文件后缀解析以apache配置文件为主，如果apache认为.xxx文件时php脚本，就当作php执行。\n1.2 CGI模式LNMP — Linux Nginx Php Mysql\nphp会监听一个端口，nginx/phpstorm/iis等中间件遇到一个php文件时，会把请求转发给php监听的端口。\n有两个配置文件，一个是中间件，一个是php服务的，nginx/iis认为.xxx后缀文件是php脚本，交给php处理，但在php配置文件中，会有一个限制php5/php3/phtml/php能够被识别。\n第三周总结 最底部有三种模式的对比。\n2. PHP数组2.1 数值数组​    自动分配ID键（ID键总是从0开始）\n123456&lt;?php\t$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);\techo $cars[0];\t\t//输出&quot;Volvo&quot;\techo $cars[1];\t\t//输出&quot;BMW&quot;\techo $cars[2];\t\t//输出&quot;Toyota&quot;?&gt;\n\n​    count()函数—获取数组的长度\n1234&lt;?php\t$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);\techo count($cars);?&gt;\n\n​    遍历数值数组\n12345678&lt;?php\t$cars=array(&quot;Volvo&quot;,&quot;BMW&quot;,&quot;Toyota&quot;);\t$arrlength=count($cars); \tfor($x=0;$x&lt;$arrlength;$x++)&#123;    \techo $cars[$x];    \techo &quot;&lt;br&gt;&quot;;   \t&#125;?&gt;\n\n为一个数组增加一位，不适合用上述这种方法遍历。\n12345678910111213141516171819&lt;?php    $arr = array(&apos;name&apos;=&gt;&apos;zs&apos;, 2, &apos;age&apos;=&gt;18, 1);    echo $arr[&apos;name&apos;];\t\t\t//zs    echo PHP_EOL;\t\t\t\t    echo $arr[0];\t\t\t\t//2    echo PHP_EOL;    echo $arr[&apos;age&apos;];\t\t\t//18    echo PHP_EOL;    echo $arr[1];\t\t\t\t//1    $arr1 = array(1,2,3,4,5);    $arr1[0] = 6;    echo PHP_EOL;    $arr1[100] = 100;    echo PHP_EOL;    echo $arr1[0], $arr1[100];    for($i=0; $i&lt;=100; $i++)&#123;\t//610062345 报错，直到i=100时把100输出        echo $arr1[$i];    &#125;?&gt;\n\n使用foreach就不会报错，数值数组和关联数组混合时，关联数组并不影响数值数组的下标。\n2.2 关联数组关联数组可以指定键的数组\n1234&lt;?php    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);    echo &quot;Peter is &quot; . $age[&apos;Peter&apos;] . &quot; years old.&quot;;?&gt;\n\n遍历关联数组\n123456789&lt;?php    $age=array(&quot;Peter&quot;=&gt;&quot;35&quot;,&quot;Ben&quot;=&gt;&quot;37&quot;,&quot;Joe&quot;=&gt;&quot;43&quot;);    foreach($age as $x=&gt;$x_value)    &#123;        echo &quot;Key=&quot; . $x . &quot;, Value=&quot; . $x_value;        echo &quot;&lt;br&gt;&quot;;    &#125;?&gt;\n\n1234567891011121314151617&lt;?php    $arr = array(1, 2, 3, 4, 5);    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125;    $arr[5]=709;    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125;    $arr[100] = 100;    foreach($arr as $key =&gt; $value)&#123;        echo $key.&quot;=&gt;&quot;.$value;        echo PHP_EOL;    &#125; ?&gt;\n\n","dateCreated":"2019-08-06T18:40:25+08:00","dateModified":"2019-08-07T23:46:29+08:00","datePublished":"2019-08-06T18:40:25+08:00","description":"Abstract: PHP语言中while和for的用法，以及PHP数组的用法。","headline":"note17","image":["https://images.unsplash.com/photo-1490682143684-14369e18dce8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/06/note17/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/06/note17/","keywords":"PHP","thumbnailUrl":"https://images.unsplash.com/photo-1490682143684-14369e18dce8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
     <meta name="description" content="Abstract: PHP语言中while和for的用法，以及PHP数组的用法。">
 <meta name="keywords" content="PHP">
 <meta property="og:type" content="blog">
@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: PHP语言中while和for的用法，以及PHP数组的用法。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-06T11:31:57.569Z">
+<meta property="og:updated_time" content="2019-08-07T15:46:29.374Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="note17">
 <meta name="twitter:description" content="Abstract: PHP语言中while和for的用法，以及PHP数组的用法。">
@@ -34,8 +34,8 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1563454758691-702be3d2e2b6?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
+        <meta property="og:image" content="https://images.unsplash.com/photo-1490682143684-14369e18dce8?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1490682143684-14369e18dce8?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
     
     
     
@@ -297,7 +297,7 @@
 <p>php会监听一个端口，nginx/phpstorm/iis等中间件遇到一个php文件时，会把请求转发给php监听的端口。</p>
 <p>有两个配置文件，一个是中间件，一个是php服务的，nginx/iis认为.xxx后缀文件是php脚本，交给php处理，但在php配置文件中，会有一个限制php5/php3/phtml/php能够被识别。</p>
 <p><a href="https://meethanmj.github.io/2019/08/04/week3sum/" target="_blank" rel="noopener">第三周总结</a> 最底部有三种模式的对比。</p>
-<h3 id="2-PHP数组"><a href="#2-PHP数组" class="headerlink" title="2. PHP数组"></a>2. PHP数组</h3><pre><code>#### 2.1 数值数组</code></pre><p>​    自动分配ID键（ID键总是从0开始）</p>
+<h3 id="2-PHP数组"><a href="#2-PHP数组" class="headerlink" title="2. PHP数组"></a>2. PHP数组</h3><h4 id="2-1-数值数组"><a href="#2-1-数值数组" class="headerlink" title="2.1 数值数组"></a>2.1 数值数组</h4><p>​    自动分配ID键（ID键总是从0开始）</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$cars = array(&quot;Volvo&quot;, &quot;BMW&quot;, &quot;Toyota&quot;);</span><br><span class="line">	echo $cars[0];		//输出&quot;Volvo&quot;</span><br><span class="line">	echo $cars[1];		//输出&quot;BMW&quot;</span><br><span class="line">	echo $cars[2];		//输出&quot;Toyota&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
 <p>​    count()函数—获取数组的长度</p>
@@ -342,9 +342,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/06/welcome/"
-                    data-tooltip="welcome"
-                    aria-label="PREVIOUS: welcome"
+                    href="/2019/08/07/practice3/"
+                    data-tooltip="练习3"
+                    aria-label="PREVIOUS: 练习3"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -457,9 +457,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/06/welcome/"
-                    data-tooltip="welcome"
-                    aria-label="PREVIOUS: welcome"
+                    href="/2019/08/07/practice3/"
+                    data-tooltip="练习3"
+                    aria-label="PREVIOUS: 练习3"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -993,7 +993,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                18 posts found
+                20 posts found
             </p>
         </div>
     </div>
