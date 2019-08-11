@@ -1,0 +1,1103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>练习5 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 把新闻信息，用户信息存放在文件中，用对文件的读写，实现用户的登录注册以及对新闻的增删改查。\n\n\n\n\n一、目录结构\n###目录结构：\n|            index.php                //初始化页面\n|——–  data                         //文件存放目录\n|            news.db                  //存放新闻信息文件\n|            users.db                 //存放用户信息文件\n|——— lib                            //脚本存放目录           \n|            login.html              // 用户登录界面    \n|            checklogin.php    //处理用户登录信息\n|            logup.html            //用户注册界面\n|           checkSignUp.php //处理用户注册信息\n|           addNews.php       //添加新闻界面\n|           del.php                  //删除新闻界面\n|           upload.php          //上传头像界面 \n|           getpasswd.php   //修改密码界面\n|           checkpass.php    //对hgetpasswd.php发送的数据进行处理\n|——– css                         //用户登录和注册界面的css目录\n|           login.css               //用户登录的css\n|          logup.css              //用户注册的css        \n|——– upload                 //用户上传头像目录\n|——– basedir                //存放页面头部尾部和一些公共函数\n|           header.php        //页面头部\n|           footer.php         //页面尾部\n|           function.php     //定义了一些公共函数\n\n二、新闻界面 index.php123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172&lt;?phpsession_start();?&gt;&lt;html&gt;&lt;head&gt;    &lt;meta charset=&quot;UTF-8&quot;&gt;    &lt;title&gt;news&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;br&gt;&lt;!--区分普通用户和管理员用户--&gt;&lt;?php\tif(isset($_SESSION[&apos;uname&apos;]))&#123;    \techo &lt;&lt;&lt;EOF    \t&lt;div&gt;        \t&lt;img src=&quot;../images/logo.png&quot; height=&quot;100px&quot; width=&quot;100px&quot; style=&quot;float: left&quot;&gt;    \t&lt;/div&gt;    \t&lt;div style=&quot;float: right&quot;&gt;        \t&lt;img src=&apos;../upload/headimg.jpg&apos; height=&quot;60px&quot; width=&quot;60px&quot;&gt;        &lt;br&gt;        &lt;a href=&quot;../logout.php&quot;&gt;注销用户&lt;/a&gt;    \t&lt;/div&gt;EOF;&#125;?&gt;&lt;h1 align=&quot;center&quot;&gt;ICQ新闻中心&lt;/h1&gt;&lt;hr&gt;&lt;table align=&quot;center&quot;&gt;    &lt;tr&gt;        &lt;th&gt;热度&lt;/th&gt;        &lt;th&gt;标题&lt;/th&gt;        &lt;th&gt;作者&lt;/th&gt;        &lt;th&gt;时间&lt;/th&gt;    &lt;/tr&gt;    &lt;?php        //用只读方式打开news.db文件        $fhandle = fopen(&quot;./data/news1.db&quot;, &quot;r&quot;);        //设置一个计数器，小于3时，每个文章标题下面增加图片和简介        $top3Cnt=1;        while(!feof($fhandle)) &#123;            $fline = fgets($fhandle);            $data = explode(&apos;||&apos;, $fline);            @$title = base64_decode($data[1]);            @$content = base64_decode($data[2]);            @$date = $data[3];            @$author = base64_decode($data[4]);            @$hot = $data[5];            @$imgUrl = $data[6];            echo &lt;&lt;&lt;EOF        &lt;tr align=&quot;center&quot;&gt;            &lt;td&gt;$hot&lt;/td&gt;            &lt;td&gt;&lt;a href=&quot;myl.php&quot;&gt;$title&lt;/a&gt;&lt;/td&gt;            &lt;td&gt;$author&lt;/td&gt;            &lt;td&gt;$date&lt;/td&gt;        &lt;/tr&gt;EOF;        //新闻前三个显示图片和简介          if($top3Cnt&lt;=3)&#123;            $tmpContent = mb_substr(base64_decode($data[2]), 0,50);            echo &lt;&lt;&lt;EOF            &lt;tr&gt;                &lt;td&gt;&lt;img src=&quot;$imgUrl&quot; height=&quot;80&quot; width=&quot;80&quot;&gt;&lt;/td&gt;                &lt;td colspan=&apos;4&apos;&gt;&lt;b&gt;内容简介：&lt;/b&gt;$tmpContent&lt;/td&gt;            &lt;/tr&gt;EOF;        &#125;        $top3Cnt++;        &#125;    ?&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;\n\n普通用户显示界面：\n\n管理员用户显示界面：\n\n三、用户登录和用户注册1.login.html1234567891011121314151617181920212223242526272829&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;    &lt;meta charset=&quot;utf-8&quot;&gt;    &lt;title&gt;登录页面&lt;/title&gt;    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/login.css&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;box&quot;&gt;     &lt;div class=&quot;top&quot;&gt;        &lt;h1&gt;登录&lt;/h1&gt;    &lt;/div&gt;    &lt;form action=&quot;checklogin.php&quot; method=&quot;post&quot;&gt;                &lt;input type=&quot;text&quot; name=&quot;username&quot; placeholder=&quot;手机号/邮箱/用户名&quot;&gt;        &lt;br&gt;        &lt;input type=&quot;password&quot; name=&quot;password&quot; placeholder=&quot;密码&quot;&gt;        &lt;br&gt;        &lt;input class=&quot;input_code&quot; type=&quot;text&quot; name=&quot;verifycode&quot; placeholder=&quot;验证码&quot;&gt;        &lt;img class=&quot;verifycode&quot; src=&quot;https://passport.360.cn/captcha.php?m=create&amp;app=i360&amp;scene=login&amp;userip=&amp;level=default&amp;sign=8820a4&amp;r=1564540365&amp;border=none&amp;_=1564540365972&quot;&gt;        &lt;br&gt;        &lt;a class=&quot;signup&quot; href=&quot;logup.html&quot;&gt;注册账号&lt;/a&gt;        &lt;a class=&quot;getpass&quot; href=&quot;./tmp/getpasswd.php&quot;&gt;忘记密码&lt;/a&gt;        &lt;br&gt;        &lt;input class=&quot;login&quot; type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;登录&quot;&gt;    &lt;/form&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;\n\n2.checklogin.php12345678910111213141516171819202122232425262728293031323334353637&lt;?php    session_start();?&gt;&lt;html&gt;&lt;head&gt;    &lt;title&gt;        登录    &lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;?php$fhandle = fopen(&apos;./data/users.db&apos;, &apos;r&apos;);while(!feof($fhandle)) &#123;    $InMes = fgets($fhandle);    $mesArray = explode(&apos;||&apos;, $InMes);    if(count($mesArray)!=2)&#123;        continue;    &#125;    if(trim($mesArray[0])==$_POST[&apos;username&apos;] &amp;&amp; trim($mesArray[1])==$_POST[&apos;password&apos;])&#123;        $_SESSION[&apos;uname&apos;] = $_POST[&apos;username&apos;];        echo &quot;正在进入后台&quot;;        echo &lt;&lt;&lt;EOF        &lt;script&gt;location.href=&quot;./data/addNews.php&quot;&lt;/script&gt;EOF;        $flag=0;        break;    &#125;    $flag = 1;&#125;if($flag==1)&#123;    echo &quot;&lt;script&gt;alert(&apos;账号或密码错误！重新输入。&apos;)&lt;/script&gt;&quot;;    echo &quot;&lt;script&gt;history.back()&lt;/script&gt;&quot;;&#125;?&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;\n\n登录成功界面：\n\n登录失败界面：\n\n3. checklogup.phplogup.html与login.html程序接近\n12345678910111213141516171819202122232425&lt;?phpsession_start();$fhandle = fopen(&apos;./data/users.db&apos;, &apos;a+&apos;);$userMes = array();$storeMes = array();@$userMes[0] = $_POST[&apos;username&apos;];@$userMes[1]=$_POST[&apos;password&apos;];@$userMes[2]=$_POST[&apos;checkpasswd&apos;];if(strcmp($userMes[1], $userMes[2])!=0)&#123;    echo &quot;&lt;script&gt;alert(&apos;两次输出密码不同！请重新输入！&apos;)&lt;/script&gt;&quot;;    echo &quot;&lt;script&gt;history.back()&lt;/script&gt;&quot;;&#125;else &#123;    $storeMes[0] = $userMes[0];    $storeMes[1] = $userMes[1];    $inMes = implode(&apos;||&apos;, $storeMes);    if (count($userMes) == 3) &#123;        fputs($fhandle, $inMes . &quot;\\n&quot;);        fclose($fhandle);        echo &quot;&lt;script&gt;alert(&apos;用户注册成功&apos;)&lt;/script&gt;&quot;;        echo &quot;&lt;script&gt;location.href=&apos;login.html&apos;&lt;/script&gt;&quot;;        $_SESSION[&apos;uname&apos;] = $_POST[&apos;username&apos;];    &#125;&#125;?&gt;\n\n用户注册失败：\n\n用户注册成功：\n\n四、新闻的增删改查1. 添加新闻 addNews.php123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354&lt;!--添加头部信息--&gt;&lt;?php include &apos;../basedir/header.php&apos;; include &apos;../basedir/function.php&apos;;?&gt;&lt;div align=&quot;center&quot;&gt;    &lt;?php        if($_SESSION[&apos;uname&apos;]==NULL) &#123;            echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;            die(&quot;请登录&quot;);        &#125;    ?&gt;    &lt;a href=&quot;upload.php&quot;&gt;上传头像&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp    &lt;a href=&quot;del.php&quot;&gt;删除新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp    &lt;a href=&quot;getpasswd.php&quot;&gt;修改密码&lt;/a&gt;&lt;/div&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;div align=&quot;center&quot;&gt;    &lt;form action=&quot;addNews.php&quot; method=&quot;post&quot;&gt;        &lt;?php            if($_SESSION[&apos;uname&apos;]==NULL)                echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;                die(&quot;请登录&quot;);        ?&gt;        &lt;input type=&quot;text&quot; name=&quot;title&quot; placeholder=&quot;文章标题&quot;&gt;&lt;br&gt;        &lt;br&gt;        &lt;input type=&quot;number&quot; name=&quot;hot&quot; placeholder=&quot;热度&quot;&gt;&lt;br&gt;        &lt;br&gt;        &lt;input type=&quot;text&quot; name=&quot;imgUrl&quot;&gt;&lt;br&gt;        &lt;br&gt;        &lt;textarea name=&quot;content&quot; cols=&quot;100&quot; rows=&quot;50&quot; placeholder=&quot;文章内容&quot;&gt;&lt;/textarea&gt;&lt;br&gt;        &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;    &lt;/form&gt;&lt;/div&gt;&lt;?php    $fhandle = fopen(&apos;../data/news2.db&apos;, &apos;a&apos;);    $t = time();    $arrMes = array();    @$arrMes[0] = computerId(&apos;../data/news2.db&apos;)+1;    @$arrMes[1] = base64_encode($_POST[&apos;title&apos;]);    @$arrMes[2] = base64_encode($_POST[&apos;content&apos;]);    @$arrMes[3] = date(&quot;Y-m-d&quot;, $t);    @$arrMes[4] = base64_encode($_SESSION[&quot;username&quot;]);    @$arrMes[5] = $_POST[&apos;hot&apos;];    @$arrMes[6] = $_POST[&apos;imgUrl&apos;];    if (count($arrMes) == 7) &#123;        $writeMes = implode(&apos;||&apos;, $arrMes);        $fline = fputs($fhandle, $writeMes.&quot;\\n&quot;);        if ($fline != flase) &#123;            echo &quot;&lt;script&gt;alert(\\&quot;新闻添加成功！\\&quot;)&lt;/script&gt;&quot;;            echo &quot;&lt;a href=&apos;../index.php&apos;&gt;点击查看&lt;/a&gt;&quot;;        &#125;    &#125;    fclose($fhandle);?&gt;&lt;!--添加尾部信息--&gt;&lt;?php include &quot;../basedir/footer.php&quot;;?&gt;\n\n添加新闻页面：\n\n\n2. 删除新闻 del.php思路：每条新闻对应一个id号，通过输入id判断要删除的新闻，程序循环读取文件每一行数据，再通过字符串函数把id号取出，若id不匹配把每行数据push到一个数组里面，若相等则跳过。然后再通过for循环把存入数据的数组以w格式重新写入文件即可。\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879&lt;?php include &apos;../basedir/header.php&apos;; include &apos;../basedir/function.php&apos;;?&gt;    &lt;?php    if($_SESSION[&apos;uname&apos;]==NULL)        echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;    ?&gt;    &lt;div align=&quot;center&quot;&gt;        &lt;a href=&quot;upload.php&quot;&gt;上传头像&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp        &lt;a href=&quot;../data/addNews.php&quot;&gt;添加新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp        &lt;a href=&quot;getpasswd.php&quot;&gt;修改密码&lt;/a&gt;        &lt;br&gt;&lt;br&gt;&lt;br&gt;        &lt;form action=&quot;del.php&quot; method=&quot;post&quot;&gt;            &lt;input type=&quot;text&quot; name=&quot;id&quot; placeholder=&quot;请输入要删除文章的编号&quot;&gt;            &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;        &lt;/form&gt;        &lt;a href=&quot;../index.php&quot; target=&quot;_blank&quot;&gt;点击查看&lt;/a&gt;    &lt;/div&gt;&lt;table&gt;    &lt;table align=&quot;center&quot;&gt;        &lt;tr&gt;            &lt;th&gt;标号&lt;/th&gt;            &lt;th&gt;标题&lt;/th&gt;            &lt;th&gt;作者&lt;/th&gt;        &lt;/tr&gt;        &lt;?php            $f = fopen(&apos;../data/news1.db&apos;, &apos;r&apos;);            while(!feof($f))&#123;                $fline = fgets($f);                $data = explode(&apos;||&apos;, $fline);                @$artId = $data[0];                @$title = base64_decode($data[1]);                @$author = base64_decode($data[4]);                echo &lt;&lt;&lt;EOF                &lt;tr align=&quot;center&quot;&gt;                    &lt;td&gt;$artId&lt;/td&gt;                    &lt;td&gt;$title&lt;/td&gt;                    &lt;td&gt;$author&lt;/td&gt;                 &lt;/tr&gt;EOF;            &#125;        ?&gt;&lt;/table&gt;&lt;?php    @$id = $_POST[&apos;id&apos;];    $fhandle = fopen(&apos;../data/news1.db&apos;, &apos;r&apos;);    $transArr = array();    while(!feof($fhandle))&#123;        $fline = fgets($fhandle);        $tmpLine = explode(&apos;||&apos;, $fline);        if($tmpLine[0] == $id)&#123;            continue;        &#125;        array_push($transArr, $tmpLine);    &#125;    fclose($fhandle);    for($i=0; $i&lt;count($transArr); $i++) &#123;        echo &quot;&lt;br&gt;&quot;;    &#125;    echo &quot;&lt;br&gt;&quot;;    $fhandle = fopen(&apos;../data/news1.db&apos;, &apos;w&apos;);    for($i=0; $i&lt;count($transArr); $i++) &#123;        if(count($transArr[$i])==7) &#123;            $transArr[$i][0] = $i + 1;            $str = implode(&apos;||&apos;, $transArr[$i]);            if($str==&quot;\\n&quot;)&#123;                continue;            &#125;            fputs($fhandle, $str);        &#125;    &#125;    if(isset($_POST[&apos;id&apos;])) &#123;        if (count($transArr) == computerId(&apos;../data/news1.db&apos;)) &#123;            echo &quot;&lt;script&gt;alert(&apos;删除成功&apos;); location.href=&apos;../tmp/del.php&apos;;&lt;/script&gt;&quot;;        &#125;    &#125;    fclose($fhandle);?&gt;&lt;?php include &quot;../basedir/footer.php&quot;;?&gt;\n\n添加好新闻后，点击删除新闻可以进入删除新闻界面\n\n\n\n\n3. 修改密码getpasswd.php\n1234567891011121314151617181920&lt;?php include &apos;../basedir/header.php&apos;; include &apos;../basedir/function.php&apos;;?&gt;&lt;div align=&quot;center&quot;&gt;    &lt;?php    if($_SESSION[&apos;uname&apos;]==NULL) &#123;        echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;        die(&quot;请登录&quot;);    &#125;    ?&gt;    &lt;a href=&quot;upload.php&quot;&gt;上传头像&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp    &lt;a href=&quot;../data/addNews.php&quot;&gt;添加新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp    &lt;a href=&quot;del.php&quot;&gt;删除新闻&lt;/a&gt;    &lt;br&gt;&lt;br&gt;&lt;br&gt;    &lt;form action=&quot;checkpass.php&quot; method=&quot;post&quot;&gt;        &lt;label&gt;输入旧密码：&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;oldpasswd&quot;&gt;        &lt;label&gt;输入新密码：&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;newpasswd&quot;&gt;        &lt;label&gt;确认密码：&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;checknewpasswd&quot;&gt;        &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;    &lt;/form&gt;&lt;/div&gt;&lt;?php include &quot;../basedir/footer.php&quot;;?&gt;\n\ncheckpass.php\n思路：先把每行数据读出存到一个数组里，用户名匹配成功后，先判断oldpass是否正确，不正确则返回，重新输入，若匹配成功，再判断newpasswd和checknewpasswd是否一致，不一致返回，重新输入，一致的话，把该用户的密码改成新密码后入栈。最后处理完的数据写入文件中。\n123456789101112131415161718192021222324252627282930313233343536373839404142434445464748&lt;?php    session_start();    if($_SESSION[&apos;uname&apos;]==NULL) &#123;        echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;        die(&quot;请登录&quot;);    &#125;    if($_POST[&apos;oldpasswd&apos;]==NULL &amp;&amp; $_POST[&apos;newpasswd&apos;]==NULL &amp;&amp; $_POST[&apos;checknewpasswd&apos;]==NULL)&#123;        echo &quot;&lt;script&gt;alert(\\&quot;密码不能为空\\&quot;); history.back();&lt;/script&gt;&quot;;    &#125;    $tmparr = array();    $userPasswd = array();    $oldpass = $_POST[&apos;oldpasswd&apos;];    $newpass = $_POST[&apos;newpasswd&apos;];    $checknew = $_POST[&apos;checknewpasswd&apos;];    $fhandle = fopen(&apos;../data/user1.db&apos;, &apos;r&apos;);    while(!feof($fhandle)) &#123;        $line = fgets($fhandle);        $lineArr = explode(&apos;||&apos;, $line);        if ($lineArr[0] == $_SESSION[&apos;uname&apos;]) &#123;            $userPasswd[0] = $lineArr[0];            $userPasswd[1] = $newpass.&quot;\\n&quot;;            $checkold = $lineArr[1];            array_push($tmparr, $userPasswd);            continue;        &#125;        array_push($tmparr, $lineArr);    &#125;    fclose($fhandle);    if(trim($checkold)!=$oldpass)&#123;        echo &quot;&lt;script&gt;alert(\\&quot;密码不正确！\\&quot;)&lt;/script&gt;&quot;;    &#125;else &#123;        if ($newpass == $checknew) &#123;            $fhandle = fopen(&apos;../data/user1.db&apos;, w);            for ($i = 0; $i &lt; count($tmparr); $i++) &#123;                $str = implode(&apos;||&apos;, $tmparr[$i]);                echo $str;                echo &quot;&lt;br&gt;&quot;;                fputs($fhandle, $str);            &#125;            fclose($fhandle);            echo &quot;&lt;script&gt;alert(\\&quot;密码修改成功，请重新登录！\\&quot;)&lt;/script&gt;&quot;;            //echo &quot;&lt;script&gt;location.href=&apos;../logout.php&apos;&lt;/script&gt;&quot;;        &#125;else&#123;            echo &quot;&lt;script&gt;alert(\\&quot;新密码不匹配，请重新输入！\\&quot;)&lt;/script&gt;&quot;;        &#125;    &#125;?&gt;\n\n修改密码界面：\n\n\n\n\n密码修改后登出账号，重新登录。\n五、上传头像 upload.php1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950&lt;?php include &apos;../basedir/function.php&apos;; include &apos;../basedir/header.php&apos;; ?&gt;&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;    &lt;meta charset=&quot;UTF-8&quot;&gt;    &lt;title&gt;上传图片&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;?phpif($_SESSION[&apos;uname&apos;]==NULL)    echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;?&gt;&lt;div align=&quot;center&quot;&gt;    &lt;a href=&quot;del.php&quot;&gt;删除新闻&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp    &lt;a href=&quot;../data/addNews.php&quot;&gt;添加新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp    &lt;a href=&quot;getpasswd.php&quot;&gt;修改密码&lt;/a&gt;    &lt;br&gt;&lt;br&gt;&lt;br&gt;    &lt;form action=&quot;upload.php&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;        &lt;label&gt;文件名：&lt;/label&gt;        &lt;input type=&quot;file&quot; name=&quot;file&quot; &gt;&lt;br&gt;        &lt;input type=&quot;text&quot; name=&quot;title&quot;&gt;&lt;br&gt;        &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;    &lt;/form&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&lt;?phpif(isset($_POST[&apos;submit&apos;]))&#123;    $name       = $_FILES[&apos;file&apos;][&apos;name&apos;];    $temp_name  = $_FILES[&apos;file&apos;][&apos;tmp_name&apos;];    if(isset($name))&#123;        if(!empty($name))&#123;            $location = &quot;../upload/&quot;;            $path = $location . $name;            if(move_uploaded_file($temp_name, $location.$name))&#123;                $_SESSION[&apos;headImg&apos;] = $path;                echo &apos;File uploaded successfully&apos;;                echo &lt;&lt;&lt;EOF                &lt;div align=&quot;center&quot;&gt;                    &lt;img src=$path&gt;                   &lt;/div&gt;EOF;            &#125;        &#125;    &#125;  else &#123;        echo &apos;You should select a file to upload !!&apos;;    &#125;&#125;?&gt;&lt;?php include &apos;../basedir/footer.php&apos;?&gt;\n\n上传头像界面：\n\n\n六、退出账号 logout.php12345&lt;?phpsession_start();session_destroy();echo &quot;&lt;script&gt;alert(&apos;账号已退出&apos;); location.href=&apos;login.html&apos;&lt;/script&gt;&quot;?&gt;\n\n在任何一个界面点击注销账号均能成功退出，重新返回用户登录界面\n\n点击确定，返回用户登录界面。\n七、问题与总结\n目前的代码有些冗余，比如删除新闻和修改密码，都是把需要的信息读取出来，然后稍作处理再写回文件，可以在function.php文件里写一个函数，需要时直接调用函数就行；删除新闻界面和初始化界面都有展示新闻的功能，也可可以通过一个函数来实现展示。\n对写入文件的内容判断不严谨，会把\\n写入，文件内容间有空行时，统计总的id数会把空行也给统计进去，进而导致删除新闻时，不成功。把空行删完以后，才会执行成功。目前对文件操作\\n理解不深，正在寻找方法解决。\n代码移植性差，需要修改地方较多。\n\n","dateCreated":"2019-08-11T16:56:56+08:00","dateModified":"2019-08-11T19:44:22+08:00","datePublished":"2019-08-11T16:56:56+08:00","description":"Abstract: 把新闻信息，用户信息存放在文件中，用对文件的读写，实现用户的登录注册以及对新闻的增删改查。","headline":"练习5","image":["https://images.pexels.com/photos/1450082/pexels-photo-1450082.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/11/practice5/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/11/practice5/","keywords":"PHP, 实战","thumbnailUrl":"https://images.pexels.com/photos/1450082/pexels-photo-1450082.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <meta name="description" content="Abstract: 把新闻信息，用户信息存放在文件中，用对文件的读写，实现用户的登录注册以及对新闻的增删改查。">
+<meta name="keywords" content="PHP,实战">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="练习5">
+<meta property="og:url" content="http://yoursite.com/2019/08/11/practice5/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 把新闻信息，用户信息存放在文件中，用对文件的读写，实现用户的登录注册以及对新闻的增删改查。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/iniPic.png">
+<meta property="og:image" content="http://yoursite.com/images/adminIniPic.png">
+<meta property="og:image" content="http://yoursite.com/images/loginSec.png">
+<meta property="og:image" content="http://yoursite.com/images/loginFail.png">
+<meta property="og:image" content="http://yoursite.com/images/logupFail.png">
+<meta property="og:image" content="http://yoursite.com/images/logupSec.png">
+<meta property="og:image" content="http://yoursite.com/images/testAddNews.png">
+<meta property="og:image" content="http://yoursite.com/images/addNewsOk.png">
+<meta property="og:image" content="http://yoursite.com/images/delShow.png">
+<meta property="og:image" content="http://yoursite.com/images/delIn.png">
+<meta property="og:image" content="http://yoursite.com/images/del7.png">
+<meta property="og:image" content="http://yoursite.com/images/delSecShow.png">
+<meta property="og:image" content="http://yoursite.com/images/chagePwd.png">
+<meta property="og:image" content="http://yoursite.com/images/chagePwdIn.png">
+<meta property="og:image" content="http://yoursite.com/images/chagePwdSec.png">
+<meta property="og:image" content="http://yoursite.com/images/PwdInFile.png">
+<meta property="og:image" content="http://yoursite.com/images/uploadImg.png">
+<meta property="og:image" content="http://yoursite.com/images/uploadImgSec.png">
+<meta property="og:image" content="http://yoursite.com/images/logout.png">
+<meta property="og:updated_time" content="2019-08-11T11:44:22.895Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="练习5">
+<meta name="twitter:description" content="Abstract: 把新闻信息，用户信息存放在文件中，用对文件的读写，实现用户的登录注册以及对新闻的增删改查。">
+<meta name="twitter:image" content="http://yoursite.com/images/iniPic.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.pexels.com/photos/1450082/pexels-photo-1450082.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.pexels.com/photos/1450082/pexels-photo-1450082.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            练习5
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-11T16:56:56+08:00">
+	
+		    Aug 11, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 把新闻信息，用户信息存放在文件中，用对文件的读写，实现用户的登录注册以及对新闻的增删改查。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h3 id="一、目录结构"><a href="#一、目录结构" class="headerlink" title="一、目录结构"></a>一、目录结构</h3><blockquote>
+<p>###目录结构：</p>
+<p>|            index.php                //初始化页面</p>
+<p>|——–  data                         //文件存放目录</p>
+<p>|            news.db                  //存放新闻信息文件</p>
+<p>|            users.db                 //存放用户信息文件</p>
+<p>|——— lib                            //脚本存放目录           </p>
+<p>|            login.html              // 用户登录界面    </p>
+<p>|            checklogin.php    //处理用户登录信息</p>
+<p>|            logup.html            //用户注册界面</p>
+<p>|           checkSignUp.php //处理用户注册信息</p>
+<p>|           addNews.php       //添加新闻界面</p>
+<p>|           del.php                  //删除新闻界面</p>
+<p>|           upload.php          //上传头像界面 </p>
+<p>|           getpasswd.php   //修改密码界面</p>
+<p>|           checkpass.php    //对hgetpasswd.php发送的数据进行处理</p>
+<p>|——– css                         //用户登录和注册界面的css目录</p>
+<p>|           login.css               //用户登录的css</p>
+<p>|          logup.css              //用户注册的css        </p>
+<p>|——– upload                 //用户上传头像目录</p>
+<p>|——– basedir                //存放页面头部尾部和一些公共函数</p>
+<p>|           header.php        //页面头部</p>
+<p>|           footer.php         //页面尾部</p>
+<p>|           function.php     //定义了一些公共函数</p>
+</blockquote>
+<h3 id="二、新闻界面-index-php"><a href="#二、新闻界面-index-php" class="headerlink" title="二、新闻界面 index.php"></a>二、新闻界面 index.php</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">session_start();</span><br><span class="line">?&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;news&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;!--区分普通用户和管理员用户--&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">	if(isset($_SESSION[&apos;uname&apos;]))&#123;</span><br><span class="line">    	echo &lt;&lt;&lt;EOF</span><br><span class="line">    	&lt;div&gt;</span><br><span class="line">        	&lt;img src=&quot;../images/logo.png&quot; height=&quot;100px&quot; width=&quot;100px&quot; style=&quot;float: left&quot;&gt;</span><br><span class="line">    	&lt;/div&gt;</span><br><span class="line">    	&lt;div style=&quot;float: right&quot;&gt;</span><br><span class="line">        	&lt;img src=&apos;../upload/headimg.jpg&apos; height=&quot;60px&quot; width=&quot;60px&quot;&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;a href=&quot;../logout.php&quot;&gt;注销用户&lt;/a&gt;</span><br><span class="line">    	&lt;/div&gt;</span><br><span class="line">EOF;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;h1 align=&quot;center&quot;&gt;ICQ新闻中心&lt;/h1&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;table align=&quot;center&quot;&gt;</span><br><span class="line">    &lt;tr&gt;</span><br><span class="line">        &lt;th&gt;热度&lt;/th&gt;</span><br><span class="line">        &lt;th&gt;标题&lt;/th&gt;</span><br><span class="line">        &lt;th&gt;作者&lt;/th&gt;</span><br><span class="line">        &lt;th&gt;时间&lt;/th&gt;</span><br><span class="line">    &lt;/tr&gt;</span><br><span class="line">    &lt;?php</span><br><span class="line">        //用只读方式打开news.db文件</span><br><span class="line">        $fhandle = fopen(&quot;./data/news1.db&quot;, &quot;r&quot;);</span><br><span class="line">        //设置一个计数器，小于3时，每个文章标题下面增加图片和简介</span><br><span class="line">        $top3Cnt=1;</span><br><span class="line">        while(!feof($fhandle)) &#123;</span><br><span class="line">            $fline = fgets($fhandle);</span><br><span class="line">            $data = explode(&apos;||&apos;, $fline);</span><br><span class="line">            @$title = base64_decode($data[1]);</span><br><span class="line">            @$content = base64_decode($data[2]);</span><br><span class="line">            @$date = $data[3];</span><br><span class="line">            @$author = base64_decode($data[4]);</span><br><span class="line">            @$hot = $data[5];</span><br><span class="line">            @$imgUrl = $data[6];</span><br><span class="line">            echo &lt;&lt;&lt;EOF</span><br><span class="line">        &lt;tr align=&quot;center&quot;&gt;</span><br><span class="line">            &lt;td&gt;$hot&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;&lt;a href=&quot;myl.php&quot;&gt;$title&lt;/a&gt;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$author&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$date&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">EOF;</span><br><span class="line">        //新闻前三个显示图片和简介  </span><br><span class="line">        if($top3Cnt&lt;=3)&#123;</span><br><span class="line">            $tmpContent = mb_substr(base64_decode($data[2]), 0,50);</span><br><span class="line">            echo &lt;&lt;&lt;EOF</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;img src=&quot;$imgUrl&quot; height=&quot;80&quot; width=&quot;80&quot;&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td colspan=&apos;4&apos;&gt;&lt;b&gt;内容简介：&lt;/b&gt;$tmpContent&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">EOF;</span><br><span class="line">        &#125;</span><br><span class="line">        $top3Cnt++;</span><br><span class="line">        &#125;</span><br><span class="line">    ?&gt;</span><br><span class="line">&lt;/table&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>普通用户显示界面：</p>
+<p><img src="/images/iniPic.png" alt></p>
+<p>管理员用户显示界面：</p>
+<p><img src="/images/adminIniPic.png" alt></p>
+<h3 id="三、用户登录和用户注册"><a href="#三、用户登录和用户注册" class="headerlink" title="三、用户登录和用户注册"></a>三、用户登录和用户注册</h3><h4 id="1-login-html"><a href="#1-login-html" class="headerlink" title="1.login.html"></a>1.login.html</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=&quot;utf-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;登录页面&lt;/title&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/login.css&quot;&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;div class=&quot;box&quot;&gt; </span><br><span class="line">    &lt;div class=&quot;top&quot;&gt;</span><br><span class="line">        &lt;h1&gt;登录&lt;/h1&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">    &lt;form action=&quot;checklogin.php&quot; method=&quot;post&quot;&gt;</span><br><span class="line">        </span><br><span class="line">        &lt;input type=&quot;text&quot; name=&quot;username&quot; placeholder=&quot;手机号/邮箱/用户名&quot;&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;input type=&quot;password&quot; name=&quot;password&quot; placeholder=&quot;密码&quot;&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;input class=&quot;input_code&quot; type=&quot;text&quot; name=&quot;verifycode&quot; placeholder=&quot;验证码&quot;&gt;</span><br><span class="line">        &lt;img class=&quot;verifycode&quot; src=&quot;https://passport.360.cn/captcha.php?m=create&amp;app=i360&amp;scene=login&amp;userip=&amp;level=default&amp;sign=8820a4&amp;r=1564540365&amp;border=none&amp;_=1564540365972&quot;&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;a class=&quot;signup&quot; href=&quot;logup.html&quot;&gt;注册账号&lt;/a&gt;</span><br><span class="line">        &lt;a class=&quot;getpass&quot; href=&quot;./tmp/getpasswd.php&quot;&gt;忘记密码&lt;/a&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;input class=&quot;login&quot; type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;登录&quot;&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-checklogin-php"><a href="#2-checklogin-php" class="headerlink" title="2.checklogin.php"></a>2.checklogin.php</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    session_start();</span><br><span class="line">?&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;</span><br><span class="line">        登录</span><br><span class="line">    &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">$fhandle = fopen(&apos;./data/users.db&apos;, &apos;r&apos;);</span><br><span class="line">while(!feof($fhandle)) &#123;</span><br><span class="line">    $InMes = fgets($fhandle);</span><br><span class="line">    $mesArray = explode(&apos;||&apos;, $InMes);</span><br><span class="line">    if(count($mesArray)!=2)&#123;</span><br><span class="line">        continue;</span><br><span class="line">    &#125;</span><br><span class="line">    if(trim($mesArray[0])==$_POST[&apos;username&apos;] &amp;&amp; trim($mesArray[1])==$_POST[&apos;password&apos;])&#123;</span><br><span class="line">        $_SESSION[&apos;uname&apos;] = $_POST[&apos;username&apos;];</span><br><span class="line">        echo &quot;正在进入后台&quot;;</span><br><span class="line">        echo &lt;&lt;&lt;EOF</span><br><span class="line">        &lt;script&gt;location.href=&quot;./data/addNews.php&quot;&lt;/script&gt;</span><br><span class="line">EOF;</span><br><span class="line">        $flag=0;</span><br><span class="line">        break;</span><br><span class="line">    &#125;</span><br><span class="line">    $flag = 1;</span><br><span class="line">&#125;</span><br><span class="line">if($flag==1)&#123;</span><br><span class="line">    echo &quot;&lt;script&gt;alert(&apos;账号或密码错误！重新输入。&apos;)&lt;/script&gt;&quot;;</span><br><span class="line">    echo &quot;&lt;script&gt;history.back()&lt;/script&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>登录成功界面：</p>
+<p><img src="/images/loginSec.png" alt></p>
+<p>登录失败界面：</p>
+<p><img src="/images/loginFail.png" alt></p>
+<h4 id="3-checklogup-php"><a href="#3-checklogup-php" class="headerlink" title="3. checklogup.php"></a>3. checklogup.php</h4><p><code>logup.html</code>与<code>login.html</code>程序接近</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">session_start();</span><br><span class="line">$fhandle = fopen(&apos;./data/users.db&apos;, &apos;a+&apos;);</span><br><span class="line">$userMes = array();</span><br><span class="line">$storeMes = array();</span><br><span class="line">@$userMes[0] = $_POST[&apos;username&apos;];</span><br><span class="line">@$userMes[1]=$_POST[&apos;password&apos;];</span><br><span class="line">@$userMes[2]=$_POST[&apos;checkpasswd&apos;];</span><br><span class="line">if(strcmp($userMes[1], $userMes[2])!=0)&#123;</span><br><span class="line">    echo &quot;&lt;script&gt;alert(&apos;两次输出密码不同！请重新输入！&apos;)&lt;/script&gt;&quot;;</span><br><span class="line">    echo &quot;&lt;script&gt;history.back()&lt;/script&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">    $storeMes[0] = $userMes[0];</span><br><span class="line">    $storeMes[1] = $userMes[1];</span><br><span class="line">    $inMes = implode(&apos;||&apos;, $storeMes);</span><br><span class="line">    if (count($userMes) == 3) &#123;</span><br><span class="line">        fputs($fhandle, $inMes . &quot;\n&quot;);</span><br><span class="line">        fclose($fhandle);</span><br><span class="line">        echo &quot;&lt;script&gt;alert(&apos;用户注册成功&apos;)&lt;/script&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;script&gt;location.href=&apos;login.html&apos;&lt;/script&gt;&quot;;</span><br><span class="line">        $_SESSION[&apos;uname&apos;] = $_POST[&apos;username&apos;];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>用户注册失败：</p>
+<p><img src="/images/logupFail.png" alt></p>
+<p>用户注册成功：</p>
+<p><img src="/images/logupSec.png" alt></p>
+<h3 id="四、新闻的增删改查"><a href="#四、新闻的增删改查" class="headerlink" title="四、新闻的增删改查"></a>四、新闻的增删改查</h3><h4 id="1-添加新闻-addNews-php"><a href="#1-添加新闻-addNews-php" class="headerlink" title="1. 添加新闻 addNews.php"></a>1. 添加新闻 addNews.php</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--添加头部信息--&gt;</span><br><span class="line">&lt;?php include &apos;../basedir/header.php&apos;; include &apos;../basedir/function.php&apos;;?&gt;</span><br><span class="line">&lt;div align=&quot;center&quot;&gt;</span><br><span class="line">    &lt;?php</span><br><span class="line">        if($_SESSION[&apos;uname&apos;]==NULL) &#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;</span><br><span class="line">            die(&quot;请登录&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    ?&gt;</span><br><span class="line">    &lt;a href=&quot;upload.php&quot;&gt;上传头像&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">    &lt;a href=&quot;del.php&quot;&gt;删除新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">    &lt;a href=&quot;getpasswd.php&quot;&gt;修改密码&lt;/a&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;br&gt;&lt;br&gt;&lt;br&gt;</span><br><span class="line">&lt;div align=&quot;center&quot;&gt;</span><br><span class="line">    &lt;form action=&quot;addNews.php&quot; method=&quot;post&quot;&gt;</span><br><span class="line">        &lt;?php</span><br><span class="line">            if($_SESSION[&apos;uname&apos;]==NULL)</span><br><span class="line">                echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;</span><br><span class="line">                die(&quot;请登录&quot;);</span><br><span class="line">        ?&gt;</span><br><span class="line">        &lt;input type=&quot;text&quot; name=&quot;title&quot; placeholder=&quot;文章标题&quot;&gt;&lt;br&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;input type=&quot;number&quot; name=&quot;hot&quot; placeholder=&quot;热度&quot;&gt;&lt;br&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;input type=&quot;text&quot; name=&quot;imgUrl&quot;&gt;&lt;br&gt;</span><br><span class="line">        &lt;br&gt;</span><br><span class="line">        &lt;textarea name=&quot;content&quot; cols=&quot;100&quot; rows=&quot;50&quot; placeholder=&quot;文章内容&quot;&gt;&lt;/textarea&gt;&lt;br&gt;</span><br><span class="line">        &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">    $fhandle = fopen(&apos;../data/news2.db&apos;, &apos;a&apos;);</span><br><span class="line">    $t = time();</span><br><span class="line">    $arrMes = array();</span><br><span class="line">    @$arrMes[0] = computerId(&apos;../data/news2.db&apos;)+1;</span><br><span class="line">    @$arrMes[1] = base64_encode($_POST[&apos;title&apos;]);</span><br><span class="line">    @$arrMes[2] = base64_encode($_POST[&apos;content&apos;]);</span><br><span class="line">    @$arrMes[3] = date(&quot;Y-m-d&quot;, $t);</span><br><span class="line">    @$arrMes[4] = base64_encode($_SESSION[&quot;username&quot;]);</span><br><span class="line">    @$arrMes[5] = $_POST[&apos;hot&apos;];</span><br><span class="line">    @$arrMes[6] = $_POST[&apos;imgUrl&apos;];</span><br><span class="line">    if (count($arrMes) == 7) &#123;</span><br><span class="line">        $writeMes = implode(&apos;||&apos;, $arrMes);</span><br><span class="line">        $fline = fputs($fhandle, $writeMes.&quot;\n&quot;);</span><br><span class="line">        if ($fline != flase) &#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(\&quot;新闻添加成功！\&quot;)&lt;/script&gt;&quot;;</span><br><span class="line">            echo &quot;&lt;a href=&apos;../index.php&apos;&gt;点击查看&lt;/a&gt;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    fclose($fhandle);</span><br><span class="line">?&gt;</span><br><span class="line">&lt;!--添加尾部信息--&gt;</span><br><span class="line">&lt;?php include &quot;../basedir/footer.php&quot;;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>添加新闻页面：</p>
+<p><img src="/images/testAddNews.png" alt></p>
+<p><img src="/images/addNewsOk.png" alt></p>
+<h4 id="2-删除新闻-del-php"><a href="#2-删除新闻-del-php" class="headerlink" title="2. 删除新闻 del.php"></a>2. 删除新闻 del.php</h4><p>思路：每条新闻对应一个<code>id</code>号，通过输入<code>id</code>判断要删除的新闻，程序循环读取文件每一行数据，再通过字符串函数把<code>id</code>号取出，若<code>id</code>不匹配把每行数据<code>push</code>到一个数组里面，若相等则跳过。然后再通过<code>for</code>循环把存入数据的数组以<code>w</code>格式重新写入文件即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php include &apos;../basedir/header.php&apos;; include &apos;../basedir/function.php&apos;;?&gt;</span><br><span class="line">    &lt;?php</span><br><span class="line">    if($_SESSION[&apos;uname&apos;]==NULL)</span><br><span class="line">        echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;</span><br><span class="line">    ?&gt;</span><br><span class="line">    &lt;div align=&quot;center&quot;&gt;</span><br><span class="line">        &lt;a href=&quot;upload.php&quot;&gt;上传头像&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">        &lt;a href=&quot;../data/addNews.php&quot;&gt;添加新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">        &lt;a href=&quot;getpasswd.php&quot;&gt;修改密码&lt;/a&gt;</span><br><span class="line">        &lt;br&gt;&lt;br&gt;&lt;br&gt;</span><br><span class="line">        &lt;form action=&quot;del.php&quot; method=&quot;post&quot;&gt;</span><br><span class="line">            &lt;input type=&quot;text&quot; name=&quot;id&quot; placeholder=&quot;请输入要删除文章的编号&quot;&gt;</span><br><span class="line">            &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">        &lt;/form&gt;</span><br><span class="line">        &lt;a href=&quot;../index.php&quot; target=&quot;_blank&quot;&gt;点击查看&lt;/a&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;table&gt;</span><br><span class="line">    &lt;table align=&quot;center&quot;&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;th&gt;标号&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;标题&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;作者&lt;/th&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;?php</span><br><span class="line">            $f = fopen(&apos;../data/news1.db&apos;, &apos;r&apos;);</span><br><span class="line">            while(!feof($f))&#123;</span><br><span class="line">                $fline = fgets($f);</span><br><span class="line">                $data = explode(&apos;||&apos;, $fline);</span><br><span class="line">                @$artId = $data[0];</span><br><span class="line">                @$title = base64_decode($data[1]);</span><br><span class="line">                @$author = base64_decode($data[4]);</span><br><span class="line">                echo &lt;&lt;&lt;EOF</span><br><span class="line">                &lt;tr align=&quot;center&quot;&gt;</span><br><span class="line">                    &lt;td&gt;$artId&lt;/td&gt;</span><br><span class="line">                    &lt;td&gt;$title&lt;/td&gt;</span><br><span class="line">                    &lt;td&gt;$author&lt;/td&gt; </span><br><span class="line">                &lt;/tr&gt;</span><br><span class="line">EOF;</span><br><span class="line">            &#125;</span><br><span class="line">        ?&gt;</span><br><span class="line">&lt;/table&gt;</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">    @$id = $_POST[&apos;id&apos;];</span><br><span class="line">    $fhandle = fopen(&apos;../data/news1.db&apos;, &apos;r&apos;);</span><br><span class="line">    $transArr = array();</span><br><span class="line">    while(!feof($fhandle))&#123;</span><br><span class="line">        $fline = fgets($fhandle);</span><br><span class="line">        $tmpLine = explode(&apos;||&apos;, $fline);</span><br><span class="line">        if($tmpLine[0] == $id)&#123;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        array_push($transArr, $tmpLine);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose($fhandle);</span><br><span class="line">    for($i=0; $i&lt;count($transArr); $i++) &#123;</span><br><span class="line">        echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    echo &quot;&lt;br&gt;&quot;;</span><br><span class="line"></span><br><span class="line">    $fhandle = fopen(&apos;../data/news1.db&apos;, &apos;w&apos;);</span><br><span class="line">    for($i=0; $i&lt;count($transArr); $i++) &#123;</span><br><span class="line">        if(count($transArr[$i])==7) &#123;</span><br><span class="line">            $transArr[$i][0] = $i + 1;</span><br><span class="line">            $str = implode(&apos;||&apos;, $transArr[$i]);</span><br><span class="line">            if($str==&quot;\n&quot;)&#123;</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">            fputs($fhandle, $str);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if(isset($_POST[&apos;id&apos;])) &#123;</span><br><span class="line">        if (count($transArr) == computerId(&apos;../data/news1.db&apos;)) &#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(&apos;删除成功&apos;); location.href=&apos;../tmp/del.php&apos;;&lt;/script&gt;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    fclose($fhandle);</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php include &quot;../basedir/footer.php&quot;;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>添加好新闻后，点击删除新闻可以进入删除新闻界面</p>
+<p><img src="/images/delShow.png" alt></p>
+<p><img src="/images/delIn.png" alt></p>
+<p><img src="/images/del7.png" alt></p>
+<p><img src="/images/delSecShow.png" alt></p>
+<h4 id="3-修改密码"><a href="#3-修改密码" class="headerlink" title="3. 修改密码"></a>3. 修改密码</h4><p><code>getpasswd.php</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php include &apos;../basedir/header.php&apos;; include &apos;../basedir/function.php&apos;;?&gt;</span><br><span class="line">&lt;div align=&quot;center&quot;&gt;</span><br><span class="line">    &lt;?php</span><br><span class="line">    if($_SESSION[&apos;uname&apos;]==NULL) &#123;</span><br><span class="line">        echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;</span><br><span class="line">        die(&quot;请登录&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    ?&gt;</span><br><span class="line">    &lt;a href=&quot;upload.php&quot;&gt;上传头像&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">    &lt;a href=&quot;../data/addNews.php&quot;&gt;添加新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">    &lt;a href=&quot;del.php&quot;&gt;删除新闻&lt;/a&gt;</span><br><span class="line">    &lt;br&gt;&lt;br&gt;&lt;br&gt;</span><br><span class="line">    &lt;form action=&quot;checkpass.php&quot; method=&quot;post&quot;&gt;</span><br><span class="line">        &lt;label&gt;输入旧密码：&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;oldpasswd&quot;&gt;</span><br><span class="line">        &lt;label&gt;输入新密码：&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;newpasswd&quot;&gt;</span><br><span class="line">        &lt;label&gt;确认密码：&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;checknewpasswd&quot;&gt;</span><br><span class="line">        &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;?php include &quot;../basedir/footer.php&quot;;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><code>checkpass.php</code></p>
+<p>思路：先把每行数据读出存到一个数组里，用户名匹配成功后，先判断<code>oldpass</code>是否正确，不正确则返回，重新输入，若匹配成功，再判断<code>newpasswd</code>和<code>checknewpasswd</code>是否一致，不一致返回，重新输入，一致的话，把该用户的密码改成新密码后入栈。最后处理完的数据写入文件中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    session_start();</span><br><span class="line">    if($_SESSION[&apos;uname&apos;]==NULL) &#123;</span><br><span class="line">        echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;</span><br><span class="line">        die(&quot;请登录&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if($_POST[&apos;oldpasswd&apos;]==NULL &amp;&amp; $_POST[&apos;newpasswd&apos;]==NULL &amp;&amp; $_POST[&apos;checknewpasswd&apos;]==NULL)&#123;</span><br><span class="line">        echo &quot;&lt;script&gt;alert(\&quot;密码不能为空\&quot;); history.back();&lt;/script&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    $tmparr = array();</span><br><span class="line">    $userPasswd = array();</span><br><span class="line">    $oldpass = $_POST[&apos;oldpasswd&apos;];</span><br><span class="line">    $newpass = $_POST[&apos;newpasswd&apos;];</span><br><span class="line">    $checknew = $_POST[&apos;checknewpasswd&apos;];</span><br><span class="line">    $fhandle = fopen(&apos;../data/user1.db&apos;, &apos;r&apos;);</span><br><span class="line">    while(!feof($fhandle)) &#123;</span><br><span class="line">        $line = fgets($fhandle);</span><br><span class="line">        $lineArr = explode(&apos;||&apos;, $line);</span><br><span class="line">        if ($lineArr[0] == $_SESSION[&apos;uname&apos;]) &#123;</span><br><span class="line">            $userPasswd[0] = $lineArr[0];</span><br><span class="line">            $userPasswd[1] = $newpass.&quot;\n&quot;;</span><br><span class="line">            $checkold = $lineArr[1];</span><br><span class="line">            array_push($tmparr, $userPasswd);</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        array_push($tmparr, $lineArr);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose($fhandle);</span><br><span class="line">    if(trim($checkold)!=$oldpass)&#123;</span><br><span class="line">        echo &quot;&lt;script&gt;alert(\&quot;密码不正确！\&quot;)&lt;/script&gt;&quot;;</span><br><span class="line">    &#125;else &#123;</span><br><span class="line">        if ($newpass == $checknew) &#123;</span><br><span class="line">            $fhandle = fopen(&apos;../data/user1.db&apos;, w);</span><br><span class="line">            for ($i = 0; $i &lt; count($tmparr); $i++) &#123;</span><br><span class="line">                $str = implode(&apos;||&apos;, $tmparr[$i]);</span><br><span class="line">                echo $str;</span><br><span class="line">                echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">                fputs($fhandle, $str);</span><br><span class="line">            &#125;</span><br><span class="line">            fclose($fhandle);</span><br><span class="line">            echo &quot;&lt;script&gt;alert(\&quot;密码修改成功，请重新登录！\&quot;)&lt;/script&gt;&quot;;</span><br><span class="line">            //echo &quot;&lt;script&gt;location.href=&apos;../logout.php&apos;&lt;/script&gt;&quot;;</span><br><span class="line"></span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(\&quot;新密码不匹配，请重新输入！\&quot;)&lt;/script&gt;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>修改密码界面：</p>
+<p><img src="/images/chagePwd.png" alt></p>
+<p><img src="/images/chagePwdIn.png" alt></p>
+<p><img src="/images/chagePwdSec.png" alt></p>
+<p><img src="/images/PwdInFile.png" alt></p>
+<p>密码修改后登出账号，重新登录。</p>
+<h3 id="五、上传头像-upload-php"><a href="#五、上传头像-upload-php" class="headerlink" title="五、上传头像 upload.php"></a>五、上传头像 upload.php</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php include &apos;../basedir/function.php&apos;; include &apos;../basedir/header.php&apos;; ?&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;上传图片&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if($_SESSION[&apos;uname&apos;]==NULL)</span><br><span class="line">    echo &quot;&lt;script&gt;alert(&apos;请登录&apos;); location.href=&apos;../login.html&apos;&lt;/script&gt;&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;div align=&quot;center&quot;&gt;</span><br><span class="line">    &lt;a href=&quot;del.php&quot;&gt;删除新闻&lt;/a&gt;       &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">    &lt;a href=&quot;../data/addNews.php&quot;&gt;添加新闻&lt;/a&gt;      &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp  &amp;nbsp</span><br><span class="line">    &lt;a href=&quot;getpasswd.php&quot;&gt;修改密码&lt;/a&gt;</span><br><span class="line">    &lt;br&gt;&lt;br&gt;&lt;br&gt;</span><br><span class="line">    &lt;form action=&quot;upload.php&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;</span><br><span class="line">        &lt;label&gt;文件名：&lt;/label&gt;</span><br><span class="line">        &lt;input type=&quot;file&quot; name=&quot;file&quot; &gt;&lt;br&gt;</span><br><span class="line">        &lt;input type=&quot;text&quot; name=&quot;title&quot;&gt;&lt;br&gt;</span><br><span class="line">        &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">if(isset($_POST[&apos;submit&apos;]))&#123;</span><br><span class="line">    $name       = $_FILES[&apos;file&apos;][&apos;name&apos;];</span><br><span class="line">    $temp_name  = $_FILES[&apos;file&apos;][&apos;tmp_name&apos;];</span><br><span class="line">    if(isset($name))&#123;</span><br><span class="line">        if(!empty($name))&#123;</span><br><span class="line">            $location = &quot;../upload/&quot;;</span><br><span class="line">            $path = $location . $name;</span><br><span class="line">            if(move_uploaded_file($temp_name, $location.$name))&#123;</span><br><span class="line">                $_SESSION[&apos;headImg&apos;] = $path;</span><br><span class="line">                echo &apos;File uploaded successfully&apos;;</span><br><span class="line">                echo &lt;&lt;&lt;EOF</span><br><span class="line">                &lt;div align=&quot;center&quot;&gt;</span><br><span class="line">                    &lt;img src=$path&gt;   </span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">EOF;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  else &#123;</span><br><span class="line">        echo &apos;You should select a file to upload !!&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;?php include &apos;../basedir/footer.php&apos;?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上传头像界面：</p>
+<p><img src="/images/uploadImg.png" alt></p>
+<p><img src="/images/uploadImgSec.png" alt></p>
+<h3 id="六、退出账号-logout-php"><a href="#六、退出账号-logout-php" class="headerlink" title="六、退出账号 logout.php"></a>六、退出账号 logout.php</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">session_start();</span><br><span class="line">session_destroy();</span><br><span class="line">echo &quot;&lt;script&gt;alert(&apos;账号已退出&apos;); location.href=&apos;login.html&apos;&lt;/script&gt;&quot;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在任何一个界面点击注销账号均能成功退出，重新返回用户登录界面</p>
+<p><img src="/images/logout.png" alt></p>
+<p>点击确定，返回用户登录界面。</p>
+<h3 id="七、问题与总结"><a href="#七、问题与总结" class="headerlink" title="七、问题与总结"></a>七、问题与总结</h3><ol>
+<li>目前的代码有些冗余，比如删除新闻和修改密码，都是把需要的信息读取出来，然后稍作处理再写回文件，可以在<code>function.php</code>文件里写一个函数，需要时直接调用函数就行；删除新闻界面和初始化界面都有展示新闻的功能，也可可以通过一个函数来实现展示。</li>
+<li>对写入文件的内容判断不严谨，会把<code>\n</code>写入，文件内容间有空行时，统计总的<code>id</code>数会把空行也给统计进去，进而导致删除新闻时，不成功。把空行删完以后，才会执行成功。目前对文件操作<code>\n</code>理解不深，正在寻找方法解决。</li>
+<li>代码移植性差，需要修改地方较多。</li>
+</ol>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/PHP/">PHP</a> <a class="tag tag--primary tag--small t-link" href="/tags/实战/">实战</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/11/welcome/"
+                    data-tooltip="welcome"
+                    aria-label="PREVIOUS: welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/09/note20/"
+                    data-tooltip="note20"
+                    aria-label="NEXT: note20"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/11/practice5/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/11/practice5/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/11/practice5/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/11/welcome/"
+                    data-tooltip="welcome"
+                    aria-label="PREVIOUS: welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/09/note20/"
+                    data-tooltip="note20"
+                    aria-label="NEXT: note20"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/11/practice5/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/11/practice5/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/11/practice5/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/11/practice5/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/11/practice5/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/11/practice5/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <h3 class="media-heading">dvwa-deploy</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <h3 class="media-heading">phpmyadmin-bug</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <h3 class="media-heading">note11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <h3 class="media-heading">week2sum</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <h3 class="media-heading">note12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <h3 class="media-heading">note13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <h3 class="media-heading">note15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                24 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
