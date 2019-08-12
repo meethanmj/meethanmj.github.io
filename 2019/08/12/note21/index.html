@@ -1,0 +1,1095 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>note21 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。\n\n\n\n\n一、MySQL数据库MySQL是流行的关系型数据库管理系统。\n\n数据库：一些关联表的集合。\n数据表：是数据的矩阵。\n列：一列包含相同类型的数据，例如用户名数据。\n行：一行是一组相关数据，例如一条用户订阅的数据。\n主键：主键是唯一的，一个数据表中只能包含一个主键。可以用主键查询数据。\n外键：外键用于关联两个表。\n\n二、MySQL基础应用1. 关于数据库123456#创建数据库CREATE DATABASE mytest;#查看数据库SHOW DATABASES;#使用数据库USE mytest;\n\n2. 关于数据表1234567891011121314151617181920212223#创建一个名为user的数据表CREATE TABLE `user`(\t`id` SMALLINT,    `username` VARCHAR(20),);#查看当前数据库中所有的数据表SHOW TABLES;#查看创建数据库时的描述SHOW CREATE TABLE user;#向user表中插入一条数据INSERT user VALUES(&apos;1&apos;, &apos;admin&apos;);#向user表中插入一条记录只包含名字的信息INSERT user(`username`) VALUES(&quot;cat&quot;);#向user表中同时插入多条记录INSERT user VALUES(&apos;2&apos;, &apos;zs&apos;), (&apos;3&apos;, &apos;ww&apos;);#查看数据表中的所有记录SELECT * FROM user;#修改数据表姓名ALERT TABLE admin RENAME TO nimda;#更改数据UPDATE nimda SET `id`=4;#删除数据表DROP TABLE user;\n\n\n\n\n库名\n表名\n字段\n\n\n\n\n用户名tb_users\n名字、密码、邮箱、昵称、创建时间等\n\n\nmynews\n新闻表tb_news\n标题、内容、作者\n\n\n\n评论表tb_comment\n新闻id、评论内容、评论用户\n\n\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859#创建新的数据库CREATE DATABASES mynews;#查看数据库SHOW DATABASE;#使用mynews库USE mynews;#创建一个名为tb_users表CREATE TABLE `tb_users`(    \t#id非空自增        `id` int(10) NOT NULL AUTO_INCREMENT,    \t#用户名非空唯一        `username` VARCHAR(50) NOT NULL UNIQUE,        `password` VARCHAR(50) NOT NULL,        `email` VARCHAR(50) NULL UNIQUE,        `nickname` VARCHAR(50) NOT NULL,        `safepoint` VARCHAR(50) NULL,    \t#头像默认        `avatarimg` VARCHAR(100) DEFAULT &apos;/images/default_avatar.jpg&apos;,    \t#时间        `reg_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),        `lastlogin_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),        `lastlogin_ip` VARCHAR(255) NULL,        PRIMARY KEY(`id`));#向tb_users表插入一条数据INSERT INTO `mynews`.`tb_users`(`username`, `password`, `email`, `nickname`) VALUES (&apos;zs&apos;, &apos;zs123&apos;, &apos;zs123@icq.com&apos;, &apos;zs123&apos;)#创建一个名为tb_news表create table `tb_news`(    `id` int(0) not null auto_increment,    `title` varchar(255) not null,    `contents` text not null,    `author` varchar(50) not null,    `new_img` varchar(100) null,    `add_time` timestamp default current_timestamp(),    `hot` int(0) default 0,    primary key(`id`));#向tb_news表插入数据INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;打完宽面&apos;, &apos;吃面！吃面！&apos;, &apos;zs&apos;);INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;鸡你太美&apos;, &apos;太美！太美！&apos;, &apos;ww&apos;);#创建一个名为tb_comment表create table `tb_comment`(    `id` int(0) not null auto_increment,    `new_id` int(0) not null,    `comment_content` text not null,    `comment_user` varchar(50) not null,    `comment_time` timestamp default current_timestamp(),    primary key(`id`));#向tb_comment表插入数据INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;1&apos;, &apos;吴亦凡&apos;, &apos;ww&apos;);INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;2&apos;, &apos;坤坤&apos;, &apos;zs&apos;);#修改数据UPDATE `mynews`.`tb_news` SET `author` = &apos;ls&apos; WHERE `id` = 1;UPDATE `tb_comment` SET `comment_content` = &apos;蔡徐坤&apos; WHERE `id` = 2;ALTER TABLE `mynews`.`tb_users` ADD UNIQUE (`username`);\n\n三、information_schemainformation_schema这个数据库中保存了MySQL服务器所有数据库的信息。如数据库名，数据库的表，表中的数据类型与访问权限等。\n\n\n\n表名\n字段作用\n\n\n\nschemata\nschema_name记录了所有数据库的名字\n\n\ntables\ntable_schema记录了所有数据库的名字\n\n\ntables\ntable_name记录了所有数据库的表的名字\n\n\ncolumns\ntable_schema记录了所有数据库的名字\n\n\ncolumns\ntable_name记录了所有数据库的表名字\n\n\ncolumns\ncolumn_name记录了所有数据库的表的列的名字\n\n\n查询数据核心语法：\n\n\n\n功能名称\n查询语句\n\n\n\n查库\nSELECT schema_name FROM information_schema.schemata\n\n\n查表\nSELECT table_name FROM information_schema.tables WHERE table_schema=库名\n\n\n查列\nSELECT column_name FROM information_schema.columns WHERE table_name=表明\n\n\n查数据\nSELECT 列名 FROM 库名.表名\n\n\n12mysql -uroot -p mynews &lt; pathmysqldump -uroot -p mysql &gt; path\n\n","dateCreated":"2019-08-12T22:19:08+08:00","dateModified":"2019-08-13T00:03:59+08:00","datePublished":"2019-08-12T22:19:08+08:00","description":"Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。","headline":"note21","image":["https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/12/note21/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/12/note21/","keywords":"MYSQL","thumbnailUrl":"https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <meta name="description" content="Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。">
+<meta name="keywords" content="MYSQL">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="note21">
+<meta property="og:url" content="http://yoursite.com/2019/08/12/note21/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-08-12T16:03:59.064Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="note21">
+<meta name="twitter:description" content="Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            note21
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-12T22:19:08+08:00">
+	
+		    Aug 12, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 对<code>MySQL</code>数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对<code>information_schema</code>表的理解。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h3 id="一、MySQL数据库"><a href="#一、MySQL数据库" class="headerlink" title="一、MySQL数据库"></a>一、MySQL数据库</h3><p>MySQL是流行的关系型数据库管理系统。</p>
+<ul>
+<li>数据库：一些关联表的集合。</li>
+<li>数据表：是数据的矩阵。</li>
+<li>列：一列包含相同类型的数据，例如用户名数据。</li>
+<li>行：一行是一组相关数据，例如一条用户订阅的数据。</li>
+<li>主键：主键是唯一的，一个数据表中只能包含一个主键。可以用主键查询数据。</li>
+<li>外键：外键用于关联两个表。</li>
+</ul>
+<h3 id="二、MySQL基础应用"><a href="#二、MySQL基础应用" class="headerlink" title="二、MySQL基础应用"></a>二、MySQL基础应用</h3><h4 id="1-关于数据库"><a href="#1-关于数据库" class="headerlink" title="1. 关于数据库"></a>1. 关于数据库</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#创建数据库</span><br><span class="line">CREATE DATABASE mytest;</span><br><span class="line">#查看数据库</span><br><span class="line">SHOW DATABASES;</span><br><span class="line">#使用数据库</span><br><span class="line">USE mytest;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-关于数据表"><a href="#2-关于数据表" class="headerlink" title="2. 关于数据表"></a>2. 关于数据表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#创建一个名为user的数据表</span><br><span class="line">CREATE TABLE `user`(</span><br><span class="line">	`id` SMALLINT,</span><br><span class="line">    `username` VARCHAR(20),</span><br><span class="line">);</span><br><span class="line">#查看当前数据库中所有的数据表</span><br><span class="line">SHOW TABLES;</span><br><span class="line">#查看创建数据库时的描述</span><br><span class="line">SHOW CREATE TABLE user;</span><br><span class="line">#向user表中插入一条数据</span><br><span class="line">INSERT user VALUES(&apos;1&apos;, &apos;admin&apos;);</span><br><span class="line">#向user表中插入一条记录只包含名字的信息</span><br><span class="line">INSERT user(`username`) VALUES(&quot;cat&quot;);</span><br><span class="line">#向user表中同时插入多条记录</span><br><span class="line">INSERT user VALUES(&apos;2&apos;, &apos;zs&apos;), (&apos;3&apos;, &apos;ww&apos;);</span><br><span class="line">#查看数据表中的所有记录</span><br><span class="line">SELECT * FROM user;</span><br><span class="line">#修改数据表姓名</span><br><span class="line">ALERT TABLE admin RENAME TO nimda;</span><br><span class="line">#更改数据</span><br><span class="line">UPDATE nimda SET `id`=4;</span><br><span class="line">#删除数据表</span><br><span class="line">DROP TABLE user;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">库名</th>
+<th align="center">表名</th>
+<th align="center">字段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"></td>
+<td align="center">用户名tb_users</td>
+<td align="center">名字、密码、邮箱、昵称、创建时间等</td>
+</tr>
+<tr>
+<td align="center">mynews</td>
+<td align="center">新闻表tb_news</td>
+<td align="center">标题、内容、作者</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">评论表tb_comment</td>
+<td align="center">新闻id、评论内容、评论用户</td>
+</tr>
+</tbody></table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">#创建新的数据库</span><br><span class="line">CREATE DATABASES mynews;</span><br><span class="line">#查看数据库</span><br><span class="line">SHOW DATABASE;</span><br><span class="line">#使用mynews库</span><br><span class="line">USE mynews;</span><br><span class="line">#创建一个名为tb_users表</span><br><span class="line">CREATE TABLE `tb_users`(</span><br><span class="line">    	#id非空自增</span><br><span class="line">        `id` int(10) NOT NULL AUTO_INCREMENT,</span><br><span class="line">    	#用户名非空唯一</span><br><span class="line">        `username` VARCHAR(50) NOT NULL UNIQUE,</span><br><span class="line">        `password` VARCHAR(50) NOT NULL,</span><br><span class="line">        `email` VARCHAR(50) NULL UNIQUE,</span><br><span class="line">        `nickname` VARCHAR(50) NOT NULL,</span><br><span class="line">        `safepoint` VARCHAR(50) NULL,</span><br><span class="line">    	#头像默认</span><br><span class="line">        `avatarimg` VARCHAR(100) DEFAULT &apos;/images/default_avatar.jpg&apos;,</span><br><span class="line">    	#时间</span><br><span class="line">        `reg_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),</span><br><span class="line">        `lastlogin_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),</span><br><span class="line">        `lastlogin_ip` VARCHAR(255) NULL,</span><br><span class="line">        PRIMARY KEY(`id`)</span><br><span class="line">);</span><br><span class="line">#向tb_users表插入一条数据</span><br><span class="line">INSERT INTO `mynews`.`tb_users`(`username`, `password`, `email`, `nickname`) VALUES (&apos;zs&apos;, &apos;zs123&apos;, &apos;zs123@icq.com&apos;, &apos;zs123&apos;)</span><br><span class="line"></span><br><span class="line">#创建一个名为tb_news表</span><br><span class="line">create table `tb_news`(</span><br><span class="line">    `id` int(0) not null auto_increment,</span><br><span class="line">    `title` varchar(255) not null,</span><br><span class="line">    `contents` text not null,</span><br><span class="line">    `author` varchar(50) not null,</span><br><span class="line">    `new_img` varchar(100) null,</span><br><span class="line">    `add_time` timestamp default current_timestamp(),</span><br><span class="line">    `hot` int(0) default 0,</span><br><span class="line">    primary key(`id`)</span><br><span class="line">);</span><br><span class="line">#向tb_news表插入数据</span><br><span class="line">INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;打完宽面&apos;, &apos;吃面！吃面！&apos;, &apos;zs&apos;);</span><br><span class="line">INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;鸡你太美&apos;, &apos;太美！太美！&apos;, &apos;ww&apos;);</span><br><span class="line"></span><br><span class="line">#创建一个名为tb_comment表</span><br><span class="line">create table `tb_comment`(</span><br><span class="line">    `id` int(0) not null auto_increment,</span><br><span class="line">    `new_id` int(0) not null,</span><br><span class="line">    `comment_content` text not null,</span><br><span class="line">    `comment_user` varchar(50) not null,</span><br><span class="line">    `comment_time` timestamp default current_timestamp(),</span><br><span class="line">    primary key(`id`)</span><br><span class="line">);</span><br><span class="line">#向tb_comment表插入数据</span><br><span class="line">INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;1&apos;, &apos;吴亦凡&apos;, &apos;ww&apos;);</span><br><span class="line">INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;2&apos;, &apos;坤坤&apos;, &apos;zs&apos;);</span><br><span class="line">#修改数据</span><br><span class="line">UPDATE `mynews`.`tb_news` SET `author` = &apos;ls&apos; WHERE `id` = 1;</span><br><span class="line">UPDATE `tb_comment` SET `comment_content` = &apos;蔡徐坤&apos; WHERE `id` = 2;</span><br><span class="line"></span><br><span class="line">ALTER TABLE `mynews`.`tb_users` ADD UNIQUE (`username`);</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、information-schema"><a href="#三、information-schema" class="headerlink" title="三、information_schema"></a>三、information_schema</h3><p><code>information_schema</code>这个数据库中保存了<code>MySQL</code>服务器所有数据库的信息。如数据库名，数据库的表，表中的数据类型与访问权限等。</p>
+<table>
+<thead>
+<tr>
+<th align="center">表名</th>
+<th align="center">字段作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">schemata</td>
+<td align="center">schema_name记录了所有数据库的名字</td>
+</tr>
+<tr>
+<td align="center">tables</td>
+<td align="center">table_schema记录了所有数据库的名字</td>
+</tr>
+<tr>
+<td align="center">tables</td>
+<td align="center">table_name记录了所有数据库的表的名字</td>
+</tr>
+<tr>
+<td align="center">columns</td>
+<td align="center">table_schema记录了所有数据库的名字</td>
+</tr>
+<tr>
+<td align="center">columns</td>
+<td align="center">table_name记录了所有数据库的表名字</td>
+</tr>
+<tr>
+<td align="center">columns</td>
+<td align="center">column_name记录了所有数据库的表的列的名字</td>
+</tr>
+</tbody></table>
+<p>查询数据核心语法：</p>
+<table>
+<thead>
+<tr>
+<th align="center">功能名称</th>
+<th align="left">查询语句</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">查库</td>
+<td align="left">SELECT schema_name FROM information_schema.schemata</td>
+</tr>
+<tr>
+<td align="center">查表</td>
+<td align="left">SELECT table_name FROM information_schema.tables WHERE table_schema=库名</td>
+</tr>
+<tr>
+<td align="center">查列</td>
+<td align="left">SELECT column_name FROM information_schema.columns WHERE table_name=表明</td>
+</tr>
+<tr>
+<td align="center">查数据</td>
+<td align="left">SELECT 列名 FROM 库名.表名</td>
+</tr>
+</tbody></table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p mynews &lt; path</span><br><span class="line">mysqldump -uroot -p mysql &gt; path</span><br></pre></td></tr></table></figure>
+
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/MYSQL/">MYSQL</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/12/practice6/"
+                    data-tooltip="练习6"
+                    aria-label="PREVIOUS: 练习6"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/11/practice5/"
+                    data-tooltip="练习5"
+                    aria-label="NEXT: 练习5"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/12/note21/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/12/note21/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/12/note21/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/12/practice6/"
+                    data-tooltip="练习6"
+                    aria-label="PREVIOUS: 练习6"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/11/practice5/"
+                    data-tooltip="练习5"
+                    aria-label="NEXT: 练习5"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/12/note21/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/12/note21/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/12/note21/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/12/note21/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/12/note21/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/12/note21/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <h3 class="media-heading">dvwa-deploy</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <h3 class="media-heading">phpmyadmin-bug</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <h3 class="media-heading">note11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <h3 class="media-heading">week2sum</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <h3 class="media-heading">note12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <h3 class="media-heading">note13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <h3 class="media-heading">note15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                26 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
