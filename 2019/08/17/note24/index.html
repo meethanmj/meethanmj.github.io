@@ -1,0 +1,1009 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>note24 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 新闻管理系统新闻展示页面、个人信息、找回密码以及点赞功能编写。\n\n\n\n\n一、新闻展示页面 show_news.php12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879&lt;html&gt;&lt;head&gt;    &lt;title&gt;        新闻展示界面    &lt;/title&gt;&lt;/head&gt;&lt;body&gt;    &lt;?php        $hot = 0;        $title = 0;        $author = 0;        $view = 0;        $time = 0;        $content = 0;        @$id= $_GET[&apos;id&apos;];        $hostname = &apos;127.0.0.1&apos;;        $username = &apos;root&apos;;        $passwd = &apos;root&apos;;        if($id)&#123;            @$con = mysql_connect(&apos;127.0.0.1&apos;, &apos;root&apos;,&apos;root&apos;) or die(mysql_error());            @mysql_select_db(&quot;lianxi&quot;) or die(mysql_error());            mysql_query(&quot;set names &apos;utf8&apos;&quot;) or die(mysql_error());            $sql = &quot;SELECT * FROM `tb_news` WHERE `id`=&apos;$id&apos;&quot;;            $result = mysql_query($sql) or die(mysql_error());            for($i=0; $i&lt;mysql_affected_rows(); $i++)&#123;                $arr = mysql_fetch_assoc($result);                if($arr[&apos;id&apos;] == $id)&#123;                    $hot=$arr[&apos;hot&apos;];                    $title = base64_decode($arr[&apos;title&apos;]);                    $author = base64_decode($arr[&apos;author&apos;]);                    $view = $arr[&apos;view&apos;];                    $time = $arr[&apos;add_time&apos;];                    $content = base64_decode($arr[&apos;contents&apos;]);                        break;                &#125;            &#125;        &#125;        echo &quot;&lt;h1 align=&apos;center&apos;&gt;$title&lt;/h1&gt;&quot;;        echo &quot;&lt;div style=&apos;float: left&apos;&gt;&lt;label&gt;作者： $author&lt;/label&gt;&lt;label&gt; &amp;nbsp  时间：$time&lt;/label&gt;&lt;/div&gt;&quot;;        echo &quot;&lt;div style=&apos;float: right&apos;&gt;&lt;label&gt;热度： $hot&lt;/label&gt;   &lt;label&gt; / 浏览量：$view&lt;/label&gt;&lt;/div&gt;&quot;;        echo &quot;&lt;br&gt;&quot;;        echo &quot;&lt;hr&gt;&quot;;        echo &quot;&lt;p align=&apos;center&apos;&gt;$content&lt;/p&gt;&quot;;        echo &quot;&lt;hr&gt;&quot;;        echo &quot;&lt;br&gt;&quot;;        echo &lt;&lt;&lt;EOF            &lt;div align=&quot;center&quot;&gt;                &lt;form action=&quot;newAddnews.php&quot;, mathod=&quot;post&quot;&gt;                    &lt;textarea rows=&apos;10&apos; cols=&apos;100&apos; style=&quot;resize: none&quot;&gt;&lt;/textarea&gt;                    &lt;br&gt;                    &lt;input type=&quot;submit&quot; name=&quot;suubmit&quot; value=&quot;提交&quot;&gt;                &lt;/form&gt;            &lt;/div&gt;EOF;        echo &quot;&lt;br&gt;&quot;;        echo &quot;&lt;h4 align=&apos;center&apos;&gt;评论&lt;/h4&gt;&quot;;        echo &quot;&lt;br&gt;&quot;;        if($id) &#123;            @$con = mysql_connect(&apos;127.0.0.1&apos;, &apos;root&apos;, &apos;root&apos;) or die(mysql_error());            @mysql_select_db(&quot;lianxi&quot;) or die(mysql_error());            mysql_query(&quot;set names &apos;utf8&apos;&quot;) or die(mysql_error());            $sql = &quot;SELECT * FROM `tb_discuss` WHERE `new_id`=&apos;$id&apos;&quot;;            $result = mysql_query($sql) or die(mysql_error());            for ($i = 0; $i &lt; mysql_affected_rows(); $i++) &#123;                $arr1 = mysql_fetch_assoc($result);                $discussUser = base64_decode($arr1[&apos;discuss_user&apos;]);                $time = $arr1[&apos;discuss_time&apos;];                $discussContent = $arr1[&quot;discuss_content&quot;];                echo &quot;&lt;hr style=\\&quot;border:1px dashed #000; height:1px\\&quot;&gt;&quot;;                echo &quot;&lt;p align=&apos;center&apos;&gt;用户：$discussUser&quot; .     &quot;     时间：$time&lt;/p&gt;&quot;;                echo &quot;&lt;br&gt;&quot;;                echo &quot;&lt;p align=&apos;center&apos;&gt;$discussContent&lt;/p&gt;&quot;;                echo &quot;&lt;hr style=\\&quot;border:1px dashed #000; height:1px\\&quot;&gt;&quot;;            &#125;            mysql_close($con);        &#125;    ?&gt;&lt;/body&gt;&lt;/html&gt;\n\n二、个人信息1. personal_information.php1234567891011121314151617181920212223242526272829303132333435&lt;?php Require_once &apos;../basedir/header.php&apos;; ?&gt;&lt;?phpsession_start();error_reporting(E_ALL^E_NOTICE);if(!isset($_SESSION[&apos;username&apos;]))&#123;    echo &quot;&lt;script&gt;alert(&apos;请登录后查看！&apos;);location.href=&apos;login.php&apos;;&lt;/script&gt;&quot;;&#125;?&gt;&lt;html&gt;&lt;head&gt;    &lt;title&gt;        个人资料    &lt;/title&gt;&lt;/head&gt;&lt;body&gt;    &lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;    &lt;div style=&quot;margin: 0px 600px 0px 600px&quot;&gt;           &lt;form action=&quot;personal_informationhoutai.php&quot; method=&quot;post&quot; enctype= &quot;multipart/form-data&quot;&gt;                    头像：&lt;input type=&quot;file&quot; name=&quot;addr&quot;/&gt;&lt;br&gt;&lt;br&gt;                    邮箱：&lt;input type=&quot;email&quot; name=&quot;email&quot;/&gt;&lt;br&gt;&lt;br&gt;                    性别：&lt;input type=&quot;radio&quot; name=&quot;sexnan&quot;/&gt;男                          &lt;input type=&quot;radio&quot; name=&quot;sexnv&quot;/&gt;女&lt;br&gt;&lt;br&gt;                &lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;               &lt;/form&gt;    &lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&lt;?phpRequire_once &apos;../basedir/footer.php&apos;;?&gt;\n\n2. personal_information_backstage.php12345678910111213141516171819202122232425262728293031323334&lt;?phpRequire_once &quot;sql.php&quot;;session_start();error_reporting(E_ALL^E_NOTICE);$username = $_SESSION[&apos;username&apos;];$sql = &quot;SELECT * FROM `tb_users` WHERE `username`=&apos;$username&apos;;&quot;;echo &quot;&lt;br&gt;&quot;;$row = mysql_query($sql);$row = mysql_fetch_assoc($row);echo &quot;&lt;br&gt;&quot;;$path = $row[&apos;addr&apos;];//var_dump($path);echo &quot;&lt;br&gt;&quot;;//将文件从临时文件中转移到文件保存路径var_dump(move_uploaded_file($_FILES[&apos;addr&apos;][&apos;tmp_name&apos;], $path));$email=  $_POST[&apos;email&apos;];    if($_POST[&apos;sexmale&apos;])&#123;        $sex = 1;    &#125;    if($_POST[&apos;sexfemale&apos;])&#123;        $sex = -1;    &#125;var_dump($_SESSION[&apos;username&apos;]);//var_dump($sex);$yuju = &quot;UPDATE `tb_users` SET email=&apos;&#123;$email&#125;&apos;,sex=&apos;$sex&apos; WHERE `username` = &apos;$_SESSION[&apos;username&apos;]&apos;;&quot;;//echo $path;$row=  mysql_query(&quot;&#123;$path&#125;&quot;);?&gt;\n\n三、找回密码1.find_passwd.php123456789101112131415161718192021222324252627282930313233&lt;?phpRequire_once &apos;../basedir/header.php&apos;;?&gt;&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head &gt; &lt;meta charset=&quot;utf-8&quot;&gt;&lt;/head&gt;&lt;body&gt;&lt;h2 align=&quot;center&quot;&gt;找回密码&lt;/h2&gt;&lt;br&gt;&lt;!--text-align:center;--&gt;&lt;div style=&quot;text-align:center;&quot;&gt;    &lt;tr&gt;        &lt;form action=&quot;findPasswdhoutai.php&quot; method=&quot;post&quot; onsubmit=&quot;checkpass()&quot; onchange=&quot;checkanswer()&quot;&gt;            &lt;p&gt;&lt;input type=&quot;text&quot; name=&quot;name&quot; placeholder=&quot;输入要找回密码的用户名&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;            &lt;p&gt;问题：你的爱好是？&lt;/p&gt;            &lt;p&gt;&lt;input type=&quot;text&quot; name=&quot;answer&quot; id=&quot;inanswer&quot; placeholder=&quot;答案&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;            &lt;p&gt;&lt;input type=&quot;password&quot; name=&quot;passwd&quot; id=&quot;passFirst&quot; placeholder=&quot;新密码&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;            &lt;p&gt;&lt;input type=&quot;password&quot; name=&quot;passwdagain&quot; id=&quot;passSecond&quot; placeholder=&quot;再次输入密码&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;            &lt;p&gt;&lt;input type=&quot;submit&quot; name=&quot;提交&quot;&gt;&lt;/p&gt;        &lt;/form&gt;    &lt;/tr&gt;    &lt;tr&gt;        &lt;td align=&quot;right&quot;&gt;        &lt;/td&gt;    &lt;/tr&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&lt;?phpRequire_once &apos;../basedir/footer.php&apos;;?&gt;\n\n2.find_passwd_backstage.php12345678910111213141516171819202122232425262728293031323334353637383940&lt;?phpRequire_once &quot;sql.php&quot;;//需要修改！error_reporting(E_ALL^E_NOTICE);$username = $_POST[&apos;name&apos;];var_dump($username);//    $username = &apos;root&apos;;//删除用户$sql = &quot;SELECT * FROM `tb_anquan` WHERE `username`=&apos;$username&apos;;&quot;;echo $sql;$result = mysql_query($sql) or die(mysql_error());$arr = mysql_fetch_assoc($result);$answer = $arr[&apos;mima&apos;];//echo $answer;//$inAnswer = $_POST[&apos;answer&apos;];if($answer != $_POST[&apos;answer&apos;])&#123;       die(&quot;&lt;script&gt;alert(&apos;密保答案不正确！&apos;);&lt;/script&gt;&quot;);&#125;$passFirst = $_POST[&apos;passwd&apos;];$passSecond = $_POST[&apos;passwdagain&apos;];if($passFirst==NULL &amp;&amp; $passSecond==NULL) &#123;    die(&quot;&lt;script&gt;alert(&apos;请输入密码！&apos;);&lt;/script&gt;&quot;);&#125;else&#123;    if($passFirst != $passSecond)&#123;        die(&quot;&lt;script&gt;alert(&apos;输入密码不一致，请重新输入！&apos;);&lt;/script&gt;&quot;);    &#125;else &#123;        $passFirst = md5($passFirst);        $sql = &quot;UPDATE `tb_users` SET `password`= &apos;$passFirst&apos; WHERE `username`=&apos;$username&apos;;&quot;;        echo $sql;        $result = mysql_query($sql) or die(mysql_error());        if (mysql_affected_rows()) &#123;            echo &quot;&lt;script&gt;alert(&apos;更新成功！&apos;);location.href=&apos;login.php&apos;;&lt;/script&gt;&quot;;        &#125; else &#123;            die(&quot;&lt;script&gt;alert(&apos;更新失败！&apos;);location.href=&apos;findPasswd.php&apos;;&lt;/script&gt;&quot;);        &#125;    &#125;&#125;?&gt;\n\n四、点赞功能up_down.php123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114&lt;html&gt;&lt;style &gt;    .th&#123;        vertical-align: middle;    &#125;    &lt;script type=&quot;text/javascript&quot; src=&quot;../js/jquery-1.12.4.js&quot;&gt;&lt;/script&gt;&lt;?php    Require_once &quot;sql.php&quot;;?&gt;&lt;/style&gt;&lt;div style=&quot;width:100%;text-align:center&quot;&gt;    &lt;h1&gt;新闻界面&lt;/h1&gt;&lt;/div&gt;&lt;table align=&quot;center&quot; border=&quot;1&quot; width=&quot;1200&quot;&gt;    &lt;tr&gt;        &lt;th&gt; &lt;h2&gt;热度&lt;/h2&gt; &lt;/th&gt;        &lt;th&gt; &lt;h2&gt;标题&lt;/h2&gt; &lt;/th&gt;        &lt;th&gt; &lt;h2&gt;作者&lt;/h2&gt; &lt;/th&gt;        &lt;th&gt; &lt;h2&gt;时间&lt;/h2&gt; &lt;/th&gt;        &lt;th width=&quot;150px&quot;&gt; &lt;h2&gt;操作&lt;/h2&gt; &lt;/th&gt;    &lt;/tr&gt;&lt;?php//$uers_id = $_SESSION[&quot;user_id&quot;];$user_id=13;$storeUidType = array();$result = mysql_query(&quot;select * from tb_news order by hot desc;&quot;);//======================================================================================$readNews = mysql_query(&quot;select * from `tb_hot` where `user_id`=$user_id&quot;);//把用户对新闻的评价保存在一个数组里//$storeUidType[news_id] = typewhile($arr1 = mysql_fetch_assoc($readNews)) &#123;    $hotUser_id = $arr1[&apos;user_id&apos;];    $hotNews_id = $arr1[&apos;news_id&apos;];    $hotType = $arr1[&apos;type&apos;];    $storeUidType[$hotNews_id] = $hotType;&#125;//echo $storeUidType;//======================================================================================while($arr = mysql_fetch_assoc($result))&#123;    $title = base64_decode($arr[&apos;title&apos;]);    //var_dump($title);    $contents = base64_decode($arr[&apos;contents&apos;]);    $author = base64_decode($arr[&apos;author&apos;]);    $new_img = $arr[&apos;new_img&apos;];    $add_time = $arr[&apos;add_time&apos;];    $Hot = $arr[&apos;hot&apos;];    //读取新闻ID    $id = $arr[&apos;id&apos;];    //=============================================    //用户还没有对新闻进行评价，颜色设置成黑色    if($storeUidType[$id]==1)&#123;        $upColor = &quot;red&quot;;        $downColor = &quot;black&quot;;    &#125;elseif($storeUidType[$id]==-1)&#123;        $upColor = &quot;black&quot;;        $downColor = &quot;red&quot;;    &#125;else&#123;        $upColor = &quot;black&quot;;        $downColor = &quot;black&quot;;    &#125;    //=============================================    $idUp = &apos;btnUp&apos; . $id;    $idDown = &apos;btnDown&apos; . $id;    $tu = base64_decode($new_img);    echo            &lt;&lt;&lt;EOF            &lt;tr&gt;            &lt;td align=&quot;center&quot;&gt;&#123;$Hot&#125;&lt;/td&gt;            &lt;td align=&quot;center&quot;&gt;&#123;$title&#125;&lt;/td&gt;            &lt;td align=&quot;center&quot;&gt;&#123;$author&#125;&lt;/td&gt;            &lt;td align=&quot;center&quot;&gt;&#123;$add_time&#125;&lt;/td&gt;            &lt;td align=&quot;center&quot; rowspan=&quot;2&quot;&gt;                &lt;p&gt;                                      &lt;button id=$idUp style=&apos;color: $upColor&apos; onclick=&apos;btnUpAct(this.id)&apos;&gt;赞&lt;/button&gt;/                    &lt;button id=$idDown style=&apos;color: $downColor&apos; onclick=&apos;btnDownAct(this.id)&apos;&gt;踩&lt;/button&gt;                                    &lt;/p&gt;                            &lt;/td&gt;            &lt;/tr&gt;            &lt;tr&gt;            &lt;td align=&quot;center&quot; height: 30px; width: 300px; text-align: center;&gt;            &lt;img height=&quot;150px&quot; src=&#123;$tu&#125;&gt;            &lt;/td&gt;            &lt;td colspan=&quot;3&quot; align=&quot;center&quot; &gt;&lt;a href=&quot;xinwenzhanshimore.php?action=&#123;$title&#125;&quot;&gt;&#123;$contents&#125;&lt;/a&gt;             &lt;/tr&gt;             &lt;script&gt;                function btnUpAct(id)&#123;                                       if(id==&apos;$idUp&apos;)&#123;                        if(document.getElementById(id).style.color == &quot;red&quot;)&#123;                            alert(&apos;您已点过赞了！&apos;);                        &#125;else&#123;                            document.getElementById(id).style.color=&quot;red&quot;;                            document.getElementById(&apos;$idDown&apos;).style.color=&quot;black&quot;;                         &#125;                    &#125;                &#125;                function btnDownAct(id)&#123;                    if(id==&apos;$idDown&apos;)&#123;                        if(document.getElementById(id).style.color == &quot;red&quot;)&#123;                            alert(&apos;您已点过踩了！&apos;);                        &#125;else&#123;                            document.getElementById(id).style.color=&quot;red&quot;;                            document.getElementById(&apos;$idUp&apos;).style.color=&quot;black&quot;;                                &#125;                    &#125;                &#125;                           &lt;/script&gt;EOF;    ?&gt;&lt;/table&gt;&lt;/html&gt;\n\n五、问题与总结新闻展示、个人信息、找回密码三个功能均可完美实现。点赞功能还是有些问题，从数据库中读取数据，新闻展示界面把该用户对每条新闻的赞踩显示出红色，在按钮添加事件，当颜色为红色时，再次点击该按钮会提示已操作过。用这种思路写出来，只是最后一条新闻功能实现是正确，后来查资料得知，js事件用于循环时只对最后一条有作用，需用闭包解决。需换思路！\n","dateCreated":"2019-08-17T10:07:39+08:00","dateModified":"2019-08-17T11:38:30+08:00","datePublished":"2019-08-17T10:07:39+08:00","description":"Abstract: 新闻管理系统新闻展示页面、个人信息、找回密码以及点赞功能编写。","headline":"note24","image":["https://cdn.pixabay.com/photo/2019/08/06/02/16/landscape-4387209_1280.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/17/note24/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/17/note24/","keywords":"PHP, MySQL, 新闻管理系统","thumbnailUrl":"https://cdn.pixabay.com/photo/2019/08/06/02/16/landscape-4387209_1280.jpg"}</script>
+    <meta name="description" content="Abstract: 新闻管理系统新闻展示页面、个人信息、找回密码以及点赞功能编写。">
+<meta name="keywords" content="PHP,MySQL,新闻管理系统">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="note24">
+<meta property="og:url" content="http://yoursite.com/2019/08/17/note24/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 新闻管理系统新闻展示页面、个人信息、找回密码以及点赞功能编写。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-08-17T03:38:30.191Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="note24">
+<meta name="twitter:description" content="Abstract: 新闻管理系统新闻展示页面、个人信息、找回密码以及点赞功能编写。">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://cdn.pixabay.com/photo/2019/08/06/02/16/landscape-4387209_1280.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://cdn.pixabay.com/photo/2019/08/06/02/16/landscape-4387209_1280.jpg"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            note24
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-17T10:07:39+08:00">
+	
+		    Aug 17, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 新闻管理系统新闻展示页面、个人信息、找回密码以及点赞功能编写。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h3 id="一、新闻展示页面-show-news-php"><a href="#一、新闻展示页面-show-news-php" class="headerlink" title="一、新闻展示页面 show_news.php"></a>一、新闻展示页面 show_news.php</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;</span><br><span class="line">        新闻展示界面</span><br><span class="line">    &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;?php</span><br><span class="line">        $hot = 0;</span><br><span class="line">        $title = 0;</span><br><span class="line">        $author = 0;</span><br><span class="line">        $view = 0;</span><br><span class="line">        $time = 0;</span><br><span class="line">        $content = 0;</span><br><span class="line">        @$id= $_GET[&apos;id&apos;];</span><br><span class="line">        $hostname = &apos;127.0.0.1&apos;;</span><br><span class="line">        $username = &apos;root&apos;;</span><br><span class="line">        $passwd = &apos;root&apos;;</span><br><span class="line">        if($id)&#123;</span><br><span class="line">            @$con = mysql_connect(&apos;127.0.0.1&apos;, &apos;root&apos;,&apos;root&apos;) or die(mysql_error());</span><br><span class="line">            @mysql_select_db(&quot;lianxi&quot;) or die(mysql_error());</span><br><span class="line">            mysql_query(&quot;set names &apos;utf8&apos;&quot;) or die(mysql_error());</span><br><span class="line">            $sql = &quot;SELECT * FROM `tb_news` WHERE `id`=&apos;$id&apos;&quot;;</span><br><span class="line">            $result = mysql_query($sql) or die(mysql_error());</span><br><span class="line">            for($i=0; $i&lt;mysql_affected_rows(); $i++)&#123;</span><br><span class="line">                $arr = mysql_fetch_assoc($result);</span><br><span class="line">                if($arr[&apos;id&apos;] == $id)&#123;</span><br><span class="line">                    $hot=$arr[&apos;hot&apos;];</span><br><span class="line">                    $title = base64_decode($arr[&apos;title&apos;]);</span><br><span class="line">                    $author = base64_decode($arr[&apos;author&apos;]);</span><br><span class="line">                    $view = $arr[&apos;view&apos;];</span><br><span class="line">                    $time = $arr[&apos;add_time&apos;];</span><br><span class="line">                    $content = base64_decode($arr[&apos;contents&apos;]);</span><br><span class="line">                        break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        echo &quot;&lt;h1 align=&apos;center&apos;&gt;$title&lt;/h1&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;div style=&apos;float: left&apos;&gt;&lt;label&gt;作者： $author&lt;/label&gt;&lt;label&gt; &amp;nbsp  时间：$time&lt;/label&gt;&lt;/div&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;div style=&apos;float: right&apos;&gt;&lt;label&gt;热度： $hot&lt;/label&gt;   &lt;label&gt; / 浏览量：$view&lt;/label&gt;&lt;/div&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;hr&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;p align=&apos;center&apos;&gt;$content&lt;/p&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;hr&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">        echo &lt;&lt;&lt;EOF</span><br><span class="line">            &lt;div align=&quot;center&quot;&gt;</span><br><span class="line">                &lt;form action=&quot;newAddnews.php&quot;, mathod=&quot;post&quot;&gt;</span><br><span class="line">                    &lt;textarea rows=&apos;10&apos; cols=&apos;100&apos; style=&quot;resize: none&quot;&gt;&lt;/textarea&gt;</span><br><span class="line">                    &lt;br&gt;</span><br><span class="line">                    &lt;input type=&quot;submit&quot; name=&quot;suubmit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">                &lt;/form&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">EOF;</span><br><span class="line">        echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;h4 align=&apos;center&apos;&gt;评论&lt;/h4&gt;&quot;;</span><br><span class="line">        echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">        if($id) &#123;</span><br><span class="line">            @$con = mysql_connect(&apos;127.0.0.1&apos;, &apos;root&apos;, &apos;root&apos;) or die(mysql_error());</span><br><span class="line">            @mysql_select_db(&quot;lianxi&quot;) or die(mysql_error());</span><br><span class="line">            mysql_query(&quot;set names &apos;utf8&apos;&quot;) or die(mysql_error());</span><br><span class="line">            $sql = &quot;SELECT * FROM `tb_discuss` WHERE `new_id`=&apos;$id&apos;&quot;;</span><br><span class="line">            $result = mysql_query($sql) or die(mysql_error());</span><br><span class="line">            for ($i = 0; $i &lt; mysql_affected_rows(); $i++) &#123;</span><br><span class="line">                $arr1 = mysql_fetch_assoc($result);</span><br><span class="line">                $discussUser = base64_decode($arr1[&apos;discuss_user&apos;]);</span><br><span class="line">                $time = $arr1[&apos;discuss_time&apos;];</span><br><span class="line">                $discussContent = $arr1[&quot;discuss_content&quot;];</span><br><span class="line">                echo &quot;&lt;hr style=\&quot;border:1px dashed #000; height:1px\&quot;&gt;&quot;;</span><br><span class="line">                echo &quot;&lt;p align=&apos;center&apos;&gt;用户：$discussUser&quot; .     &quot;     时间：$time&lt;/p&gt;&quot;;</span><br><span class="line">                echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">                echo &quot;&lt;p align=&apos;center&apos;&gt;$discussContent&lt;/p&gt;&quot;;</span><br><span class="line">                echo &quot;&lt;hr style=\&quot;border:1px dashed #000; height:1px\&quot;&gt;&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">            mysql_close($con);</span><br><span class="line">        &#125;</span><br><span class="line">    ?&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、个人信息"><a href="#二、个人信息" class="headerlink" title="二、个人信息"></a>二、个人信息</h3><h4 id="1-personal-information-php"><a href="#1-personal-information-php" class="headerlink" title="1. personal_information.php"></a>1. personal_information.php</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php Require_once &apos;../basedir/header.php&apos;; ?&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">session_start();</span><br><span class="line">error_reporting(E_ALL^E_NOTICE);</span><br><span class="line">if(!isset($_SESSION[&apos;username&apos;]))&#123;</span><br><span class="line">    echo &quot;&lt;script&gt;alert(&apos;请登录后查看！&apos;);location.href=&apos;login.php&apos;;&lt;/script&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;</span><br><span class="line">        个人资料</span><br><span class="line">    &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;</span><br><span class="line">    &lt;div style=&quot;margin: 0px 600px 0px 600px&quot;&gt;</span><br><span class="line">           &lt;form action=&quot;personal_informationhoutai.php&quot; method=&quot;post&quot; enctype= &quot;multipart/form-data&quot;&gt;</span><br><span class="line"></span><br><span class="line">                    头像：&lt;input type=&quot;file&quot; name=&quot;addr&quot;/&gt;&lt;br&gt;&lt;br&gt;</span><br><span class="line"></span><br><span class="line">                    邮箱：&lt;input type=&quot;email&quot; name=&quot;email&quot;/&gt;&lt;br&gt;&lt;br&gt;</span><br><span class="line"></span><br><span class="line">                    性别：&lt;input type=&quot;radio&quot; name=&quot;sexnan&quot;/&gt;男</span><br><span class="line">                          &lt;input type=&quot;radio&quot; name=&quot;sexnv&quot;/&gt;女&lt;br&gt;&lt;br&gt;</span><br><span class="line"></span><br><span class="line">                &lt;input type=&quot;submit&quot; value=&quot;提交&quot;/&gt;</span><br><span class="line">               &lt;/form&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">Require_once &apos;../basedir/footer.php&apos;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-personal-information-backstage-php"><a href="#2-personal-information-backstage-php" class="headerlink" title="2. personal_information_backstage.php"></a>2. personal_information_backstage.php</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">Require_once &quot;sql.php&quot;;</span><br><span class="line">session_start();</span><br><span class="line">error_reporting(E_ALL^E_NOTICE);</span><br><span class="line"></span><br><span class="line">$username = $_SESSION[&apos;username&apos;];</span><br><span class="line">$sql = &quot;SELECT * FROM `tb_users` WHERE `username`=&apos;$username&apos;;&quot;;</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">$row = mysql_query($sql);</span><br><span class="line"></span><br><span class="line">$row = mysql_fetch_assoc($row);</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">$path = $row[&apos;addr&apos;];</span><br><span class="line">//var_dump($path);</span><br><span class="line">echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">//将文件从临时文件中转移到文件保存路径</span><br><span class="line">var_dump(move_uploaded_file($_FILES[&apos;addr&apos;][&apos;tmp_name&apos;], $path));</span><br><span class="line"></span><br><span class="line">$email=  $_POST[&apos;email&apos;];</span><br><span class="line"></span><br><span class="line">    if($_POST[&apos;sexmale&apos;])&#123;</span><br><span class="line">        $sex = 1;</span><br><span class="line">    &#125;</span><br><span class="line">    if($_POST[&apos;sexfemale&apos;])&#123;</span><br><span class="line">        $sex = -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">var_dump($_SESSION[&apos;username&apos;]);</span><br><span class="line">//var_dump($sex);</span><br><span class="line">$yuju = &quot;UPDATE `tb_users` SET email=&apos;&#123;$email&#125;&apos;,sex=&apos;$sex&apos; WHERE `username` = &apos;$_SESSION[&apos;username&apos;]&apos;;&quot;;</span><br><span class="line">//echo $path;</span><br><span class="line">$row=  mysql_query(&quot;&#123;$path&#125;&quot;);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、找回密码"><a href="#三、找回密码" class="headerlink" title="三、找回密码"></a>三、找回密码</h3><h4 id="1-find-passwd-php"><a href="#1-find-passwd-php" class="headerlink" title="1.find_passwd.php"></a>1.find_passwd.php</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">Require_once &apos;../basedir/header.php&apos;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head &gt; &lt;meta charset=&quot;utf-8&quot;&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h2 align=&quot;center&quot;&gt;找回密码&lt;/h2&gt;</span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;!--text-align:center;--&gt;</span><br><span class="line">&lt;div style=&quot;text-align:center;&quot;&gt;</span><br><span class="line">    &lt;tr&gt;</span><br><span class="line">        &lt;form action=&quot;findPasswdhoutai.php&quot; method=&quot;post&quot; onsubmit=&quot;checkpass()&quot; onchange=&quot;checkanswer()&quot;&gt;</span><br><span class="line">            &lt;p&gt;&lt;input type=&quot;text&quot; name=&quot;name&quot; placeholder=&quot;输入要找回密码的用户名&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;</span><br><span class="line">            &lt;p&gt;问题：你的爱好是？&lt;/p&gt;</span><br><span class="line">            &lt;p&gt;&lt;input type=&quot;text&quot; name=&quot;answer&quot; id=&quot;inanswer&quot; placeholder=&quot;答案&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;</span><br><span class="line">            &lt;p&gt;&lt;input type=&quot;password&quot; name=&quot;passwd&quot; id=&quot;passFirst&quot; placeholder=&quot;新密码&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;</span><br><span class="line">            &lt;p&gt;&lt;input type=&quot;password&quot; name=&quot;passwdagain&quot; id=&quot;passSecond&quot; placeholder=&quot;再次输入密码&quot; style=&quot;height: 20px;width: 200px&quot;&gt;&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">            &lt;p&gt;&lt;input type=&quot;submit&quot; name=&quot;提交&quot;&gt;&lt;/p&gt;</span><br><span class="line">        &lt;/form&gt;</span><br><span class="line">    &lt;/tr&gt;</span><br><span class="line">    &lt;tr&gt;</span><br><span class="line">        &lt;td align=&quot;right&quot;&gt;</span><br><span class="line">        &lt;/td&gt;</span><br><span class="line">    &lt;/tr&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">Require_once &apos;../basedir/footer.php&apos;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-find-passwd-backstage-php"><a href="#2-find-passwd-backstage-php" class="headerlink" title="2.find_passwd_backstage.php"></a>2.find_passwd_backstage.php</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">Require_once &quot;sql.php&quot;;</span><br><span class="line">//需要修改！</span><br><span class="line">error_reporting(E_ALL^E_NOTICE);</span><br><span class="line">$username = $_POST[&apos;name&apos;];</span><br><span class="line">var_dump($username);</span><br><span class="line">//    $username = &apos;root&apos;;</span><br><span class="line">//删除用户</span><br><span class="line">$sql = &quot;SELECT * FROM `tb_anquan` WHERE `username`=&apos;$username&apos;;&quot;;</span><br><span class="line">echo $sql;</span><br><span class="line">$result = mysql_query($sql) or die(mysql_error());</span><br><span class="line"></span><br><span class="line">$arr = mysql_fetch_assoc($result);</span><br><span class="line">$answer = $arr[&apos;mima&apos;];</span><br><span class="line">//echo $answer;</span><br><span class="line">//$inAnswer = $_POST[&apos;answer&apos;];</span><br><span class="line">if($answer != $_POST[&apos;answer&apos;])&#123;</span><br><span class="line">       die(&quot;&lt;script&gt;alert(&apos;密保答案不正确！&apos;);&lt;/script&gt;&quot;);</span><br><span class="line">&#125;</span><br><span class="line">$passFirst = $_POST[&apos;passwd&apos;];</span><br><span class="line">$passSecond = $_POST[&apos;passwdagain&apos;];</span><br><span class="line">if($passFirst==NULL &amp;&amp; $passSecond==NULL) &#123;</span><br><span class="line">    die(&quot;&lt;script&gt;alert(&apos;请输入密码！&apos;);&lt;/script&gt;&quot;);</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    if($passFirst != $passSecond)&#123;</span><br><span class="line">        die(&quot;&lt;script&gt;alert(&apos;输入密码不一致，请重新输入！&apos;);&lt;/script&gt;&quot;);</span><br><span class="line">    &#125;else &#123;</span><br><span class="line">        $passFirst = md5($passFirst);</span><br><span class="line">        $sql = &quot;UPDATE `tb_users` SET `password`= &apos;$passFirst&apos; WHERE `username`=&apos;$username&apos;;&quot;;</span><br><span class="line">        echo $sql;</span><br><span class="line">        $result = mysql_query($sql) or die(mysql_error());</span><br><span class="line">        if (mysql_affected_rows()) &#123;</span><br><span class="line">            echo &quot;&lt;script&gt;alert(&apos;更新成功！&apos;);location.href=&apos;login.php&apos;;&lt;/script&gt;&quot;;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            die(&quot;&lt;script&gt;alert(&apos;更新失败！&apos;);location.href=&apos;findPasswd.php&apos;;&lt;/script&gt;&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、点赞功能"><a href="#四、点赞功能" class="headerlink" title="四、点赞功能"></a>四、点赞功能</h3><h4 id="up-down-php"><a href="#up-down-php" class="headerlink" title="up_down.php"></a>up_down.php</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;style &gt;</span><br><span class="line">    .th&#123;</span><br><span class="line">        vertical-align: middle;</span><br><span class="line">    &#125;</span><br><span class="line">    &lt;script type=&quot;text/javascript&quot; src=&quot;../js/jquery-1.12.4.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">    Require_once &quot;sql.php&quot;;</span><br><span class="line">?&gt;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line"></span><br><span class="line">&lt;div style=&quot;width:100%;text-align:center&quot;&gt;</span><br><span class="line">    &lt;h1&gt;新闻界面&lt;/h1&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;table align=&quot;center&quot; border=&quot;1&quot; width=&quot;1200&quot;&gt;</span><br><span class="line">    &lt;tr&gt;</span><br><span class="line">        &lt;th&gt; &lt;h2&gt;热度&lt;/h2&gt; &lt;/th&gt;</span><br><span class="line">        &lt;th&gt; &lt;h2&gt;标题&lt;/h2&gt; &lt;/th&gt;</span><br><span class="line">        &lt;th&gt; &lt;h2&gt;作者&lt;/h2&gt; &lt;/th&gt;</span><br><span class="line">        &lt;th&gt; &lt;h2&gt;时间&lt;/h2&gt; &lt;/th&gt;</span><br><span class="line">        &lt;th width=&quot;150px&quot;&gt; &lt;h2&gt;操作&lt;/h2&gt; &lt;/th&gt;</span><br><span class="line">    &lt;/tr&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">//$uers_id = $_SESSION[&quot;user_id&quot;];</span><br><span class="line">$user_id=13;</span><br><span class="line">$storeUidType = array();</span><br><span class="line">$result = mysql_query(&quot;select * from tb_news order by hot desc;&quot;);</span><br><span class="line">//======================================================================================</span><br><span class="line">$readNews = mysql_query(&quot;select * from `tb_hot` where `user_id`=$user_id&quot;);</span><br><span class="line">//把用户对新闻的评价保存在一个数组里</span><br><span class="line">//$storeUidType[news_id] = type</span><br><span class="line">while($arr1 = mysql_fetch_assoc($readNews)) &#123;</span><br><span class="line">    $hotUser_id = $arr1[&apos;user_id&apos;];</span><br><span class="line">    $hotNews_id = $arr1[&apos;news_id&apos;];</span><br><span class="line">    $hotType = $arr1[&apos;type&apos;];</span><br><span class="line">    $storeUidType[$hotNews_id] = $hotType;</span><br><span class="line">&#125;</span><br><span class="line">//echo $storeUidType;</span><br><span class="line">//======================================================================================</span><br><span class="line">while($arr = mysql_fetch_assoc($result))&#123;</span><br><span class="line">    $title = base64_decode($arr[&apos;title&apos;]);</span><br><span class="line">    //var_dump($title);</span><br><span class="line">    $contents = base64_decode($arr[&apos;contents&apos;]);</span><br><span class="line">    $author = base64_decode($arr[&apos;author&apos;]);</span><br><span class="line">    $new_img = $arr[&apos;new_img&apos;];</span><br><span class="line">    $add_time = $arr[&apos;add_time&apos;];</span><br><span class="line">    $Hot = $arr[&apos;hot&apos;];</span><br><span class="line">    //读取新闻ID</span><br><span class="line">    $id = $arr[&apos;id&apos;];</span><br><span class="line">    //=============================================</span><br><span class="line">    //用户还没有对新闻进行评价，颜色设置成黑色</span><br><span class="line">    if($storeUidType[$id]==1)&#123;</span><br><span class="line">        $upColor = &quot;red&quot;;</span><br><span class="line">        $downColor = &quot;black&quot;;</span><br><span class="line">    &#125;elseif($storeUidType[$id]==-1)&#123;</span><br><span class="line">        $upColor = &quot;black&quot;;</span><br><span class="line">        $downColor = &quot;red&quot;;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        $upColor = &quot;black&quot;;</span><br><span class="line">        $downColor = &quot;black&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    //=============================================</span><br><span class="line">    $idUp = &apos;btnUp&apos; . $id;</span><br><span class="line">    $idDown = &apos;btnDown&apos; . $id;</span><br><span class="line">    $tu = base64_decode($new_img);</span><br><span class="line">    echo</span><br><span class="line">            &lt;&lt;&lt;EOF</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">            &lt;td align=&quot;center&quot;&gt;&#123;$Hot&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td align=&quot;center&quot;&gt;&#123;$title&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td align=&quot;center&quot;&gt;&#123;$author&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td align=&quot;center&quot;&gt;&#123;$add_time&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td align=&quot;center&quot; rowspan=&quot;2&quot;&gt;</span><br><span class="line">                &lt;p&gt;                  </span><br><span class="line">                    &lt;button id=$idUp style=&apos;color: $upColor&apos; onclick=&apos;btnUpAct(this.id)&apos;&gt;赞&lt;/button&gt;/</span><br><span class="line">                    &lt;button id=$idDown style=&apos;color: $downColor&apos; onclick=&apos;btnDownAct(this.id)&apos;&gt;踩&lt;/button&gt;                    </span><br><span class="line">                &lt;/p&gt;</span><br><span class="line">                </span><br><span class="line">            &lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line"></span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">            &lt;td align=&quot;center&quot; height: 30px; width: 300px; text-align: center;&gt;</span><br><span class="line">            &lt;img height=&quot;150px&quot; src=&#123;$tu&#125;&gt;</span><br><span class="line">            &lt;/td&gt;</span><br><span class="line">            &lt;td colspan=&quot;3&quot; align=&quot;center&quot; &gt;&lt;a href=&quot;xinwenzhanshimore.php?action=&#123;$title&#125;&quot;&gt;&#123;$contents&#125;&lt;/a&gt; </span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">             &lt;script&gt;</span><br><span class="line">                function btnUpAct(id)&#123;                   </span><br><span class="line">                    if(id==&apos;$idUp&apos;)&#123;</span><br><span class="line">                        if(document.getElementById(id).style.color == &quot;red&quot;)&#123;</span><br><span class="line">                            alert(&apos;您已点过赞了！&apos;);</span><br><span class="line">                        &#125;else&#123;</span><br><span class="line">                            document.getElementById(id).style.color=&quot;red&quot;;</span><br><span class="line">                            document.getElementById(&apos;$idDown&apos;).style.color=&quot;black&quot;; </span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                function btnDownAct(id)&#123;</span><br><span class="line">                    if(id==&apos;$idDown&apos;)&#123;</span><br><span class="line">                        if(document.getElementById(id).style.color == &quot;red&quot;)&#123;</span><br><span class="line">                            alert(&apos;您已点过踩了！&apos;);</span><br><span class="line">                        &#125;else&#123;</span><br><span class="line">                            document.getElementById(id).style.color=&quot;red&quot;;</span><br><span class="line">                            document.getElementById(&apos;$idUp&apos;).style.color=&quot;black&quot;;        </span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;               </span><br><span class="line">            &lt;/script&gt;</span><br><span class="line">EOF;</span><br><span class="line">    </span><br><span class="line">?&gt;</span><br><span class="line">&lt;/table&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="五、问题与总结"><a href="#五、问题与总结" class="headerlink" title="五、问题与总结"></a>五、问题与总结</h3><p>新闻展示、个人信息、找回密码三个功能均可完美实现。点赞功能还是有些问题，从数据库中读取数据，新闻展示界面把该用户对每条新闻的赞踩显示出红色，在按钮添加事件，当颜色为红色时，再次点击该按钮会提示已操作过。用这种思路写出来，只是最后一条新闻功能实现是正确，后来查资料得知，<code>js</code>事件用于循环时只对最后一条有作用，需用闭包解决。需换思路！</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/MySQL/">MySQL</a> <a class="tag tag--primary tag--small t-link" href="/tags/PHP/">PHP</a> <a class="tag tag--primary tag--small t-link" href="/tags/新闻管理系统/">新闻管理系统</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/note25/"
+                    data-tooltip="note25"
+                    aria-label="PREVIOUS: note25"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/16/note23/"
+                    data-tooltip="note23"
+                    aria-label="NEXT: note23"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/17/note24/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/17/note24/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/17/note24/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/note25/"
+                    data-tooltip="note25"
+                    aria-label="PREVIOUS: note25"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/16/note23/"
+                    data-tooltip="note23"
+                    aria-label="NEXT: note23"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/17/note24/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/17/note24/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/17/note24/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/17/note24/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/17/note24/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/17/note24/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <h3 class="media-heading">dvwa-deploy</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <h3 class="media-heading">phpmyadmin-bug</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <h3 class="media-heading">note11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <h3 class="media-heading">week2sum</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <h3 class="media-heading">note12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <h3 class="media-heading">note13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <h3 class="media-heading">note15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                32 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>

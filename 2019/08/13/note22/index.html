@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: MYSQL常用函数的讲解\n\n\n\n\n一、常用函数\n\n\n函数名\n作用\n\n\n\nversion()\n返回数据库的版本号\n\n\ndatabase()\n返回当前数据库名\n\n\nuser()\n返回当前用户\n\n\nsystem_user()\n返回当前用户\n\n\n\nconcat(s1, s2, …, sn)字符串s1，s2等多个字符串合并为一个字符串。\n\n12-- MY SQL FUNCTIONSELECT CONCAT(&quot;MY &quot;, &quot;SQL &quot;, &quot;FUNCTION &quot;);\n\n\nconcat_ws(x, s1, s1, …, sn)把字符串合并成一个字符串，两两间以x连接。\n\n12-- I-LOVE-SQLSELECT CONCAT_WS(&quot;-&quot;, &quot;I&quot;, &quot;LOVE&quot;, &quot;SQL&quot;);\n\n\ngroup_concat(s1, ‘ ‘, s2  )返回一个字符串结果，该结果由分组中的值连接组合而成。\n\n1SELECT GROUP_CONCAT(username, &apos;-&apos;, passwd) FROM `USERS`;\n\n\nleft(s, n)返回字符串s前n个字符。 \n\n1234-- helloSELECT LEFT(&apos;hello world&apos;, 5);-- helllo wSELECT LEFT(&apos;hello world&apos;, 7);\n\n\nright(s, n)返回字符串s的后n个字符。\n\n12-- o worldSELECT RIGHT(&apos;hello world&apos;, 7);\n\n\nsubstr/substring(s, start, length)\n\n123456-- o SELECT SUBSTR(&apos;hello world&apos;, 5, 2);SELECT SUBSTRING(&apos;hello world&apos;, 5, 2);-- o woSELECT SUBSTR(&apos;hello world&apos;, 5, 4);SELECT SUBSTRING(&apos;hello world&apos;, 5, 4);\n\n\nmid(s, n, len)从字符串s的start位置截取长度为length的子字符串\n\n12-- o wSELECT MID(&apos;hello world&apos;, 5, 3);\n\n\nDISTINCT 过虑重复的记录\n\n1SELECT DISTINCT name FROM user;\n\n\nUNION操作符用于合并两个或多个SELECT语句的结果集\n\nNOTE: UNION内部的每个SELECT语句必须拥有相同数量的列，列也必须拥有相似的数据类型。UNION在进行表连接后会筛选掉重复的记录，UNION ALL只是简单的将两个结果合并后返回。\n1SELECT 字段名 FROM 表1 UNION SELECT 字段名 FROM 表2\n\n\nORDER BY在SQL注入中用于判断字段数，然后用UNION用于输出信息。\n\nLIKE\n\n\n\n\n\n操作符\n左右\n\n\n\n_\n代表任意单个字符\n\n\n%\n代表任意多字符\n\n\n12345SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;b%&apos;;SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;%o%&apos;;SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;admi_&apos;;-- 把标题中含有1作者名含有1值含有1的数据列出SELECT * FROM test.content WHERE title LIKE &apos;%1%&apos; or author like &apos;%1%&apos; or value like %1%&apos;&apos;\n\nlike  %q%包含q的      %q q在结尾      q%   q在开头\n二、读写文件1. 写文件12345-- 绝对路径into dumpfile &quot;filepath&quot;-- 绝对路径into outfile &quot;filepath&quot;select 123 into outfile/dumpfile &apos;/var/www/html/eval.php&apos;;\n\n2. 读文件1234567-- 绝对路径load_file(&apos;filepath&apos;)select load_file(&apos;/etc/passwd&apos;);create table data(\tdata text)insert into data values(load_file(&apos;&apos;));\n\nload file: 读取文件并以字符串形式返回文件内容。\ninto outfile: 将所选行写入文件，该文件会在服务器主机上进行创建，所以你必须要有执行这条命令的权限，还要注意要写入文件不能是现有的文件。如：/etc/passwd\n以下内容不太懂，先记住\n文件转十六进制，然后unhexo into dumpfile\n本地使用hex(load file(‘path’))处理二进制文件\n服务器上，执行select unhex(0x十六进制内容) into dumpfile “/tmp/a.exe”\n","dateCreated":"2019-08-13T17:30:39+08:00","dateModified":"2019-08-13T23:38:20+08:00","datePublished":"2019-08-13T17:30:39+08:00","description":"Abstract: MYSQL常用函数的讲解","headline":"note22","image":["https://images.unsplash.com/photo-1548678967-f1aec58f6fb2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/13/note22/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/13/note22/","keywords":"MySQL","thumbnailUrl":"https://images.unsplash.com/photo-1548678967-f1aec58f6fb2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: MYSQL常用函数的讲解\n\n\n\n\n一、常用函数\n\n\n函数名\n作用\n\n\n\nversion()\n返回数据库的版本号\n\n\ndatabase()\n返回当前数据库名\n\n\nuser()\n返回当前用户\n\n\nsystem_user()\n返回当前用户\n\n\n\nconcat(s1, s2, …, sn)字符串s1，s2等多个字符串合并为一个字符串。\n\n12-- MY SQL FUNCTIONSELECT CONCAT(&quot;MY &quot;, &quot;SQL &quot;, &quot;FUNCTION &quot;);\n\n\nconcat_ws(x, s1, s1, …, sn)把字符串合并成一个字符串，两两间以x连接。\n\n12-- I-LOVE-SQLSELECT CONCAT_WS(&quot;-&quot;, &quot;I&quot;, &quot;LOVE&quot;, &quot;SQL&quot;);\n\n\ngroup_concat(s1, ‘ ‘, s2  )返回一个字符串结果，该结果由分组中的值连接组合而成。\n\n1SELECT GROUP_CONCAT(username, &apos;-&apos;, passwd) FROM `USERS`;\n\n\nleft(s, n)返回字符串s前n个字符。 \n\n1234-- helloSELECT LEFT(&apos;hello world&apos;, 5);-- helllo wSELECT LEFT(&apos;hello world&apos;, 7);\n\n\nright(s, n)返回字符串s的后n个字符。\n\n12-- o worldSELECT RIGHT(&apos;hello world&apos;, 7);\n\n\nsubstr/substring(s, start, length)\n\n123456-- o SELECT SUBSTR(&apos;hello world&apos;, 5, 2);SELECT SUBSTRING(&apos;hello world&apos;, 5, 2);-- o woSELECT SUBSTR(&apos;hello world&apos;, 5, 4);SELECT SUBSTRING(&apos;hello world&apos;, 5, 4);\n\n\nmid(s, n, len)从字符串s的start位置截取长度为length的子字符串\n\n12-- o wSELECT MID(&apos;hello world&apos;, 5, 3);\n\n\nDISTINCT 过虑重复的记录\n\n1SELECT DISTINCT name FROM user;\n\n\nUNION操作符用于合并两个或多个SELECT语句的结果集\n\nNOTE: UNION内部的每个SELECT语句必须拥有相同数量的列，列也必须拥有相似的数据类型。UNION在进行表连接后会筛选掉重复的记录，UNION ALL只是简单的将两个结果合并后返回。\n1SELECT 字段名 FROM 表1 UNION SELECT 字段名 FROM 表2\n\n\nORDER BY在SQL注入中用于判断字段数，然后用UNION用于输出信息。\n\nLIKE\n\n\n\n\n\n操作符\n左右\n\n\n\n_\n代表任意单个字符\n\n\n%\n代表任意多字符\n\n\n12345SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;b%&apos;;SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;%o%&apos;;SELECT id FROM users WHERE &apos;username&apos; LIKE &apos;admi_&apos;;-- 把标题中含有1作者名含有1值含有1的数据列出SELECT * FROM test.content WHERE title LIKE &apos;%1%&apos; or author like &apos;%1%&apos; or value like %1%&apos;&apos;\n\nlike  %q%包含q的      %q q在结尾      q%   q在开头\n二、读写文件1. 写文件12345-- 绝对路径into dumpfile &quot;filepath&quot;-- 绝对路径into outfile &quot;filepath&quot;select 123 into outfile/dumpfile &apos;/var/www/html/eval.php&apos;;\n\n2. 读文件1234567-- 绝对路径load_file(&apos;filepath&apos;)select load_file(&apos;/etc/passwd&apos;);create table data(\tdata text)insert into data values(load_file(&apos;&apos;));\n\nload file: 读取文件并以字符串形式返回文件内容。\ninto outfile: 将所选行写入文件，该文件会在服务器主机上进行创建，所以你必须要有执行这条命令的权限，还要注意要写入文件不能是现有的文件。如：/etc/passwd\n以下内容不太懂，先记住\n文件转十六进制，然后unhexo into dumpfile\n本地使用hex(load file(‘path’))处理二进制文件\n服务器上，执行select unhex(0x十六进制内容) into dumpfile “/tmp/a.exe”\n","dateCreated":"2019-08-13T17:30:39+08:00","dateModified":"2019-08-17T11:31:59+08:00","datePublished":"2019-08-13T17:30:39+08:00","description":"Abstract: MYSQL常用函数的讲解","headline":"note22","image":["https://images.unsplash.com/photo-1548678967-f1aec58f6fb2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/13/note22/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/13/note22/","keywords":"MySQL","thumbnailUrl":"https://images.unsplash.com/photo-1548678967-f1aec58f6fb2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}</script>
     <meta name="description" content="Abstract: MYSQL常用函数的讲解">
 <meta name="keywords" content="MySQL">
 <meta property="og:type" content="blog">
@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: MYSQL常用函数的讲解">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-13T15:38:20.590Z">
+<meta property="og:updated_time" content="2019-08-17T03:31:59.812Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="note22">
 <meta name="twitter:description" content="Abstract: MYSQL常用函数的讲解">
@@ -420,9 +420,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/13/welcome/"
-                    data-tooltip="welcome"
-                    aria-label="PREVIOUS: welcome"
+                    href="/2019/08/16/note23/"
+                    data-tooltip="note23"
+                    aria-label="PREVIOUS: note23"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -535,9 +535,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/13/welcome/"
-                    data-tooltip="welcome"
-                    aria-label="PREVIOUS: welcome"
+                    href="/2019/08/16/note23/"
+                    data-tooltip="note23"
+                    aria-label="PREVIOUS: note23"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -1071,7 +1071,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                29 posts found
+                32 posts found
             </p>
         </div>
     </div>
