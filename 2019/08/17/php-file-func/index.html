@@ -6,24 +6,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>han个人博客</title>
+    <title>PHP内置过滤函数 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"Website","@id":"http://yoursite.com","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"name":"han个人博客","description":"爱生活，爱编程","url":"http://yoursite.com"}</script>
-    <meta name="description" content="爱生活，爱编程">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。\n\n\n\n\n一、SQL注入过滤函数1. addslashes()定义和用法\naddslashes(string)函数返回在预定义的字符前添加反斜杠的字符串。\n预定义字符是：\n\n单引号(‘)\n\n双引号(“)\n\n反斜杠()\n\nNULL\n\n\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转移的字符串。\n\n\n1234567&lt;?php        $id=$_GET[\"id\"];    $str = addslashes($id);    echo $str;?&gt;\n\n\n2. mysql_escape_string()\n在PHP5.3中已经弃用mysql_escape_string()\n\nmysql_escape_string()并不转义%和_\n1234567&lt;?php    $id=$_GET[\"id\"];@$str = mysql_escape_string($id);echo $str;?&gt;\n\n\n3. mysql_real_escape_string()定义和用法\nmysql_real_escape_string(str, con)函数转义SQL语句中使用的字符串中的特殊字符。\n受影响的字符：\n\n\\x00\n\\n\n\\r\n\\\n‘\n“\n\\x1a\n\n若成功，返回被转义的字符串，否则，返回false。\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转义的字符串。\n\n\nconnection\n可选。规定MySQL连接。未规定，则使用上一个连接。\n\n\n123456789&lt;?php$id=$_GET[\"id\"];if(@$str = mysql_real_escape_string($id))    echo $str;else    echo 'false';?&gt;\n\n\n二、XSS过滤函数1. htmlspecialchars()定义和用法\nhtmlspecialchars()函数把预定义的字符转换成HTML实体。\n1234567&lt;?php$id=$_GET[\"id\"];$str = htmlspecialchars($id);echo $str;?&gt;\n\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转义的字符串。\n\n\n\n2. strip_tag()函数定义和用法\nstrip_tags(string, allow) 函数剥去字符串中的HTML、XML 以及PHP的标签。\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要检查的字符串。\n\n\nallow\n可选。规定允许的标签。这些标签不会被删除。\n\n\n1234567&lt;?php$id=$_GET[\"id\"];$str = strip_tags($id);echo $str;?&gt;\n\n\n三、命令执行过滤函数1. escapeshellcmd()定义和用法\n在Windows下过滤方式是在字符前面加上一个^符号；在Linux是在字符前加上反斜杠（\\）\n1234567&lt;?php$id=$_GET[\"id\"];$str = escapeshellcmd($id);echo $str;?&gt;\n\n\n2. escapeshellarg()定义和用法\n给所有参数加上一对双引号，强制为字符串。\n1234567&lt;?php$id=$_GET[\"id\"];$str = escapeshellarg($id);echo $str;?&gt;\n\n\n\n参考博文\n\n","dateCreated":"2019-08-17T16:42:07+08:00","dateModified":"2019-08-17T17:35:36+08:00","datePublished":"2019-08-17T16:42:07+08:00","description":"Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。","headline":"PHP内置过滤函数","image":["https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/17/php-file-func/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/17/php-file-func/","keywords":"summary","thumbnailUrl":"https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"}</script>
+    <meta name="description" content="Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。">
+<meta name="keywords" content="summary">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="han个人博客">
-<meta property="og:url" content="http://yoursite.com/page/2/index.html">
+<meta property="og:title" content="PHP内置过滤函数">
+<meta property="og:url" content="http://yoursite.com/2019/08/17/php-file-func/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="爱生活，爱编程">
+<meta property="og:description" content="Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/18addslashes.png">
+<meta property="og:image" content="http://yoursite.com/images/19mysqlEscapeStr.png">
+<meta property="og:image" content="http://yoursite.com/images/20mysqlRealEscapeStr.png">
+<meta property="og:image" content="http://yoursite.com/images/21htmlspecialchars.png">
+<meta property="og:image" content="http://yoursite.com/images/22stripTags.png">
+<meta property="og:image" content="http://yoursite.com/images/23escapeshellcmd.png">
+<meta property="og:image" content="http://yoursite.com/images/24escapeshellarg.png">
+<meta property="og:updated_time" content="2019-08-17T09:35:36.482Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="han个人博客">
-<meta name="twitter:description" content="爱生活，爱编程">
+<meta name="twitter:title" content="PHP内置过滤函数">
+<meta name="twitter:description" content="Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。">
+<meta name="twitter:image" content="http://yoursite.com/images/18addslashes.png">
     
     
         
@@ -31,6 +41,9 @@
     
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
+    
+        <meta property="og:image" content="https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80"/>
     
     
     
@@ -41,6 +54,8 @@
 
     
 
+    
+        
     
 </head>
 
@@ -55,7 +70,7 @@
         
     
 
-<header id="header" data-behavior="2">
+<header id="header" data-behavior="5">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a
@@ -88,7 +103,7 @@
         
     
 
-<nav id="sidebar" data-behavior="2">
+<nav id="sidebar" data-behavior="5">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -243,32 +258,25 @@
 </nav>
 
             
-            <div id="main" data-behavior="2"
+            <div id="main" data-behavior="5"
                  class="
                         hasCoverMetaIn
                         ">
-                <section class="postShorten-group main-content-wrap">
+                
+<article class="post">
     
     
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/11/practice5/"
-                            aria-label=": 练习5"
-                        >
-                            练习5
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-11T16:56:56+08:00">
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            PHP内置过滤函数
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-17T16:42:07+08:00">
 	
-		    Aug 11, 2019
+		    Aug 17, 2019
     	
     </time>
     
@@ -280,616 +288,255 @@
     
 </div>
 
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: 把新闻信息，用户信息存放在文件中，用对文件的读写，实现用户的登录注册以及对新闻的增删改查。</p>
-                    
-                        <a
-                            href="/2019/08/11/practice5/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": 练习5"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/11/practice5/"
-                aria-label=": 练习5"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.pexels.com/photos/1450082/pexels-photo-1450082.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/09/note20/"
-                            aria-label=": note20"
-                        >
-                            note20
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-09T22:06:12+08:00">
-	
-		    Aug 09, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
-
-
     
 </div>
 
-            </div>
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了<code>php</code>内置过滤函数。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h3 id="一、SQL注入过滤函数"><a href="#一、SQL注入过滤函数" class="headerlink" title="一、SQL注入过滤函数"></a>一、SQL注入过滤函数</h3><h4 id="1-addslashes"><a href="#1-addslashes" class="headerlink" title="1. addslashes()"></a>1. addslashes()</h4><p><strong>定义和用法</strong></p>
+<p><code>addslashes(string)</code>函数返回在预定义的字符前添加反斜杠的字符串。</p>
+<p>预定义字符是：</p>
+<ul>
+<li><p>单引号(‘)</p>
+</li>
+<li><p>双引号(“)</p>
+</li>
+<li><p>反斜杠()</p>
+</li>
+<li><p>NULL</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>string</td>
+<td>必需。规定要转移的字符串。</td>
+</tr>
+</tbody></table>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    </span><br><span class="line">    $id=$_GET[<span class="string">"id"</span>];</span><br><span class="line">    $str = addslashes($id);</span><br><span class="line">    <span class="keyword">echo</span> $str;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/18addslashes.png" alt></p>
+<h4 id="2-mysql-escape-string"><a href="#2-mysql-escape-string" class="headerlink" title="2. mysql_escape_string()"></a>2. mysql_escape_string()</h4><blockquote>
+<p>在PHP5.3中已经弃用mysql_escape_string()</p>
+</blockquote>
+<p><code>mysql_escape_string()</code>并不转义<code>%</code>和<code>_</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    </span><br><span class="line">$id=$_GET[<span class="string">"id"</span>];</span><br><span class="line">@$str = mysql_escape_string($id);</span><br><span class="line"><span class="keyword">echo</span> $str;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/19mysqlEscapeStr.png" alt></p>
+<h4 id="3-mysql-real-escape-string"><a href="#3-mysql-real-escape-string" class="headerlink" title="3. mysql_real_escape_string()"></a>3. mysql_real_escape_string()</h4><p><strong>定义和用法</strong></p>
+<p><code>mysql_real_escape_string(str, con)</code>函数转义SQL语句中使用的字符串中的特殊字符。</p>
+<p>受影响的字符：</p>
+<ul>
+<li>\x00</li>
+<li>\n</li>
+<li>\r</li>
+<li>\</li>
+<li>‘</li>
+<li>“</li>
+<li>\x1a</li>
+</ul>
+<p>若成功，返回被转义的字符串，否则，返回<code>false</code>。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>string</td>
+<td>必需。规定要转义的字符串。</td>
+</tr>
+<tr>
+<td>connection</td>
+<td>可选。规定MySQL连接。未规定，则使用上一个连接。</td>
+</tr>
+</tbody></table>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$id=$_GET[<span class="string">"id"</span>];</span><br><span class="line"><span class="keyword">if</span>(@$str = mysql_real_escape_string($id))</span><br><span class="line">    <span class="keyword">echo</span> $str;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">'false'</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/20mysqlRealEscapeStr.png" alt></p>
+<h3 id="二、XSS过滤函数"><a href="#二、XSS过滤函数" class="headerlink" title="二、XSS过滤函数"></a>二、XSS过滤函数</h3><h4 id="1-htmlspecialchars"><a href="#1-htmlspecialchars" class="headerlink" title="1. htmlspecialchars()"></a>1. htmlspecialchars()</h4><p><strong>定义和用法</strong></p>
+<p><code>htmlspecialchars()</code>函数把预定义的字符转换成<code>HTML</code>实体。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$id=$_GET[<span class="string">"id"</span>];</span><br><span class="line">$str = htmlspecialchars($id);</span><br><span class="line"><span class="keyword">echo</span> $str;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>string</td>
+<td>必需。规定要转义的字符串。</td>
+</tr>
+</tbody></table>
+<p><img src="/images/21htmlspecialchars.png" alt></p>
+<h4 id="2-strip-tag-函数"><a href="#2-strip-tag-函数" class="headerlink" title="2. strip_tag()函数"></a>2. strip_tag()函数</h4><p><strong>定义和用法</strong></p>
+<p><code>strip_tags(string, allow)</code> 函数剥去字符串中的<code>HTML</code>、<code>XML</code> 以及<code>PHP</code>的标签。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>string</td>
+<td>必需。规定要检查的字符串。</td>
+</tr>
+<tr>
+<td>allow</td>
+<td>可选。规定允许的标签。这些标签不会被删除。</td>
+</tr>
+</tbody></table>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$id=$_GET[<span class="string">"id"</span>];</span><br><span class="line">$str = strip_tags($id);</span><br><span class="line"><span class="keyword">echo</span> $str;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/22stripTags.png" alt></p>
+<h3 id="三、命令执行过滤函数"><a href="#三、命令执行过滤函数" class="headerlink" title="三、命令执行过滤函数"></a>三、命令执行过滤函数</h3><h4 id="1-escapeshellcmd"><a href="#1-escapeshellcmd" class="headerlink" title="1. escapeshellcmd()"></a>1. escapeshellcmd()</h4><p><strong>定义和用法</strong></p>
+<p>在Windows下过滤方式是在字符前面加上一个^符号；在Linux是在字符前加上反斜杠（\）</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$id=$_GET[<span class="string">"id"</span>];</span><br><span class="line">$str = escapeshellcmd($id);</span><br><span class="line"><span class="keyword">echo</span> $str;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/23escapeshellcmd.png" alt></p>
+<h4 id="2-escapeshellarg"><a href="#2-escapeshellarg" class="headerlink" title="2. escapeshellarg()"></a>2. escapeshellarg()</h4><p><strong>定义和用法</strong></p>
+<p>给所有参数加上一对双引号，强制为字符串。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$id=$_GET[<span class="string">"id"</span>];</span><br><span class="line">$str = escapeshellarg($id);</span><br><span class="line"><span class="keyword">echo</span> $str;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/24escapeshellarg.png" alt></p>
+<blockquote>
+<p><a href="https://uknowsec.cn/posts/notes/php内置过滤函数总结.html" target="_blank" rel="noopener">参考博文</a></p>
+</blockquote>
+
             
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: 新闻界面添加新功能讲解，PHP中的Cookie和Session以及程序执行函数</p>
-                    
-                        <a
-                            href="/2019/08/09/note20/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": note20"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
+
+
         </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
         
-            <a
-                href="/2019/08/09/note20/"
-                aria-label=": note20"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.pexels.com/photos/2758741/pexels-photo-2758741.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/09/practice4/"
-                            aria-label=": 练习4"
-                        >
-                            练习4
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-09T08:43:27+08:00">
-	
-		    Aug 09, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: 新闻界面新增用户登录和注册功能，以及在编写过程中遇到的问题与解决</p>
-                    
-                        <a
-                            href="/2019/08/09/practice4/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": 练习4"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/09/practice4/"
-                aria-label=": 练习4"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1560345573-9f453083c335?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/08/note19/"
-                            aria-label=": note19"
-                        >
-                            note19
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-08T23:47:18+08:00">
-	
-		    Aug 08, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: PHP中文件和文件夹操作常用函数以及文件上传功能的介绍和应用，对新闻界面添加用户登录注册界面等。</p>
-                    
-                        <a
-                            href="/2019/08/08/note19/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": note19"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/08/note19/"
-                aria-label=": note19"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1562772186-ad68d3906ca9?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/07/note18/"
-                            aria-label=": note18"
-                        >
-                            note18
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-07T23:40:08+08:00">
-	
-		    Aug 07, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
-
-
-    
-</div>
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/summary/">summary</a>
 
             </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: PHP数组索引数组和关联数组的遍历，以及数组常用的函数；PHP文件处理常用函数以及不同模式下对文件的操作。</p>
-                    
-                        <a
-                            href="/2019/08/07/note18/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": note18"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
         
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/note25/"
+                    data-tooltip="note25"
+                    aria-label="NEXT: note25"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
             <a
-                href="/2019/08/07/note18/"
-                aria-label=": note18"
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
             >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1444090542259-0af8fa96557e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/17/php-file-func/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/17/php-file-func/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/17/php-file-func/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
             
         
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
+        <li class="post-action">
             
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/07/practice3/"
-                            aria-label=": 练习3"
-                        >
-                            练习3
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-07T20:09:09+08:00">
-	
-		    Aug 07, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
-
-
-    
-</div>
-
-            </div>
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: 学习PHP的三个练习，第一个是判断一个数是否为素数，第二个是画五角星，第三个是写一个新闻界面，用读写文件来代替数据库。</p>
-                    
-                        <a
-                            href="/2019/08/07/practice3/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": 练习3"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/07/practice3/"
-                aria-label=": 练习3"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1563216368-5b6a40648062?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/06/note17/"
-                            aria-label=": note17"
-                        >
-                            note17
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-06T18:40:25+08:00">
-	
-		    Aug 06, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: PHP语言中<code>while</code>和<code>for</code>的用法，以及PHP数组的用法。</p>
-                    
-                        <a
-                            href="/2019/08/06/note17/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": note17"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/06/note17/"
-                aria-label=": note17"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1490682143684-14369e18dce8?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/06/practice2/"
-                            aria-label=": 练习2"
-                        >
-                            练习2
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-06T18:30:59+08:00">
-	
-		    Aug 06, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: PHP语言<code>if-else</code>/<code>switch-case</code>和<code>while</code>练习</p>
-                    
-                        <a
-                            href="/2019/08/06/practice2/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": 练习2"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/06/practice2/"
-                aria-label=": 练习2"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1557474295-714ea5fc2557?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/06/note16/"
-                            aria-label=": note16"
-                        >
-                            note16
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-06T18:28:35+08:00">
-	
-		    Aug 06, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: PHP中的运算符、字符串操作和流程控制</p>
-                    
-                        <a
-                            href="/2019/08/06/note16/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": note16"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/06/note16/"
-                aria-label=": note16"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    
-    <article class="postShorten postShorten--thumbnailimg-left">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title">
-                    
-                        <a
-                            class="link-unstyled"
-                            href="/2019/08/04/week3sum/"
-                            aria-label=": week3sum"
-                        >
-                            week3sum
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
-    <time datetime="2019-08-04T19:10:14+08:00">
-	
-		    Aug 04, 2019
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
-
-
-    
-</div>
-
-            </div>
-            
-                <div class="postShorten-excerpt">
-                    <p><strong>Abstract</strong>: 对第三周学习内容的总结</p>
-                    
-                        <a
-                            href="/2019/08/04/week3sum/"
-                            class="postShorten-excerpt_link link"
-                            aria-label=": week3sum"
-                        >
-                            Continue reading
-                        </a>
-                        
-                    
-                </div>
-            
-        </div>
-        
-            <a
-                href="/2019/08/04/week3sum/"
-                aria-label=": week3sum"
-            >
-                <div class="postShorten-thumbnailimg">
-                    <img alt="" src="https://images.unsplash.com/photo-1562760157-a1a28713c862?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"/>
-                </div>
-            </a>
-            
-        
-    </article>
-    
-    <div class="pagination-bar">
-    <ul class="pagination">
-        
-          <li class="pagination-prev">
-            <a
-                class="btn btn--default btn--small"
-                href="/"
-                aria-label="NEWER POSTS"
-            >
-              <i class="fa fa-angle-left text-base icon-mr"></i>
-              <span>NEWER POSTS</span>
-            </a>
-          </li>
-        
-        
-          <li class="pagination-next">
-            <a
-                class="btn btn--default btn--small"
-                href="/page/3/"
-                aria-label="OLDER POSTS"
-            >
-              <span>OLDER POSTS</span>
-              <i class="fa fa-angle-right text-base icon-ml"></i>
-            </a>
-          </li>
-        
-        <li class="pagination-number">page 2 of 4</li>
+        </li>
     </ul>
 </div>
 
-</section>
+
+        
+        
+            
+        
+    </div>
+</article>
+
 
 
                 <footer id="footer" class="main-content-wrap">
@@ -899,6 +546,154 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/note25/"
+                    data-tooltip="note25"
+                    aria-label="NEXT: note25"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/17/php-file-func/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/17/php-file-func/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/17/php-file-func/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/17/php-file-func/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/17/php-file-func/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/17/php-file-func/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -1310,6 +1105,8 @@
 <script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
 <!--SCRIPTS END-->
 
+
+    
 
 
 
