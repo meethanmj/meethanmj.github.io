@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。\n\n\n\n\n一、SQL注入过滤函数1. addslashes()定义和用法\naddslashes(string)函数返回在预定义的字符前添加反斜杠的字符串。\n预定义字符是：\n\n单引号(‘)\n\n双引号(“)\n\n反斜杠()\n\nNULL\n\n\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转移的字符串。\n\n\n1234567&lt;?php        $id=$_GET[\"id\"];    $str = addslashes($id);    echo $str;?&gt;\n\n\n2. mysql_escape_string()\n在PHP5.3中已经弃用mysql_escape_string()\n\nmysql_escape_string()并不转义%和_\n1234567&lt;?php    $id=$_GET[\"id\"];@$str = mysql_escape_string($id);echo $str;?&gt;\n\n\n3. mysql_real_escape_string()定义和用法\nmysql_real_escape_string(str, con)函数转义SQL语句中使用的字符串中的特殊字符。\n受影响的字符：\n\n\\x00\n\\n\n\\r\n\\\n‘\n“\n\\x1a\n\n若成功，返回被转义的字符串，否则，返回false。\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转义的字符串。\n\n\nconnection\n可选。规定MySQL连接。未规定，则使用上一个连接。\n\n\n123456789&lt;?php$id=$_GET[\"id\"];if(@$str = mysql_real_escape_string($id))    echo $str;else    echo 'false';?&gt;\n\n\n二、XSS过滤函数1. htmlspecialchars()定义和用法\nhtmlspecialchars()函数把预定义的字符转换成HTML实体。\n1234567&lt;?php$id=$_GET[\"id\"];$str = htmlspecialchars($id);echo $str;?&gt;\n\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转义的字符串。\n\n\n\n2. strip_tag()函数定义和用法\nstrip_tags(string, allow) 函数剥去字符串中的HTML、XML 以及PHP的标签。\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要检查的字符串。\n\n\nallow\n可选。规定允许的标签。这些标签不会被删除。\n\n\n1234567&lt;?php$id=$_GET[\"id\"];$str = strip_tags($id);echo $str;?&gt;\n\n\n三、命令执行过滤函数1. escapeshellcmd()定义和用法\n在Windows下过滤方式是在字符前面加上一个^符号；在Linux是在字符前加上反斜杠（\\）\n1234567&lt;?php$id=$_GET[\"id\"];$str = escapeshellcmd($id);echo $str;?&gt;\n\n\n2. escapeshellarg()定义和用法\n给所有参数加上一对双引号，强制为字符串。\n1234567&lt;?php$id=$_GET[\"id\"];$str = escapeshellarg($id);echo $str;?&gt;\n\n\n\n参考博文\n\n","dateCreated":"2019-08-17T16:42:07+08:00","dateModified":"2019-08-17T17:35:36+08:00","datePublished":"2019-08-17T16:42:07+08:00","description":"Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。","headline":"PHP内置过滤函数","image":["https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/17/php-file-func/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/17/php-file-func/","keywords":"summary","thumbnailUrl":"https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。\n\n\n\n\n一、SQL注入过滤函数1. addslashes()定义和用法\naddslashes(string)函数返回在预定义的字符前添加反斜杠的字符串。\n预定义字符是：\n\n单引号(‘)\n\n双引号(“)\n\n反斜杠()\n\nNULL\n\n\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转移的字符串。\n\n\n1234567&lt;?php        $id=$_GET[\"id\"];    $str = addslashes($id);    echo $str;?&gt;\n\n\n2. mysql_escape_string()\n在PHP5.3中已经弃用mysql_escape_string()\n\nmysql_escape_string()并不转义%和_\n1234567&lt;?php    $id=$_GET[\"id\"];@$str = mysql_escape_string($id);echo $str;?&gt;\n\n\n3. mysql_real_escape_string()定义和用法\nmysql_real_escape_string(str, con)函数转义SQL语句中使用的字符串中的特殊字符。\n受影响的字符：\n\n\\x00\n\\n\n\\r\n\\\n‘\n“\n\\x1a\n\n若成功，返回被转义的字符串，否则，返回false。\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转义的字符串。\n\n\nconnection\n可选。规定MySQL连接。未规定，则使用上一个连接。\n\n\n123456789&lt;?php$id=$_GET[\"id\"];if(@$str = mysql_real_escape_string($id))    echo $str;else    echo 'false';?&gt;\n\n\n二、XSS过滤函数1. htmlspecialchars()定义和用法\nhtmlspecialchars()函数把预定义的字符转换成HTML实体。\n1234567&lt;?php$id=$_GET[\"id\"];$str = htmlspecialchars($id);echo $str;?&gt;\n\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要转义的字符串。\n\n\n\n2. strip_tag()函数定义和用法\nstrip_tags(string, allow) 函数剥去字符串中的HTML、XML 以及PHP的标签。\n\n\n\n参数\n描述\n\n\n\nstring\n必需。规定要检查的字符串。\n\n\nallow\n可选。规定允许的标签。这些标签不会被删除。\n\n\n1234567&lt;?php$id=$_GET[\"id\"];$str = strip_tags($id);echo $str;?&gt;\n\n\n三、命令执行过滤函数1. escapeshellcmd()定义和用法\n在Windows下过滤方式是在字符前面加上一个^符号；在Linux是在字符前加上反斜杠（\\）\n1234567&lt;?php$id=$_GET[\"id\"];$str = escapeshellcmd($id);echo $str;?&gt;\n\n\n2. escapeshellarg()定义和用法\n给所有参数加上一对双引号，强制为字符串。\n1234567&lt;?php$id=$_GET[\"id\"];$str = escapeshellarg($id);echo $str;?&gt;\n\n\n\n参考博文\n\n","dateCreated":"2019-08-17T16:42:07+08:00","dateModified":"2019-08-17T17:41:29+08:00","datePublished":"2019-08-17T16:42:07+08:00","description":"Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。","headline":"PHP内置过滤函数","image":["https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/17/php-file-func/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/17/php-file-func/","keywords":"summary","thumbnailUrl":"https://images.unsplash.com/photo-1557633758-b4834d3e7f90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"}</script>
     <meta name="description" content="Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。">
 <meta name="keywords" content="summary">
 <meta property="og:type" content="blog">
@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://yoursite.com/images/22stripTags.png">
 <meta property="og:image" content="http://yoursite.com/images/23escapeshellcmd.png">
 <meta property="og:image" content="http://yoursite.com/images/24escapeshellarg.png">
-<meta property="og:updated_time" content="2019-08-17T09:35:36.482Z">
+<meta property="og:updated_time" content="2019-08-17T09:41:29.946Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PHP内置过滤函数">
 <meta name="twitter:description" content="Abstract: 本周写的新闻管理系统未对用户输入做出相应的判断，存在大量的漏洞，这篇文章特地总结了php内置过滤函数。">
@@ -441,9 +441,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/17/welcome/"
-                    data-tooltip="Welcome"
-                    aria-label="PREVIOUS: Welcome"
+                    href="/2019/08/20/note26/"
+                    data-tooltip="note26"
+                    aria-label="PREVIOUS: note26"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -556,9 +556,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/17/welcome/"
-                    data-tooltip="Welcome"
-                    aria-label="PREVIOUS: Welcome"
+                    href="/2019/08/20/note26/"
+                    data-tooltip="note26"
+                    aria-label="PREVIOUS: note26"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -1092,7 +1092,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                33 posts found
+                35 posts found
             </p>
         </div>
     </div>

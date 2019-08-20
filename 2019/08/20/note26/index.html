@@ -6,25 +6,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>Welcome - han个人博客</title>
+    <title>note26 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"","dateCreated":"2019-08-17T17:35:00+08:00","dateModified":"2019-08-17T17:38:33+08:00","datePublished":"2019-08-17T17:35:00+08:00","description":"记录学习，分享知识\n","headline":"Welcome","image":["http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg","http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/17/welcome/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/17/welcome/","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"}</script>
-    <meta name="description" content="记录学习，分享知识">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。\n\n\n\n\n\n\nHTTP协议基础一、计算机网络模型基础OSI 模型总共分为七层，从下到上分别是：物理层、数据链路层、网络层、运输层、会话层、表示层和应用层。\nTCP/IP 模型分为五层，从下到上是：物理层、链路层、网络层、运输层和应用层。\n\nOSI模型和 TCP/IP 模型\n\n\n\n\nOSI 模型\nTCP/IP 模型\n各层的解释\n\n\n\n应用层\n应用层\n为应用程序提供服务\n\n\n表示层\n应用层\n数据格式转化、数据加密\n\n\n会话层\n应用层\n建立、管理和维护会话\n\n\n传输层\n传输层\n建立、管理和维护端到端的连接\n\n\n网络层\n网络层\nIP 选址及路由选择\n\n\n数据链路层\n数据链路层\n提供介质访问和链路管理\n\n\n物理层\n物理层\n物理层\n\n\n\n过程如下：\n\n\n应用层数据，先按照运输层协议标准，封装到运输层数据里（数据段）；\n接着运输层的数据，会按照网络层协议的标准，封装到网络层数据里（数据包/报文）；\n接着这些数据包会按照链路层的协议标准，封装链路层数据里（帧）；\n这些数据帧，按照物理层的电气特性，转换为网络中 0101比特流发送出去\n网络会把这些流数据，不断地拆封再拆封，直到送到目标主机，然后由目标主机一层一层拆封数据，进行反解析，最终完成一次数据传递。\n\n\n\n\n层数\n作用\n\n\n\n物理层\n规定电气特性。如调制解调器、光导纤维等\n\n\n数据链路层\n有 ARQ 、PPP等协议，数据单元为帧，典型设备有：网卡/网桥/交换机\n\n\n网络层\n有IP/ICMP等协议，数据单元为数据包，典型设备为：路由器/防火墙/多层交换机\n\n\n传输层\n有TCP/UDP等协议，数据单元为数据段，典型设备有：进程和端口\n\n\n应用层\n有DHCP/FTP/HTTP等协议，典型设备有：应用程序(FTP/SMTP/HTTP)\n\n\n越往高走，越偏向软件化。\n二、HTTP协议HTTP 协议是超文本传输（转移）协议，基于 TCP/IP 通信协议来传递数据，是一个属于应用层的面向对象的协议。\n 常用状态码\n\n\n\n状态码\n意义\n\n\n\n200 OK\n从客户端发来的请求在服务器端被正常处理\n\n\n204 No Content\n服务器接收的请求已成功处理，但在返回响应报文中不含实体的主体部分\n\n\n301 Moved Permanently\n永久性重定向\n\n\n302 Found\n临时性重定向\n\n\n304 Not Modified\n客户端发送附带条件请求时，服务器端允许请求访问资源，但未满足条件的情况\n\n\n400 Bad Request\n请求报文中存在语法错误\n\n\n403 Forbidden\n对请求资源的访问被服务器拒绝\n\n\n404 Not Found\n服务器上无法找到请求的资源\n\n\n500 Internal Server Error\n服务器端在执行请求时发生了错误\n\n\n三、BurpSuite使用burpsuite抓取新闻管理系统的数据包\n新闻初始界面\n\n点击 forward\n\n点击用户界面\n\n注册成功后，登录\n\n评论\n\n读取新闻\n\n进入个人信息页面\n\n","dateCreated":"2019-08-20T19:12:56+08:00","dateModified":"2019-08-21T00:20:41+08:00","datePublished":"2019-08-20T19:12:56+08:00","description":"Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。","headline":"note26","image":["https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/20/note26/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/20/note26/","keywords":"HTTP","thumbnailUrl":"https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"}</script>
+    <meta name="description" content="Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。">
+<meta name="keywords" content="HTTP">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Welcome">
-<meta property="og:url" content="http://yoursite.com/2019/08/17/welcome/index.html">
+<meta property="og:title" content="note26">
+<meta property="og:url" content="http://yoursite.com/2019/08/20/note26/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="记录学习，分享知识">
+<meta property="og:description" content="Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-17T09:38:33.698Z">
+<meta property="og:image" content="http://yoursite.com/images/25bpindex.png">
+<meta property="og:image" content="http://yoursite.com/images/26bpindex.png">
+<meta property="og:image" content="http://yoursite.com/images/29bplogup.png">
+<meta property="og:image" content="http://yoursite.com/images/32bpjumpindex.png">
+<meta property="og:image" content="http://yoursite.com/images/33bpshowNews.png">
+<meta property="og:image" content="http://yoursite.com/images/35bpreadNews.png">
+<meta property="og:image" content="http://yoursite.com/images/37bpPerInfo.png">
+<meta property="og:updated_time" content="2019-08-20T16:20:41.353Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Welcome">
-<meta name="twitter:description" content="记录学习，分享知识">
+<meta name="twitter:title" content="note26">
+<meta name="twitter:description" content="Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。">
+<meta name="twitter:image" content="http://yoursite.com/images/25bpindex.png">
     
     
         
@@ -33,12 +42,9 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
+        <meta property="og:image" content="https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"/>
     
-    
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
     
     
     <!--STYLES-->
@@ -48,6 +54,8 @@
 
     
 
+    
+        
     
 </head>
 
@@ -250,35 +258,199 @@
 </nav>
 
             
-        <div class="post-header-cover
-                    text-center
-                    post-header-cover--full"
-             style="background-image:url('http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg');"
-             data-behavior="5">
-            
-                <div class="post-header main-content-wrap text-center">
-    
-        <h1 class="post-title">
-            Welcome
-        </h1>
-    
-    
-</div>
-
-            
-        </div>
-
             <div id="main" data-behavior="5"
-                 class="hasCover
+                 class="
                         hasCoverMetaIn
                         ">
                 
 <article class="post">
     
     
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            note26
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-20T19:12:56+08:00">
+	
+		    Aug 20, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <!-- excerpt -->
+            <p><strong>Abstract</strong>: 针对 <code>HTTP</code>的协议基础进行了简单的学习，掌握 <code>HTTP</code> 相关内容， 安装 <code>burpsuite</code> 软件，熟练使用该软件。对 <code>PDO</code>模式下防止 <code>SQL</code> 注入的理解。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP协议基础"><span class="toc-text">HTTP协议基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#一、计算机网络模型基础"><span class="toc-text">一、计算机网络模型基础</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、HTTP协议"><span class="toc-text">二、HTTP协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、BurpSuite"><span class="toc-text">三、BurpSuite</span></a></li></ol>
+
+<h3 id="HTTP协议基础"><a href="#HTTP协议基础" class="headerlink" title="HTTP协议基础"></a>HTTP协议基础</h3><h4 id="一、计算机网络模型基础"><a href="#一、计算机网络模型基础" class="headerlink" title="一、计算机网络模型基础"></a>一、计算机网络模型基础</h4><p><code>OSI</code> 模型总共分为七层，从下到上分别是：物理层、数据链路层、网络层、运输层、会话层、表示层和应用层。</p>
+<p><code>TCP/IP</code> 模型分为五层，从下到上是：物理层、链路层、网络层、运输层和应用层。</p>
+<ul>
+<li><code>OSI</code>模型和 <code>TCP/IP</code> 模型</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><code>OSI</code> 模型</th>
+<th><code>TCP/IP</code> 模型</th>
+<th>各层的解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>应用层</td>
+<td>应用层</td>
+<td>为应用程序提供服务</td>
+</tr>
+<tr>
+<td>表示层</td>
+<td>应用层</td>
+<td>数据格式转化、数据加密</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>应用层</td>
+<td>建立、管理和维护会话</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>传输层</td>
+<td>建立、管理和维护端到端的连接</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>网络层</td>
+<td><code>IP</code> 选址及路由选择</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>数据链路层</td>
+<td>提供介质访问和链路管理</td>
+</tr>
+<tr>
+<td>物理层</td>
+<td>物理层</td>
+<td>物理层</td>
+</tr>
+</tbody></table>
+<ul>
+<li>过程如下：</li>
+</ul>
+<ol>
+<li>应用层数据，先按照运输层协议标准，封装到运输层数据里（数据段）；</li>
+<li>接着运输层的数据，会按照网络层协议的标准，封装到网络层数据里（数据包/报文）；</li>
+<li>接着这些数据包会按照链路层的协议标准，封装链路层数据里（帧）；</li>
+<li>这些数据帧，按照物理层的电气特性，转换为网络中 <code>0101</code>比特流发送出去</li>
+<li>网络会把这些流数据，不断地拆封再拆封，直到送到目标主机，然后由目标主机一层一层拆封数据，进行反解析，最终完成一次数据传递。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>层数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>物理层</td>
+<td>规定电气特性。如调制解调器、光导纤维等</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>有 <code>ARQ</code> 、<code>PPP</code>等协议，数据单元为帧，典型设备有：网卡/网桥/交换机</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>有<code>IP</code>/<code>ICMP</code>等协议，数据单元为数据包，典型设备为：路由器/防火墙/多层交换机</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>有<code>TCP</code>/<code>UDP</code>等协议，数据单元为数据段，典型设备有：进程和端口</td>
+</tr>
+<tr>
+<td>应用层</td>
+<td>有<code>DHCP</code>/<code>FTP</code>/<code>HTTP</code>等协议，典型设备有：应用程序(<code>FTP</code>/<code>SMTP</code>/<code>HTTP</code>)</td>
+</tr>
+</tbody></table>
+<p>越往高走，越偏向软件化。</p>
+<h3 id="二、HTTP协议"><a href="#二、HTTP协议" class="headerlink" title="二、HTTP协议"></a>二、HTTP协议</h3><p><code>HTTP</code> 协议是超文本传输（转移）协议，基于 <code>TCP/IP</code> 通信协议来传递数据，是一个属于应用层的面向对象的协议。</p>
+<p> 常用状态码</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>200 OK</td>
+<td>从客户端发来的请求在服务器端被正常处理</td>
+</tr>
+<tr>
+<td>204 No Content</td>
+<td>服务器接收的请求已成功处理，但在返回响应报文中不含实体的主体部分</td>
+</tr>
+<tr>
+<td>301 Moved Permanently</td>
+<td>永久性重定向</td>
+</tr>
+<tr>
+<td>302 Found</td>
+<td>临时性重定向</td>
+</tr>
+<tr>
+<td>304 Not Modified</td>
+<td>客户端发送附带条件请求时，服务器端允许请求访问资源，但未满足条件的情况</td>
+</tr>
+<tr>
+<td>400 Bad Request</td>
+<td>请求报文中存在语法错误</td>
+</tr>
+<tr>
+<td>403 Forbidden</td>
+<td>对请求资源的访问被服务器拒绝</td>
+</tr>
+<tr>
+<td>404 Not Found</td>
+<td>服务器上无法找到请求的资源</td>
+</tr>
+<tr>
+<td>500 Internal Server Error</td>
+<td>服务器端在执行请求时发生了错误</td>
+</tr>
+</tbody></table>
+<h3 id="三、BurpSuite"><a href="#三、BurpSuite" class="headerlink" title="三、BurpSuite"></a>三、BurpSuite</h3><p>使用burpsuite抓取新闻管理系统的数据包</p>
+<p>新闻初始界面</p>
+<p><img src="/images/25bpindex.png" alt></p>
+<p>点击 <code>forward</code></p>
+<p><img src="/images/26bpindex.png" alt></p>
+<p>点击用户界面</p>
+<p><img src="/images/29bplogup.png" alt></p>
+<p>注册成功后，登录</p>
+<p><img src="/images/32bpjumpindex.png" alt></p>
+<p>评论</p>
+<p><img src="/images/33bpshowNews.png" alt></p>
+<p>读取新闻</p>
+<p><img src="/images/35bpreadNews.png" alt></p>
+<p>进入个人信息页面</p>
+<p><img src="/images/37bpPerInfo.png" alt></p>
+
             
 
 
@@ -286,7 +458,114 @@
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/HTTP/">HTTP</a>
+
+            </div>
         
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/20/practice8/"
+                    data-tooltip="practice8"
+                    aria-label="PREVIOUS: practice8"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/php-file-func/"
+                    data-tooltip="PHP内置过滤函数"
+                    aria-label="NEXT: PHP内置过滤函数"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/20/note26/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/20/note26/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/20/note26/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
         
     </div>
 </article>
@@ -300,6 +579,154 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/20/practice8/"
+                    data-tooltip="practice8"
+                    aria-label="PREVIOUS: practice8"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/17/php-file-func/"
+                    data-tooltip="PHP内置过滤函数"
+                    aria-label="NEXT: PHP内置过滤函数"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/20/note26/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/20/note26/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/20/note26/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/20/note26/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/20/note26/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/20/note26/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -698,7 +1125,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                33 posts found
+                35 posts found
             </p>
         </div>
     </div>
@@ -711,6 +1138,8 @@
 <script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
 <!--SCRIPTS END-->
 
+
+    
 
 
 
