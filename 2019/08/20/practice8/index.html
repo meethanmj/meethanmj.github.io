@@ -6,18 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>practice8 - han个人博客</title>
+    <title>练习8 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。\n\n\n\n\n\n描述 HTTP 协议和 HTTPS 协议的异同点\n相同点：HTTP 和 HTTPS 都采用同一个基础的协议。HTTPS并非是一种新协议，只是HTTP通信接口部分用SSL和TLS协议代替而已。HTTPS就是身披SSL协议外壳的HTTP。\n不同点\n\n\n\n名称\n不同点\n\n\n\n安全性\nHTTP不安全，HTTPS安全；HTTP无需证书，无需加密，HTTPS需要证书需要加密\n\n\n端口号\nHTTP标准端口是80，HTTPS是443\n\n\n所处层\nHTTP工作与应用层，HTTPS工作与传输层\n\n\nURL\nHTTP以http://开头，HTTPS以https://开头\n\n\n通信\nHTTP直接和TCP通信，HTTPS写和SSL通信，再由SSL和TCP通信。\n\n\n参考文献\n\nHTTP和HTTPS异同点\n《图解HTTP》\n\n\n\n\n描述 HTTP 协议中，常见头部字段信息含义。\n请求首部字段\n\n\n\n请求首部字段\n含义\n\n\n\nAccept\n通知服务器，用户能够处理的媒体类型及媒体类型的相对优先级。\n\n\nAccept-Charset\n通知服务器用户代理支持的字符集及字符集的相对优先顺序。\n\n\nAuthorization\n告知服务器，用户代理的认证信息。\n\n\nExpect\n告知服务器，期望出现的某种特定行为。\n\n\nFrom\n告知服务器使用用户代理的电子邮件地址。\n\n\nHost\n告知服务器，请求资源所处的互联网的主机名和端口号。\n\n\nProxy-Authorization\n告知服务器认证所需要的信息。\n\n\nRange\n告知服务器资源的指定范围。\n\n\nReferer\n告知服务器请求的原始资源的URI\n\n\nUser-Agent\n将创建请求的浏览器和用户代理名称等信息传达给服务器。\n\n\n响应首部字段\n\n\n\n响应首部字段\n含义\n\n\n\nAccept-Ranges\n告知客户端服务器是否能处理范围请求，以指定获取服务器端某个部分的资源。\n\n\nAge\n告知客户端，源服务器在多久前创建了响应。\n\n\nETag\n告知客户端实体标识。\n\n\nLocation\n响应接收方引导至某个与请求URI位置不同的资源。\n\n\nProxy-Authenticate\n由代理服务器所要求的认证信息发送给客户端。\n\n\nRetry-After\n告知客户端应该在多久之后再次发送请求。\n\n\nServer\n告知客户端当前服务器上安装的HTTP服务器应用程序的信息。\n\n\nVary\n可对缓存进行控制。\n\n\nWWW-Authenticate\n用于HTTP访问认证。\n\n\n\nIIS put 写权限漏洞\n打开VMware虚拟机，先查看 IP 地址\n\n\n\n​    主机访问网站\n\n​        WebDAV 开启之前\n\n​    使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后，\n\n​    开启 WebDAV 服务，\n\n​    使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后，\n\n​    文件所在文件夹的写权限未开启前\n\n​    使用 PUT 写入文件\n\n​    文件所在文件夹的写权限开启\n\n​    使用 PUT 写入文件\n\n​    进入目录查看，可以找到 test.txt 文件\n\n​    先将一句话木马写入 test.txt 中\n\n​        查看 test.txt\n\n​    将 脚本资源访问 打上勾\n\n​    在用 MOVE 将 test.txt 修改为 test.asp\n \n​    查看 test.asp\n\n","dateCreated":"2019-08-20T20:03:11+08:00","dateModified":"2019-08-21T12:58:44+08:00","datePublished":"2019-08-20T20:03:11+08:00","description":"Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。","headline":"practice8","image":["https://images.unsplash.com/photo-1533577743874-fd9cd7145f3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1001&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/20/practice8/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/20/practice8/","keywords":"HTTP","thumbnailUrl":"https://images.unsplash.com/photo-1533577743874-fd9cd7145f3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1001&q=80"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。\n\n\n\n\n\n描述 HTTP 协议和 HTTPS 协议的异同点\n相同点：HTTP 和 HTTPS 都采用同一个基础的协议。HTTPS并非是一种新协议，只是HTTP通信接口部分用SSL和TLS协议代替而已。HTTPS就是身披SSL协议外壳的HTTP。\n不同点\n\n\n\n名称\n不同点\n\n\n\n安全性\nHTTP不安全，HTTPS安全；HTTP无需证书，无需加密，HTTPS需要证书需要加密\n\n\n端口号\nHTTP标准端口是80，HTTPS是443\n\n\n所处层\nHTTP工作与应用层，HTTPS工作与传输层\n\n\nURL\nHTTP以http://开头，HTTPS以https://开头\n\n\n通信\nHTTP直接和TCP通信，HTTPS写和SSL通信，再由SSL和TCP通信。\n\n\n参考文献\n\nHTTP和HTTPS异同点\n《图解HTTP》\n\n\n\n\n描述 HTTP 协议中，常见头部字段信息含义。\n请求首部字段\n\n\n\n请求首部字段\n含义\n\n\n\nAccept\n通知服务器，用户能够处理的媒体类型及媒体类型的相对优先级。\n\n\nAccept-Charset\n通知服务器用户代理支持的字符集及字符集的相对优先顺序。\n\n\nAuthorization\n告知服务器，用户代理的认证信息。\n\n\nExpect\n告知服务器，期望出现的某种特定行为。\n\n\nFrom\n告知服务器使用用户代理的电子邮件地址。\n\n\nHost\n告知服务器，请求资源所处的互联网的主机名和端口号。\n\n\nProxy-Authorization\n告知服务器认证所需要的信息。\n\n\nRange\n告知服务器资源的指定范围。\n\n\nReferer\n告知服务器请求的原始资源的URI\n\n\nUser-Agent\n将创建请求的浏览器和用户代理名称等信息传达给服务器。\n\n\n响应首部字段\n\n\n\n响应首部字段\n含义\n\n\n\nAccept-Ranges\n告知客户端服务器是否能处理范围请求，以指定获取服务器端某个部分的资源。\n\n\nAge\n告知客户端，源服务器在多久前创建了响应。\n\n\nETag\n告知客户端实体标识。\n\n\nLocation\n响应接收方引导至某个与请求URI位置不同的资源。\n\n\nProxy-Authenticate\n由代理服务器所要求的认证信息发送给客户端。\n\n\nRetry-After\n告知客户端应该在多久之后再次发送请求。\n\n\nServer\n告知客户端当前服务器上安装的HTTP服务器应用程序的信息。\n\n\nVary\n可对缓存进行控制。\n\n\nWWW-Authenticate\n用于HTTP访问认证。\n\n\n\nIIS put 写权限漏洞\n打开VMware虚拟机，先查看 IP 地址\n\n\n\n​    主机访问网站\n\n​        WebDAV 开启之前\n\n​    使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后，\n\n​    开启 WebDAV 服务，\n\n​    使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后，\n\n​    文件所在文件夹的写权限未开启前\n\n​    使用 PUT 写入文件\n\n​    文件所在文件夹的写权限开启\n\n​    使用 PUT 写入文件\n\n​    进入目录查看，可以找到 test.txt 文件\n\n​    先将一句话木马写入 test.txt 中\n\n​        查看 test.txt\n\n​    将 脚本资源访问 打上勾\n\n​    在用 MOVE 将 test.txt 修改为 test.asp\n \n​    查看 test.asp\n\n","dateCreated":"2019-08-20T20:03:11+08:00","dateModified":"2019-08-21T23:16:03+08:00","datePublished":"2019-08-20T20:03:11+08:00","description":"Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。","headline":"练习8","image":["https://images.unsplash.com/photo-1533577743874-fd9cd7145f3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1001&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/20/practice8/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/20/practice8/","keywords":"HTTP","thumbnailUrl":"https://images.unsplash.com/photo-1533577743874-fd9cd7145f3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1001&q=80"}</script>
     <meta name="description" content="Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。">
 <meta name="keywords" content="HTTP">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="practice8">
+<meta property="og:title" content="练习8">
 <meta property="og:url" content="http://yoursite.com/2019/08/20/practice8/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。">
@@ -38,9 +38,9 @@
 <meta property="og:image" content="http://yoursite.com/images/51script.png">
 <meta property="og:image" content="http://yoursite.com/images/52createAsp.png">
 <meta property="og:image" content="http://yoursite.com/images/53show.png">
-<meta property="og:updated_time" content="2019-08-21T04:58:44.217Z">
+<meta property="og:updated_time" content="2019-08-21T15:16:03.501Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="practice8">
+<meta name="twitter:title" content="练习8">
 <meta name="twitter:description" content="Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。">
 <meta name="twitter:image" content="http://yoursite.com/images/38Ipaddr.png">
     
@@ -278,7 +278,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            practice8
+            练习8
         </h1>
     
     
@@ -503,9 +503,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/21/welcome/"
-                    data-tooltip="Welcome"
-                    aria-label="PREVIOUS: Welcome"
+                    href="/2019/08/21/note27/"
+                    data-tooltip="note27"
+                    aria-label="PREVIOUS: note27"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -618,9 +618,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/08/21/welcome/"
-                    data-tooltip="Welcome"
-                    aria-label="PREVIOUS: Welcome"
+                    href="/2019/08/21/note27/"
+                    data-tooltip="note27"
+                    aria-label="PREVIOUS: note27"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -1154,7 +1154,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                35 posts found
+                36 posts found
             </p>
         </div>
     </div>
