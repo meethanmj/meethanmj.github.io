@@ -6,25 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>Welcome - han个人博客</title>
+    <title>burpsuite - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"","dateCreated":"2019-08-21T22:39:00+08:00","dateModified":"2019-08-21T22:39:49+08:00","datePublished":"2019-08-21T22:39:00+08:00","description":"记录  学习  分享\n","headline":"Welcome","image":["http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg","http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/21/welcome/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/21/welcome/","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"}</script>
-    <meta name="description" content="记录  学习  分享">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 在 Web 应用的安全测试或扫描中，长时间无操作或意外出发 logout ，均会导致会话失效，访问请求跳到登录页面，需要再次登录，手工登录会有一些繁琐，其实完全可以使用 Burpsuite 的宏在会话失效后完成自动登录。\n\n\n\n\n\n\n使用宏维持会话有效分析登录过程在 Firefox 浏览器中登录 DVWA 后，点击 Logout 退出登录，然后在重新登录，用 Burpsuite 分析登录过程。登陆退出后，页面跳转到 login.php , 服务器响应内容中包含 user_token。重新执行登录时，登录请求包含上一次得到的 user_token。登录成功后，服务响应 302 ，跳转到 index.php。\n创建用户登录宏理清登录流程后，根据这个流程创建一个用户登录的宏。账号重新登录时，需要两个动作，第一个是 GET 请求 login.php 页面，获取 user_token ，下一个动作是发现账号、密码和 user_token 进行登录。在录制宏选项中，按住Ctrl，选择两个请求。第一个动作的 GET 请求，与前面的 CSRF 绕过的配置一样，选择 user_token 位置，添加变量。第二个动作，POST 请求的几个参数，username、password、Login都保持不变，user_token使用宏里上一次请求的参数返回值。完成后保持宏，命名为user_Login。\n创建会话处理规则添加一条新规则，规则描述为 User_Login，添加规则动作，选择 Check session is valid，验证会话是否有效。设置判断会话是否失效的标志和会话失效后的操作，会话失效后，运行之前的登录宏，从宏的请求响应中更新参数值。Tools Scope选择上 Proxy，URL Scope添加整个 DVWA路径。\n验证规则有效性浏览器清除所有的 Cookie，输入 DVWA 地址，Burpsuite 宏自动登录网站，浏览器页面不会跳转到登录页面，而是直接进入主界面。\n","dateCreated":"2019-08-22T08:23:04+08:00","dateModified":"2019-08-22T22:39:05+08:00","datePublished":"2019-08-22T08:23:04+08:00","description":"Abstract: 在 Web 应用的安全测试或扫描中，长时间无操作或意外出发 logout ，均会导致会话失效，访问请求跳到登录页面，需要再次登录，手工登录会有一些繁琐，其实完全可以使用 Burpsuite 的宏在会话失效后完成自动登录。","headline":"burpsuite","image":["https://images.unsplash.com/photo-1554320666-c12ac6076837?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/22/burpsuite/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/22/burpsuite/","keywords":"BurpSuite","thumbnailUrl":"https://images.unsplash.com/photo-1554320666-c12ac6076837?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"}</script>
+    <meta name="description" content="Abstract: 在 Web 应用的安全测试或扫描中，长时间无操作或意外出发 logout ，均会导致会话失效，访问请求跳到登录页面，需要再次登录，手工登录会有一些繁琐，其实完全可以使用 Burpsuite 的宏在会话失效后完成自动登录。">
+<meta name="keywords" content="BurpSuite">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Welcome">
-<meta property="og:url" content="http://yoursite.com/2019/08/21/welcome/index.html">
+<meta property="og:title" content="burpsuite">
+<meta property="og:url" content="http://yoursite.com/2019/08/22/burpsuite/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="记录  学习  分享">
+<meta property="og:description" content="Abstract: 在 Web 应用的安全测试或扫描中，长时间无操作或意外出发 logout ，均会导致会话失效，访问请求跳到登录页面，需要再次登录，手工登录会有一些繁琐，其实完全可以使用 Burpsuite 的宏在会话失效后完成自动登录。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-21T14:39:49.468Z">
+<meta property="og:updated_time" content="2019-08-22T14:39:05.688Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Welcome">
-<meta name="twitter:description" content="记录  学习  分享">
+<meta name="twitter:title" content="burpsuite">
+<meta name="twitter:description" content="Abstract: 在 Web 应用的安全测试或扫描中，长时间无操作或意外出发 logout ，均会导致会话失效，访问请求跳到登录页面，需要再次登录，手工登录会有一些繁琐，其实完全可以使用 Burpsuite 的宏在会话失效后完成自动登录。">
     
     
         
@@ -33,12 +34,9 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
+        <meta property="og:image" content="https://images.unsplash.com/photo-1554320666-c12ac6076837?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=634&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1554320666-c12ac6076837?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=634&amp;q=80"/>
     
-    
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
     
     
     <!--STYLES-->
@@ -48,6 +46,8 @@
 
     
 
+    
+        
     
 </head>
 
@@ -250,35 +250,54 @@
 </nav>
 
             
-        <div class="post-header-cover
-                    text-center
-                    post-header-cover--full"
-             style="background-image:url('http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg');"
-             data-behavior="5">
-            
-                <div class="post-header main-content-wrap text-center">
-    
-        <h1 class="post-title">
-            Welcome
-        </h1>
-    
-    
-</div>
-
-            
-        </div>
-
             <div id="main" data-behavior="5"
-                 class="hasCover
+                 class="
                         hasCoverMetaIn
                         ">
                 
 <article class="post">
     
     
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            burpsuite
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-22T08:23:04+08:00">
+	
+		    Aug 22, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <!-- excerpt -->
+            <p><strong>Abstract</strong>: 在 <code>Web</code> 应用的安全测试或扫描中，长时间无操作或意外出发 <code>logout</code> ，均会导致会话失效，访问请求跳到登录页面，需要再次登录，手工登录会有一些繁琐，其实完全可以使用 <code>Burpsuite</code> 的宏在会话失效后完成自动登录。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用宏维持会话有效"><span class="toc-text">使用宏维持会话有效</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分析登录过程"><span class="toc-text">分析登录过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建用户登录宏"><span class="toc-text">创建用户登录宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建会话处理规则"><span class="toc-text">创建会话处理规则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#验证规则有效性"><span class="toc-text">验证规则有效性</span></a></li></ol></li></ol>
+
+<h3 id="使用宏维持会话有效"><a href="#使用宏维持会话有效" class="headerlink" title="使用宏维持会话有效"></a>使用宏维持会话有效</h3><h4 id="分析登录过程"><a href="#分析登录过程" class="headerlink" title="分析登录过程"></a>分析登录过程</h4><p>在 <code>Firefox</code> 浏览器中登录 <code>DVWA</code> 后，点击 <code>Logout</code> 退出登录，然后在重新登录，用 <code>Burpsuite</code> 分析登录过程。登陆退出后，页面跳转到 <code>login.php</code> , 服务器响应内容中包含 <code>user_token</code>。重新执行登录时，登录请求包含上一次得到的 <code>user_token</code>。登录成功后，服务响应 <code>302</code> ，跳转到 <code>index.php</code>。</p>
+<h4 id="创建用户登录宏"><a href="#创建用户登录宏" class="headerlink" title="创建用户登录宏"></a>创建用户登录宏</h4><p>理清登录流程后，根据这个流程创建一个用户登录的宏。账号重新登录时，需要两个动作，第一个是 <code>GET</code> 请求 <code>login.php</code> 页面，获取 <code>user_token</code> ，下一个动作是发现账号、密码和 <code>user_token</code> 进行登录。在录制宏选项中，按住<code>Ctrl</code>，选择两个请求。第一个动作的 <code>GET</code> 请求，与前面的 <code>CSRF</code> 绕过的配置一样，选择 <code>user_token</code> 位置，添加变量。第二个动作，<code>POST</code> 请求的几个参数，<code>username</code>、<code>password</code>、<code>Login</code>都保持不变，<code>user_token</code>使用宏里上一次请求的参数返回值。完成后保持宏，命名为<code>user_Login</code>。</p>
+<h4 id="创建会话处理规则"><a href="#创建会话处理规则" class="headerlink" title="创建会话处理规则"></a>创建会话处理规则</h4><p>添加一条新规则，规则描述为 <code>User_Login</code>，添加规则动作，选择 <code>Check session is valid</code>，验证会话是否有效。设置判断会话是否失效的标志和会话失效后的操作，会话失效后，运行之前的登录宏，从宏的请求响应中更新参数值。<code>Tools Scope</code>选择上 <code>Proxy</code>，<code>URL Scope</code>添加整个 <code>DVWA</code>路径。</p>
+<h4 id="验证规则有效性"><a href="#验证规则有效性" class="headerlink" title="验证规则有效性"></a>验证规则有效性</h4><p>浏览器清除所有的 <code>Cookie</code>，输入 <code>DVWA</code> 地址，<code>Burpsuite</code> 宏自动登录网站，浏览器页面不会跳转到登录页面，而是直接进入主界面。</p>
+
             
 
 
@@ -286,7 +305,114 @@
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/BurpSuite/">BurpSuite</a>
+
+            </div>
         
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/22/note28/"
+                    data-tooltip="note28"
+                    aria-label="PREVIOUS: note28"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/21/note27/"
+                    data-tooltip="note27"
+                    aria-label="NEXT: note27"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/22/burpsuite/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/22/burpsuite/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/22/burpsuite/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
         
     </div>
 </article>
@@ -300,6 +426,154 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/22/note28/"
+                    data-tooltip="note28"
+                    aria-label="PREVIOUS: note28"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/21/note27/"
+                    data-tooltip="note27"
+                    aria-label="NEXT: note27"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/22/burpsuite/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/22/burpsuite/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/22/burpsuite/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/22/burpsuite/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/22/burpsuite/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/22/burpsuite/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -698,7 +972,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                36 posts found
+                38 posts found
             </p>
         </div>
     </div>
@@ -711,6 +985,8 @@
 <script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
 <!--SCRIPTS END-->
 
+
+    
 
 
 
