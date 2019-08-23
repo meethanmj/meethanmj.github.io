@@ -1,0 +1,1060 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>note29 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。\n\n\n\n\n\n\n协议学习目标\n熟悉网络层数据包结构\n熟悉ARP 协议、IP 协议、ICMP 协议\n能够看懂 wireshark获取到的网络层数据包 \n\nARP协议ARPARP: Address Resolution Protocol 协议，即地址解析协议，把网络层的 IP 地址翻译成在数据链路层寻址的48位硬件地址（MAC地址）。\n在 OSI 模型中 ARP 协议属于链路层；在 TCP/IP 模型中，ARP 协议属于网络层。\nARP协议工作流程第一步：在每台主机都设有一个 ARP 高速缓存，保存局域网上各主机和路由 IP 地址到硬件地址的映射表。当 A主机向 B主机发送一个数据包时，A 主机先在其高速缓存中查看有无 B 的 IP 地址对应的 MAC地址，如果有把硬件地址写入到数据包。\n第二步：若没有找到，APR 进程在局域网上广播发送一个 ARP 请求分组，数据包的主要内容是：“我的 IP 值是1.1.1.1，硬件地址是 xx-xx-xx-xx-xx-xx-xx-xx。我想知道IP地址为 2.2.2.2 的主机硬件地址”，局域网上所有主机上都会收到这个 ARP 请求分组。\n第三步：主机 B 收到了主机 A 发送的 ARP 请求分组数据包，发现请求的 IP 和自己的 IP 一样，就收下这个 IP，并向主机A发送 ARP 响应分组，同时把数据包带有 A 的硬件地址写入自己的 ARP 缓存表。其余所有的主机因为 IP 不匹配都不会理会这个请求数据包。响应包的主要内容是：“我的 IP 地址是 2.2.2.2，我的硬件地址是 yy-yy-yy-yy-yy-yy-yy-yy”，单独发送给 A，不会广播。\nNote: ARP 对保存在高速缓存中的每一个映射地址都设置生存时间，超过生存时间就会从缓存表中删除，防止对方硬件地址突然失效，比如拔下网线，更换网卡；当硬件地址发生变化，主机会发送一个无偿的 ARP 数据包，广播给局域网内所有鸡器。\nIP协议IP 在 ARP 的上层，ICMP 和 IGMP在 IP 的上层。\n\n\nICMP协议ICMPICMP: Internet Control Message Protocol ，即网际报文控制协议。用于在IP 主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。大部分网络检修技巧和工具都是基于ICMP的。简单点说，ICMP常用于寻找网络故障。\ntracert工作原理tracert 从源主机向目的主机发送一连串 ICMP 数据包。第一个数据包 P1 的生存时间 TTL=1，当 P1 数据包到达路径上第一个路由器 R1 时候，路由器把 TTL 减一，然后发现 TTL=0，R1就丢弃 P1，然后发送一个 ICMP时间超过差错报文。下一个数据包 TTL=2，到第二个路由器 R2被丢弃，以此类推。\n当 TTL 等于某一个数值时候，刚好到达目的主机，目的主机就返回一个正常的响应包，告诉源主机已经到达目的主机。\n传输层在网络中进行通信的实体是主机中的进程，网络层为主机之间提供逻辑通信，而传输层为应用进程之间提供端到端的逻辑通信。传输层还要对报文进行差错检测，提供可靠的运输。但在网络层，IP 数据包检测只针对首部，不检查数据部分。\n传输层的两个主要协议：\n* 传输控制协议 `TCP` (`Transmission Control Protocol`)\n* 用户数据包协议`UDP` (`User Datagram Protocol`)区别\nTCP 提供面向连接的服务。在传送数据前必须先建立会话，进行流量控制，保证可靠传输。\nUDP 传输之间不需要建立连接，不提供可靠交付，简单点说就是发送出去就不管了。适合一个数据包就能完成通信，或者对丢包了没必要重传的应用。\n\n\nTCP协议三次握手\n\n客户端发送 SYN 段，并指明客户端的初始化序列号，即 ISN(s)\n服务端发送自己的 SYN段作为应答，同样指明自己的 ISN(s) 。为了确认客户端的 SYN，将 ISN(c)+1 作为 ACK 数值。这样，每发送一个 SYN，序列号就会加1。如果有丢失情况，则会重传。\n为了确认服务器端的 SYN，客户端将 SYN(s)+1作为返回的 ACK数值。\n\n四次挥手\n\n客户端发送一个 FIN 段，并包含一个希望接受这看到的自己当前的序列号 K，同时还包含一个 ACK 表示确认对方最近一次发过来的数据。\n服务端将 K值加1作为 ACK 序号值，表明收到了上一个包。这是上层应用程序会被告知另一端发起了关闭操作，通常将这引起应用程序发起自己的关闭。\n服务端发起自己的 FIN 段， ACK=K+1，Seq=L 。\n客户端确认，ACK=L+1\n\nDNS域名解析工作原理\n浏览器输入 www.xxx.com 域名，操作系统会检查自己本地的 hosts 文件是否有这个映射关系，若有，就先调用这个 IP 地址映射，完成域名解析。\n若 hosts 没有这个域名映射，则查找本地 DNS 解析器缓存，是否有这个网址映射关系，若有直接返回，完成域名解析。\n若 hosts 与本地 DNS 解析器缓存都没有相应的网址映射关系，首先会找 TCP/IP 参数设置的首选 DNS 服务器，即本地 DNS 服务器，此服务器收到查询时，若要查询的域名，包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析。\n若本地 DNS 服务器解析失败，则到根 DNS 解析器请求。\n\nDHCP协议DHCP: Dynamic Host Configuration Protocol，即动态主机配置协议，是一个应用层协议，工作在局域网，使用 UDP 协议，能够让设备自动获取重要网络资源，本质就是在 DHCP 服务器上有一个数据库，存放着 IP地址、网关、DNS等参数。\n工作方式\n自动分配方式：DHCP给主机指定一个永久的 IP 地址，一旦 DHCP 客户端第一次成功的从 DHCP 服务器租用到 IP位址后，就永远使用这个位址。\n动态分配方式：DHCP 给主机指定一个有”时间限制”的 IP 地址，到时间或主机明确表示放弃这个地址时，这个地址可以被其他主机使用，当然，客户端可以比其他主机更优先延续租用。\n手动分配方式：主机 IP 地址由网络管理员指定，它可以按照 MAC地址固定分配 IP 位址，DHCP 只是把指定的 IP 地址告诉主机，相当于将某个 MAC 和 IP 进行了静态绑定。\n\n工作流程\n新机器加入网络时，会使用 0.0.0.0 作为源地址，发送广播discover报文，查询网络上有哪些 DHCP server \nDHCP 服务器接收到 DHCP Discover 报文后，回应 Offer 报文，提供 IP 地址给请求方\n请求方根据收到的 Offer 报文，选择一个 DHCP server ，并选择它提供的 IP 地址，然后广播 Request 报文，向 DHCP Server 请求该 IP 地址，同时想本地网络公告自己已经选择了某个 DHCP Server 的某个 IP 地址\nDHCP Server 回应 ACK 报文，将 IP 地址分配给 Client 端\n\n","dateCreated":"2019-08-23T18:51:36+08:00","dateModified":"2019-08-23T20:28:26+08:00","datePublished":"2019-08-23T18:51:36+08:00","description":"Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。","headline":"note29","image":["https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/23/note29/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/23/note29/","keywords":"计算机网络","thumbnailUrl":"https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <meta name="description" content="Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。">
+<meta name="keywords" content="计算机网络">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="note29">
+<meta property="og:url" content="http://yoursite.com/2019/08/23/note29/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/78ip.png">
+<meta property="og:image" content="http://yoursite.com/images/79ipprotocol.png">
+<meta property="og:image" content="http://yoursite.com/images/80tcpudp.png">
+<meta property="og:image" content="http://yoursite.com/images/81threehands.png">
+<meta property="og:image" content="http://yoursite.com/images/82foursaybai.png">
+<meta property="og:updated_time" content="2019-08-23T12:28:26.424Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="note29">
+<meta name="twitter:description" content="Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。">
+<meta name="twitter:image" content="http://yoursite.com/images/78ip.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            note29
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-23T18:51:36+08:00">
+	
+		    Aug 23, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 学习网络层数据包的结构， <code>ARP</code> 协议、<code>IP</code> 协议和 <code>ICMP</code> 协议以及 <code>wireshark</code> 获取网络层的数据包。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#协议"><span class="toc-text">协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#学习目标"><span class="toc-text">学习目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ARP协议"><span class="toc-text">ARP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ARP"><span class="toc-text">ARP</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ARP协议工作流程"><span class="toc-text">ARP协议工作流程</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP协议"><span class="toc-text">IP协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ICMP协议"><span class="toc-text">ICMP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ICMP"><span class="toc-text">ICMP</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#tracert工作原理"><span class="toc-text">tracert工作原理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#传输层"><span class="toc-text">传输层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#区别"><span class="toc-text">区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP协议"><span class="toc-text">TCP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#三次握手"><span class="toc-text">三次握手</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#四次挥手"><span class="toc-text">四次挥手</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DNS域名解析"><span class="toc-text">DNS域名解析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#工作原理"><span class="toc-text">工作原理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DHCP协议"><span class="toc-text">DHCP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#工作方式"><span class="toc-text">工作方式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#工作流程"><span class="toc-text">工作流程</span></a></li></ol></li></ol></li></ol>
+
+<h3 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h3><h4 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h4><ul>
+<li>熟悉网络层数据包结构</li>
+<li>熟悉<code>ARP</code> 协议、<code>IP</code> 协议、<code>ICMP</code> 协议</li>
+<li>能够看懂 <code>wireshark</code>获取到的网络层数据包 </li>
+</ul>
+<h4 id="ARP协议"><a href="#ARP协议" class="headerlink" title="ARP协议"></a>ARP协议</h4><h5 id="ARP"><a href="#ARP" class="headerlink" title="ARP"></a>ARP</h5><p><code>ARP</code>: <code>Address Resolution Protocol</code> 协议，即地址解析协议，把网络层的 <code>IP</code> 地址翻译成在数据链路层寻址的48位硬件地址（<code>MAC</code>地址）。</p>
+<p>在 <code>OSI</code> 模型中 <code>ARP</code> 协议属于链路层；在 <code>TCP/IP</code> 模型中，<code>ARP</code> 协议属于网络层。</p>
+<h5 id="ARP协议工作流程"><a href="#ARP协议工作流程" class="headerlink" title="ARP协议工作流程"></a>ARP协议工作流程</h5><p><strong>第一步</strong>：在每台主机都设有一个 <code>ARP</code> 高速缓存，保存局域网上各主机和路由 <code>IP</code> 地址到硬件地址的映射表。当 <code>A</code>主机向 <code>B</code>主机发送一个数据包时，<code>A</code> 主机先在其高速缓存中查看有无 <code>B</code> 的 <code>IP</code> 地址对应的 <code>MAC</code>地址，如果有把硬件地址写入到数据包。</p>
+<p><strong>第二步</strong>：若没有找到，<code>APR</code> 进程在局域网上广播发送一个 <code>ARP</code> 请求分组，数据包的主要内容是：“我的 <code>IP</code> 值是<code>1.1.1.1</code>，硬件地址是 <code>xx-xx-xx-xx-xx-xx-xx-xx</code>。我想知道<code>IP</code>地址为 <code>2.2.2.2</code> 的主机硬件地址”，局域网上所有主机上都会收到这个 <code>ARP</code> 请求分组。</p>
+<p><strong>第三步</strong>：主机 <code>B</code> 收到了主机 <code>A</code> 发送的 <code>ARP</code> 请求分组数据包，发现请求的 <code>IP</code> 和自己的 <code>IP</code> 一样，就收下这个 <code>IP</code>，并向主机<code>A</code>发送 <code>ARP</code> 响应分组，同时把数据包带有 <code>A</code> 的硬件地址写入自己的 <code>ARP</code> 缓存表。其余所有的主机因为 <code>IP</code> 不匹配都不会理会这个请求数据包。响应包的主要内容是：“我的 <code>IP</code> 地址是 <code>2.2.2.2</code>，我的硬件地址是 <code>yy-yy-yy-yy-yy-yy-yy-yy</code>”，单独发送给 <code>A</code>，不会广播。</p>
+<p><strong>Note</strong>: <code>ARP</code> 对保存在高速缓存中的每一个映射地址都设置生存时间，超过生存时间就会从缓存表中删除，防止对方硬件地址突然失效，比如拔下网线，更换网卡；当硬件地址发生变化，主机会发送一个无偿的 <code>ARP</code> 数据包，广播给局域网内所有鸡器。</p>
+<h4 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a>IP协议</h4><p><code>IP</code> 在 <code>ARP</code> 的上层，<code>ICMP</code> 和 <code>IGMP</code>在 <code>IP</code> 的上层。</p>
+<p><img src="/images/78ip.png" alt></p>
+<p><img src="/images/79ipprotocol.png" alt></p>
+<h4 id="ICMP协议"><a href="#ICMP协议" class="headerlink" title="ICMP协议"></a>ICMP协议</h4><h5 id="ICMP"><a href="#ICMP" class="headerlink" title="ICMP"></a>ICMP</h5><p><code>ICMP</code>: <code>Internet Control Message Protocol</code> ，即网际报文控制协议。用于在<code>IP</code> 主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。大部分网络检修技巧和工具都是基于<code>ICMP</code>的。简单点说，<code>ICMP</code>常用于寻找网络故障。</p>
+<h5 id="tracert工作原理"><a href="#tracert工作原理" class="headerlink" title="tracert工作原理"></a>tracert工作原理</h5><p><code>tracert</code> 从源主机向目的主机发送一连串 <code>ICMP</code> 数据包。第一个数据包 <code>P1</code> 的生存时间 <code>TTL=1</code>，当 <code>P1</code> 数据包到达路径上第一个路由器 <code>R1</code> 时候，路由器把 <code>TTL</code> 减一，然后发现 <code>TTL=0</code>，<code>R1</code>就丢弃 <code>P1</code>，然后发送一个 <code>ICMP</code>时间超过差错报文。下一个数据包 <code>TTL=2</code>，到第二个路由器 <code>R2</code>被丢弃，以此类推。</p>
+<p>当 <code>TTL</code> 等于某一个数值时候，刚好到达目的主机，目的主机就返回一个正常的响应包，告诉源主机已经到达目的主机。</p>
+<h3 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h3><p>在网络中进行通信的实体是主机中的进程，网络层为主机之间提供逻辑通信，而传输层为应用进程之间提供端到端的逻辑通信。传输层还要对报文进行差错检测，提供可靠的运输。但在网络层，<code>IP</code> 数据包检测只针对首部，不检查数据部分。</p>
+<p>传输层的两个主要协议：</p>
+<pre><code>* 传输控制协议 `TCP` (`Transmission Control Protocol`)
+* 用户数据包协议`UDP` (`User Datagram Protocol`)</code></pre><h4 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h4><ol>
+<li><code>TCP</code> 提供面向连接的服务。在传送数据前必须先建立会话，进行流量控制，保证可靠传输。</li>
+<li><code>UDP</code> 传输之间不需要建立连接，不提供可靠交付，简单点说就是发送出去就不管了。适合一个数据包就能完成通信，或者对丢包了没必要重传的应用。</li>
+</ol>
+<p><img src="/images/80tcpudp.png" alt></p>
+<h4 id="TCP协议"><a href="#TCP协议" class="headerlink" title="TCP协议"></a>TCP协议</h4><h5 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h5><p><img src="/images/81threehands.png" alt></p>
+<ol>
+<li>客户端发送 <code>SYN</code> 段，并指明客户端的初始化序列号，即 <code>ISN(s)</code></li>
+<li>服务端发送自己的 <code>SYN</code>段作为应答，同样指明自己的 <code>ISN(s)</code> 。为了确认客户端的 <code>SYN</code>，将 <code>ISN(c)+1</code> 作为 <code>ACK</code> 数值。这样，每发送一个 <code>SYN</code>，序列号就会加1。如果有丢失情况，则会重传。</li>
+<li>为了确认服务器端的 <code>SYN</code>，客户端将 <code>SYN(s)+1</code>作为返回的 <code>ACK</code>数值。</li>
+</ol>
+<h5 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h5><p><img src="/images/82foursaybai.png" alt></p>
+<ol>
+<li>客户端发送一个 <code>FIN</code> 段，并包含一个希望接受这看到的自己当前的序列号 <code>K</code>，同时还包含一个 <code>ACK</code> 表示确认对方最近一次发过来的数据。</li>
+<li>服务端将 <code>K</code>值加1作为 <code>ACK</code> 序号值，表明收到了上一个包。这是上层应用程序会被告知另一端发起了关闭操作，通常将这引起应用程序发起自己的关闭。</li>
+<li>服务端发起自己的 <code>FIN</code> 段， <code>ACK=K+1</code>，<code>Seq=L</code> 。</li>
+<li>客户端确认，<code>ACK=L+1</code></li>
+</ol>
+<h4 id="DNS域名解析"><a href="#DNS域名解析" class="headerlink" title="DNS域名解析"></a>DNS域名解析</h4><h5 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h5><ol>
+<li>浏览器输入 <code>www.xxx.com</code> 域名，操作系统会检查自己本地的 <code>hosts</code> 文件是否有这个映射关系，若有，就先调用这个 <code>IP</code> 地址映射，完成域名解析。</li>
+<li>若 <code>hosts</code> 没有这个域名映射，则查找本地 <code>DNS</code> 解析器缓存，是否有这个网址映射关系，若有直接返回，完成域名解析。</li>
+<li>若 <code>hosts</code> 与本地 <code>DNS</code> 解析器缓存都没有相应的网址映射关系，首先会找 <code>TCP/IP</code> 参数设置的首选 <code>DNS</code> 服务器，即本地 <code>DNS</code> 服务器，此服务器收到查询时，若要查询的域名，包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析。</li>
+<li>若本地 <code>DNS</code> 服务器解析失败，则到根 <code>DNS</code> 解析器请求。</li>
+</ol>
+<h4 id="DHCP协议"><a href="#DHCP协议" class="headerlink" title="DHCP协议"></a>DHCP协议</h4><p><code>DHCP</code>: <code>Dynamic Host Configuration Protocol</code>，即动态主机配置协议，是一个应用层协议，工作在局域网，使用 <code>UDP</code> 协议，能够让设备自动获取重要网络资源，本质就是在 <code>DHCP</code> 服务器上有一个数据库，存放着 <code>IP</code>地址、网关、<code>DNS</code>等参数。</p>
+<h5 id="工作方式"><a href="#工作方式" class="headerlink" title="工作方式"></a>工作方式</h5><ol>
+<li>自动分配方式：<code>DHCP</code>给主机指定一个永久的 <code>IP</code> 地址，一旦 <code>DHCP</code> 客户端第一次成功的从 <code>DHCP</code> 服务器租用到 <code>IP</code>位址后，就永远使用这个位址。</li>
+<li>动态分配方式：<code>DHCP</code> 给主机指定一个有”时间限制”的 <code>IP</code> 地址，到时间或主机明确表示放弃这个地址时，这个地址可以被其他主机使用，当然，客户端可以比其他主机更优先延续租用。</li>
+<li>手动分配方式：主机 <code>IP</code> 地址由网络管理员指定，它可以按照 <code>MAC</code>地址固定分配 <code>IP</code> 位址，<code>DHCP</code> 只是把指定的 <code>IP</code> 地址告诉主机，相当于将某个 <code>MAC</code> 和 <code>IP</code> 进行了静态绑定。</li>
+</ol>
+<h5 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h5><ol>
+<li>新机器加入网络时，会使用 <code>0.0.0.0</code> 作为源地址，发送广播<code>discover</code>报文，查询网络上有哪些 <code>DHCP server</code> </li>
+<li><code>DHCP</code> 服务器接收到 <code>DHCP Discover</code> 报文后，回应 <code>Offer</code> 报文，提供 <code>IP</code> 地址给请求方</li>
+<li>请求方根据收到的 <code>Offer</code> 报文，选择一个 <code>DHCP server</code> ，并选择它提供的 <code>IP</code> 地址，然后广播 <code>Request</code> 报文，向 <code>DHCP Server</code> 请求该 <code>IP</code> 地址，同时想本地网络公告自己已经选择了某个 <code>DHCP Server</code> 的某个 <code>IP</code> 地址</li>
+<li><code>DHCP Server</code> 回应 <code>ACK</code> 报文，将 <code>IP</code> 地址分配给 <code>Client</code> 端</li>
+</ol>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/计算机网络/">计算机网络</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/23/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/22/note28/"
+                    data-tooltip="note28"
+                    aria-label="NEXT: note28"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/23/note29/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/23/note29/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/23/note29/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/23/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/22/note28/"
+                    data-tooltip="note28"
+                    aria-label="NEXT: note28"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/23/note29/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/23/note29/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/23/note29/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/23/note29/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/23/note29/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/23/note29/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <h3 class="media-heading">dvwa-deploy</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <h3 class="media-heading">phpmyadmin-bug</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <h3 class="media-heading">note11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <h3 class="media-heading">week2sum</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <h3 class="media-heading">note12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <h3 class="media-heading">note13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <h3 class="media-heading">note15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                39 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
