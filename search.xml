@@ -267,18 +267,7 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>HTTP - BurpSuite</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[IIS PUT 权限写漏洞复现]]></title>
-    <url>%2F2019%2F08%2F20%2FIIS-put-bug%2F</url>
-    <content type="text"><![CDATA[Abstract: IIS PUT写权限漏洞学习报告。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
-      <categories>
-        <category>Web Security</category>
-      </categories>
-      <tags>
-        <tag>漏洞复现</tag>
+        <tag>burpsuite</tag>
       </tags>
   </entry>
   <entry>
@@ -290,6 +279,17 @@
       </categories>
       <tags>
         <tag>HTTP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[IIS PUT 权限写漏洞复现]]></title>
+    <url>%2F2019%2F08%2F20%2FIIS-put-bug%2F</url>
+    <content type="text"><![CDATA[Abstract: IIS PUT写权限漏洞学习报告。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>漏洞复现</tag>
       </tags>
   </entry>
   <entry>
