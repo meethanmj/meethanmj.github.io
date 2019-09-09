@@ -63,7 +63,9 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>二次注入 - Access 注入 - Mssql 注入</tag>
+        <tag>二次注入</tag>
+        <tag>Access 注入</tag>
+        <tag>Mssql 注入</tag>
       </tags>
   </entry>
   <entry>
@@ -87,7 +89,8 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>宽字节注入 - IP 注入</tag>
+        <tag>宽字节注入</tag>
+        <tag>IP 注入</tag>
       </tags>
   </entry>
   <entry>
@@ -98,7 +101,8 @@
         <category>Web Security</category>
       </categories>
       <tags>
-        <tag>宽字节注入 - IP注入</tag>
+        <tag>宽字节注入</tag>
+        <tag>IP 注入</tag>
       </tags>
   </entry>
   <entry>
@@ -624,7 +628,8 @@
         <category>summary</category>
       </categories>
       <tags>
-        <tag>Linux基本命令 - 搭建服务</tag>
+        <tag>Linux 基本命令</tag>
+        <tag>搭建服务</tag>
       </tags>
   </entry>
   <entry>
@@ -658,8 +663,8 @@
         <category>笔记</category>
       </categories>
       <tags>
-        <tag>SELinux - phpmyadmin</tag>
-        <tag>docker</tag>
+        <tag>SELinux</tag>
+        <tag>phpmyadmin</tag>
       </tags>
   </entry>
   <entry>

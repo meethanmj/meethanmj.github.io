@@ -13,9 +13,9 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract:  SQL 注入之宽字节注入、 HTTP 头注入和其他注入\n\n\n\n\n\n\n宽字节注入原理：GBK 占用两字节，ASCII 占用一个字节。PHP 中编码为 GBK，函数执行添加的是 ASCII 编码，添加的符号为 &quot;\\&quot;，MySQL 默认字符集是 GBK 等宽字节字符集。\n%df&#39; 被 PHP 中的 addslashes函数（开启 GPC 或者 iconv()）转义成 %df\\&#39; ，其中 \\ 的十六进制是 %5C，那么现在 %df\\&#39; = %df%5C%27 ，若程序默认的字符集是 GBK 等宽字节字符集，则 MySQL 用 GBK 编码时，会认为 %df%5c%27 是一个宽字符，即 運&#39;，出现单引号就好注入了。\n宽字节注入，内联注入是无法使用的，宽字节注入推荐使用加前缀 --prefix和后缀 suffix 方法，不推荐写 tamper。\n注意：\n\nPHP5.3之前，PDO 受宽字节注入影响\n如何防止宽字节注入？\nmysql_set_chartset(&#39;GBK&#39;)\nmysql_real_escape_string($value)\n\n\n\n二次编码注入url 编码是一种浏览器用来打包表单输入的格式。url 编码就是一个字符 ascii码的十六进制，不过需要在前面加上 % ，比如 \\ 的 ascii 是 92（0x5c），故\\ 的 url 编码为 %5c\n函数\nurldecode()\nrawurldecode()\n\n12345&lt;?php    echo urldecode($_GET['id']);    ?&gt;\n\n注意：默认的 GET 和 POST 函数，先解码一次。\nHTTP头注入XFF 注入X-Forwarded-For：简称 XFF 头，代表客户端，也就是 HTTP 的请求端真实的 IP，通常一些网站防注入功能会记录请求端真实 IP 地址并写入数据库或某文件。通过修改 XFF 头可以实现伪造 IP。\n使用 Modify Headers 可以修改 X-Forwarded-For。\n\n通过 burpsuite 抓包\n\n","dateCreated":"2019-09-02T21:53:19+08:00","dateModified":"2019-09-09T13:38:54+08:00","datePublished":"2019-09-02T21:53:19+08:00","description":"Abstract:  SQL 注入之宽字节注入、 HTTP 头注入和其他注入","headline":"笔记36","image":["https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=676&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/02/note36/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/02/note36/","keywords":"宽字节注入 - IP 注入","thumbnailUrl":"https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=676&q=80"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract:  SQL 注入之宽字节注入、 HTTP 头注入和其他注入\n\n\n\n\n\n\n宽字节注入原理：GBK 占用两字节，ASCII 占用一个字节。PHP 中编码为 GBK，函数执行添加的是 ASCII 编码，添加的符号为 &quot;\\&quot;，MySQL 默认字符集是 GBK 等宽字节字符集。\n%df&#39; 被 PHP 中的 addslashes函数（开启 GPC 或者 iconv()）转义成 %df\\&#39; ，其中 \\ 的十六进制是 %5C，那么现在 %df\\&#39; = %df%5C%27 ，若程序默认的字符集是 GBK 等宽字节字符集，则 MySQL 用 GBK 编码时，会认为 %df%5c%27 是一个宽字符，即 運&#39;，出现单引号就好注入了。\n宽字节注入，内联注入是无法使用的，宽字节注入推荐使用加前缀 --prefix和后缀 suffix 方法，不推荐写 tamper。\n注意：\n\nPHP5.3之前，PDO 受宽字节注入影响\n如何防止宽字节注入？\nmysql_set_chartset(&#39;GBK&#39;)\nmysql_real_escape_string($value)\n\n\n\n二次编码注入url 编码是一种浏览器用来打包表单输入的格式。url 编码就是一个字符 ascii码的十六进制，不过需要在前面加上 % ，比如 \\ 的 ascii 是 92（0x5c），故\\ 的 url 编码为 %5c\n函数\nurldecode()\nrawurldecode()\n\n12345&lt;?php    echo urldecode($_GET['id']);    ?&gt;\n\n注意：默认的 GET 和 POST 函数，先解码一次。\nHTTP头注入XFF 注入X-Forwarded-For：简称 XFF 头，代表客户端，也就是 HTTP 的请求端真实的 IP，通常一些网站防注入功能会记录请求端真实 IP 地址并写入数据库或某文件。通过修改 XFF 头可以实现伪造 IP。\n使用 Modify Headers 可以修改 X-Forwarded-For。\n\n通过 burpsuite 抓包\n\n","dateCreated":"2019-09-02T21:53:19+08:00","dateModified":"2019-09-09T13:58:46+08:00","datePublished":"2019-09-02T21:53:19+08:00","description":"Abstract:  SQL 注入之宽字节注入、 HTTP 头注入和其他注入","headline":"笔记36","image":["https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=676&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/02/note36/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/02/note36/","keywords":"宽字节注入, IP 注入","thumbnailUrl":"https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=676&q=80"}</script>
     <meta name="description" content="Abstract:  SQL 注入之宽字节注入、 HTTP 头注入和其他注入">
-<meta name="keywords" content="宽字节注入 - IP 注入">
+<meta name="keywords" content="宽字节注入,IP 注入">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="笔记36">
 <meta property="og:url" content="http://yoursite.com/2019/09/02/note36/index.html">
@@ -24,7 +24,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C187httpIP.png">
 <meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C188.png">
-<meta property="og:updated_time" content="2019-09-09T05:38:54.453Z">
+<meta property="og:updated_time" content="2019-09-09T05:58:46.191Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="笔记36">
 <meta name="twitter:description" content="Abstract:  SQL 注入之宽字节注入、 HTTP 头注入和其他注入">
@@ -332,7 +332,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/宽字节注入-IP-注入/">宽字节注入 - IP 注入</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/IP-注入/">IP 注入</a> <a class="tag tag--primary tag--small t-link" href="/tags/宽字节注入/">宽字节注入</a>
 
             </div>
         
