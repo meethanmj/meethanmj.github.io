@@ -6,25 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note23 - han个人博客</title>
+    <title>笔记23 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 用PHP操作MySQL数据库\n\n\n\n\n一、常用函数\n\n\n函数名称\n作用\n\n\n\nmysql_connect(host, uname, passwd)\n进行数据库连接\n\n\nmysql_select_db(‘database’)\n选择数据库\n\n\nmysql_query(sql)\n向数据库发送指令\n\n\nmysql_fetch_array()\n获取数据集中一行数据\n\n\nmysql_fetch_row()\n获取数字索引数组\n\n\nmysql_fetch_assoc()\n获取关联索引数组\n\n\n二、循环遍历查询结果1. whilesql.php\n12345678&lt;?php  \t$host = '127.0.0.1';\t$username = 'root';\t$password = 'root';\t@$con = mysql_connect($host, $username, $password) or die(mysql_error());\tmysql_select_db('test') or die(mysql_error()); \tmysql_query('set names \"utf8\"') or die(mysql_error());?&gt;\n\n12345678910&lt;?php  \tinclude 'sql.php';\t$sql = \"SELECT * FROM `content`;\";\t$result = mysql_query($sql);\twhile($arr = mysql_fetch_assoc($result))&#123;        $title = $arr['title'];        $author = $arr['author'];        echo $author. '-&gt;' . $title;    &#125;?&gt;\n\n2. for1234567891011&lt;?php\tinclude 'sql.php';\t$sql = \"SELECT * FROM `content`;\";\t$result = mysql_query($sql);\tfor($i=0; $i&lt;mysql_affected_rows(); $i++)&#123;        $arr = mysql_fetch_assoc($result);        $title = $arr['title'];        $author = $arr['author'];        echo $author. '-&gt;' . $title;    &#125;?&gt;\n\n三、对密码的处理123456789101112131415161718192021222324252627&lt;?php\tsession_start();\t//若$_SESSION['uname']为空则跳转到登录页面\tif(!$_SESSION('uname'))&#123;        header(\"Location: login.php\");        die();    &#125;\t@$old_pass = $_POST['old_pass'];\t@$new_pass = $_POST['new_pass'];\t@$new_pass_again = $_POST['new_pass_again'];\tif($old_pass &amp;&amp; $new_pass &amp;&amp; $new_pass_again)&#123;        if($new_pass != $new_pass_again)&#123;            die(\"&lt;script&gt;alert('两次输入密码不一致，请重新输入!')&lt;/script&gt;\")；        &#125;     \t$pass = md5($new_pass);        $uid = $_SESSION['uid'];        include 'sql.php';        $sql = \"UPDATE `users` SET `passwd` = '&#123;$pass&#125;' WHERE `id`=&#123;$uid&#125;;\";        $result = mysql_query($sql) or die(mysql_error());                if(mysql_affected_rows())&#123;            echo '&lt;script&gt;alert(\"密码修改成功！\");&lt;/script&gt;';        &#125;else&#123;            echo '&lt;script&gt;alert(\"密码修改成功！\");&lt;/script&gt;';        &#125;    &#125;?&gt;\n\n","dateCreated":"2019-08-16T21:50:13+08:00","dateModified":"2019-08-17T23:00:47+08:00","datePublished":"2019-08-16T21:50:13+08:00","description":"Abstract: 用PHP操作MySQL数据库","headline":"note23","image":["https://images.pexels.com/photos/2440080/pexels-photo-2440080.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/16/note23/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/16/note23/","keywords":"PHP, MySQL","thumbnailUrl":"https://images.pexels.com/photos/2440080/pexels-photo-2440080.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 用PHP操作MySQL数据库\n\n\n\n\n一、常用函数\n\n\n函数名称\n作用\n\n\n\nmysql_connect(host, uname, passwd)\n进行数据库连接\n\n\nmysql_select_db(‘database’)\n选择数据库\n\n\nmysql_query(sql)\n向数据库发送指令\n\n\nmysql_fetch_array()\n获取数据集中一行数据\n\n\nmysql_fetch_row()\n获取数字索引数组\n\n\nmysql_fetch_assoc()\n获取关联索引数组\n\n\n二、循环遍历查询结果1. whilesql.php\n12345678&lt;?php  \t$host = '127.0.0.1';\t$username = 'root';\t$password = 'root';\t@$con = mysql_connect($host, $username, $password) or die(mysql_error());\tmysql_select_db('test') or die(mysql_error()); \tmysql_query('set names \"utf8\"') or die(mysql_error());?&gt;\n\n12345678910&lt;?php  \tinclude 'sql.php';\t$sql = \"SELECT * FROM `content`;\";\t$result = mysql_query($sql);\twhile($arr = mysql_fetch_assoc($result))&#123;        $title = $arr['title'];        $author = $arr['author'];        echo $author. '-&gt;' . $title;    &#125;?&gt;\n\n2. for1234567891011&lt;?php\tinclude 'sql.php';\t$sql = \"SELECT * FROM `content`;\";\t$result = mysql_query($sql);\tfor($i=0; $i&lt;mysql_affected_rows(); $i++)&#123;        $arr = mysql_fetch_assoc($result);        $title = $arr['title'];        $author = $arr['author'];        echo $author. '-&gt;' . $title;    &#125;?&gt;\n\n三、对密码的处理123456789101112131415161718192021222324252627&lt;?php\tsession_start();\t//若$_SESSION['uname']为空则跳转到登录页面\tif(!$_SESSION('uname'))&#123;        header(\"Location: login.php\");        die();    &#125;\t@$old_pass = $_POST['old_pass'];\t@$new_pass = $_POST['new_pass'];\t@$new_pass_again = $_POST['new_pass_again'];\tif($old_pass &amp;&amp; $new_pass &amp;&amp; $new_pass_again)&#123;        if($new_pass != $new_pass_again)&#123;            die(\"&lt;script&gt;alert('两次输入密码不一致，请重新输入!')&lt;/script&gt;\")；        &#125;     \t$pass = md5($new_pass);        $uid = $_SESSION['uid'];        include 'sql.php';        $sql = \"UPDATE `users` SET `passwd` = '&#123;$pass&#125;' WHERE `id`=&#123;$uid&#125;;\";        $result = mysql_query($sql) or die(mysql_error());                if(mysql_affected_rows())&#123;            echo '&lt;script&gt;alert(\"密码修改成功！\");&lt;/script&gt;';        &#125;else&#123;            echo '&lt;script&gt;alert(\"密码修改成功！\");&lt;/script&gt;';        &#125;    &#125;?&gt;\n\n","dateCreated":"2019-08-16T21:50:13+08:00","dateModified":"2019-09-09T13:37:18+08:00","datePublished":"2019-08-16T21:50:13+08:00","description":"Abstract: 用PHP操作MySQL数据库","headline":"笔记23","image":["https://images.pexels.com/photos/2440080/pexels-photo-2440080.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/16/note23/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/16/note23/","keywords":"PHP, MySQL","thumbnailUrl":"https://images.pexels.com/photos/2440080/pexels-photo-2440080.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"}</script>
     <meta name="description" content="Abstract: 用PHP操作MySQL数据库">
 <meta name="keywords" content="PHP,MySQL">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note23">
+<meta property="og:title" content="笔记23">
 <meta property="og:url" content="http://yoursite.com/2019/08/16/note23/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 用PHP操作MySQL数据库">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-17T15:00:47.973Z">
+<meta property="og:updated_time" content="2019-09-09T05:37:18.965Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note23">
+<meta name="twitter:title" content="笔记23">
 <meta name="twitter:description" content="Abstract: 用PHP操作MySQL数据库">
     
     
@@ -261,7 +261,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note23
+            笔记23
         </h1>
     
     
@@ -357,8 +357,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/17/note24/"
-                    data-tooltip="note24"
-                    aria-label="PREVIOUS: note24"
+                    data-tooltip="笔记24"
+                    aria-label="PREVIOUS: 笔记24"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -371,8 +371,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/13/note22/"
-                    data-tooltip="note22"
-                    aria-label="NEXT: note22"
+                    data-tooltip="笔记22"
+                    aria-label="NEXT: 笔记22"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -472,8 +472,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/17/note24/"
-                    data-tooltip="note24"
-                    aria-label="PREVIOUS: note24"
+                    data-tooltip="笔记24"
+                    aria-label="PREVIOUS: 笔记24"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -486,8 +486,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/13/note22/"
-                    data-tooltip="note22"
-                    aria-label="NEXT: note22"
+                    data-tooltip="笔记22"
+                    aria-label="NEXT: 笔记22"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -675,7 +675,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -685,9 +685,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -740,8 +740,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -750,10 +750,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -775,7 +775,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -785,9 +785,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -796,7 +796,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -874,7 +874,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -884,9 +884,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -907,7 +907,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -917,9 +917,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -940,7 +940,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -950,9 +950,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -973,7 +973,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -983,9 +983,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

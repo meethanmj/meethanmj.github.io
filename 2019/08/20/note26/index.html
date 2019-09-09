@@ -6,18 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note26 - han个人博客</title>
+    <title>笔记26 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。\n\n\n\n\n\n\nHTTP协议基础计算机网络模型基础OSI 模型总共分为七层，从下到上分别是：物理层、数据链路层、网络层、运输层、会话层、表示层和应用层。\nTCP/IP 模型分为五层，从下到上是：物理层、链路层、网络层、运输层和应用层。\n\nOSI模型和 TCP/IP 模型\n\n\n\n\nOSI 模型\nTCP/IP 模型\n各层的解释\n\n\n\n应用层\n应用层\n为应用程序提供服务\n\n\n表示层\n应用层\n数据格式转化、数据加密\n\n\n会话层\n应用层\n建立、管理和维护会话\n\n\n传输层\n传输层\n建立、管理和维护端到端的连接\n\n\n网络层\n网络层\nIP 选址及路由选择\n\n\n数据链路层\n数据链路层\n提供介质访问和链路管理\n\n\n物理层\n物理层\n物理层\n\n\n\n过程如下：\n\n\n应用层数据，先按照运输层协议标准，封装到运输层数据里（数据段）；\n接着运输层的数据，会按照网络层协议的标准，封装到网络层数据里（数据包/报文）；\n接着这些数据包会按照链路层的协议标准，封装链路层数据里（帧）；\n这些数据帧，按照物理层的电气特性，转换为网络中 0101比特流发送出去\n网络会把这些流数据，不断地拆封再拆封，直到送到目标主机，然后由目标主机一层一层拆封数据，进行反解析，最终完成一次数据传递。\n\n\n\n\n层数\n作用\n\n\n\n物理层\n规定电气特性。如调制解调器、光导纤维等\n\n\n数据链路层\n有 ARQ 、PPP等协议，数据单元为帧，典型设备有：网卡/网桥/交换机\n\n\n网络层\n有IP/ICMP等协议，数据单元为数据包，典型设备为：路由器/防火墙/多层交换机\n\n\n传输层\n有TCP/UDP等协议，数据单元为数据段，典型设备有：进程和端口\n\n\n应用层\n有DHCP/FTP/HTTP等协议，典型设备有：应用程序(FTP/SMTP/HTTP)\n\n\n越往高走，越偏向软件化。\nHTTP协议HTTP 协议是超文本传输（转移）协议，基于 TCP/IP 通信协议来传递数据，是一个属于应用层的面向对象的协议。\n 常用状态码\n\n\n\n状态码\n意义\n\n\n\n200 OK\n从客户端发来的请求在服务器端被正常处理\n\n\n204 No Content\n服务器接收的请求已成功处理，但在返回响应报文中不含实体的主体部分\n\n\n301 Moved Permanently\n永久性重定向\n\n\n302 Found\n临时性重定向\n\n\n304 Not Modified\n客户端发送附带条件请求时，服务器端允许请求访问资源，但未满足条件的情况\n\n\n400 Bad Request\n请求报文中存在语法错误\n\n\n403 Forbidden\n对请求资源的访问被服务器拒绝\n\n\n404 Not Found\n服务器上无法找到请求的资源\n\n\n500 Internal Server Error\n服务器端在执行请求时发生了错误\n\n\nBurpSuite使用burpsuite抓取新闻管理系统的数据包\n新闻初始界面\n\n点击 forward\n\n点击用户界面\n\n注册成功后，登录\n\n评论\n\n读取新闻\n\n进入个人信息页面\n\nPDO模式下防止SQL注入使用 PDO 的 prepare 方式，主要是提高 SQL 模板查询性能、阻止 SQL 注入。\n","dateCreated":"2019-08-20T19:12:56+08:00","dateModified":"2019-08-21T23:05:23+08:00","datePublished":"2019-08-20T19:12:56+08:00","description":"Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。","headline":"note26","image":["https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/20/note26/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/20/note26/","keywords":"HTTP","thumbnailUrl":"https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。\n\n\n\n\n\n\nHTTP协议基础计算机网络模型基础OSI 模型总共分为七层，从下到上分别是：物理层、数据链路层、网络层、运输层、会话层、表示层和应用层。\nTCP/IP 模型分为五层，从下到上是：物理层、链路层、网络层、运输层和应用层。\n\nOSI模型和 TCP/IP 模型\n\n\n\n\nOSI 模型\nTCP/IP 模型\n各层的解释\n\n\n\n应用层\n应用层\n为应用程序提供服务\n\n\n表示层\n应用层\n数据格式转化、数据加密\n\n\n会话层\n应用层\n建立、管理和维护会话\n\n\n传输层\n传输层\n建立、管理和维护端到端的连接\n\n\n网络层\n网络层\nIP 选址及路由选择\n\n\n数据链路层\n数据链路层\n提供介质访问和链路管理\n\n\n物理层\n物理层\n物理层\n\n\n\n过程如下：\n\n\n应用层数据，先按照运输层协议标准，封装到运输层数据里（数据段）；\n接着运输层的数据，会按照网络层协议的标准，封装到网络层数据里（数据包/报文）；\n接着这些数据包会按照链路层的协议标准，封装链路层数据里（帧）；\n这些数据帧，按照物理层的电气特性，转换为网络中 0101比特流发送出去\n网络会把这些流数据，不断地拆封再拆封，直到送到目标主机，然后由目标主机一层一层拆封数据，进行反解析，最终完成一次数据传递。\n\n\n\n\n层数\n作用\n\n\n\n物理层\n规定电气特性。如调制解调器、光导纤维等\n\n\n数据链路层\n有 ARQ 、PPP等协议，数据单元为帧，典型设备有：网卡/网桥/交换机\n\n\n网络层\n有IP/ICMP等协议，数据单元为数据包，典型设备为：路由器/防火墙/多层交换机\n\n\n传输层\n有TCP/UDP等协议，数据单元为数据段，典型设备有：进程和端口\n\n\n应用层\n有DHCP/FTP/HTTP等协议，典型设备有：应用程序(FTP/SMTP/HTTP)\n\n\n越往高走，越偏向软件化。\nHTTP协议HTTP 协议是超文本传输（转移）协议，基于 TCP/IP 通信协议来传递数据，是一个属于应用层的面向对象的协议。\n 常用状态码\n\n\n\n状态码\n意义\n\n\n\n200 OK\n从客户端发来的请求在服务器端被正常处理\n\n\n204 No Content\n服务器接收的请求已成功处理，但在返回响应报文中不含实体的主体部分\n\n\n301 Moved Permanently\n永久性重定向\n\n\n302 Found\n临时性重定向\n\n\n304 Not Modified\n客户端发送附带条件请求时，服务器端允许请求访问资源，但未满足条件的情况\n\n\n400 Bad Request\n请求报文中存在语法错误\n\n\n403 Forbidden\n对请求资源的访问被服务器拒绝\n\n\n404 Not Found\n服务器上无法找到请求的资源\n\n\n500 Internal Server Error\n服务器端在执行请求时发生了错误\n\n\nBurpSuite使用burpsuite抓取新闻管理系统的数据包\n新闻初始界面\n\n点击 forward\n\n点击用户界面\n\n注册成功后，登录\n\n评论\n\n读取新闻\n\n进入个人信息页面\n\nPDO模式下防止SQL注入使用 PDO 的 prepare 方式，主要是提高 SQL 模板查询性能、阻止 SQL 注入。\n","dateCreated":"2019-08-20T19:12:56+08:00","dateModified":"2019-09-09T13:37:40+08:00","datePublished":"2019-08-20T19:12:56+08:00","description":"Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。","headline":"笔记26","image":["https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/20/note26/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/20/note26/","keywords":"HTTP","thumbnailUrl":"https://cdn.pixabay.com/photo/2019/08/17/04/18/morning-4411420_1280.jpg"}</script>
     <meta name="description" content="Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。">
 <meta name="keywords" content="HTTP">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note26">
+<meta property="og:title" content="笔记26">
 <meta property="og:url" content="http://yoursite.com/2019/08/20/note26/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。">
@@ -29,9 +29,9 @@
 <meta property="og:image" content="http://yoursite.com/images/33bpshowNews.png">
 <meta property="og:image" content="http://yoursite.com/images/35bpreadNews.png">
 <meta property="og:image" content="http://yoursite.com/images/37bpPerInfo.png">
-<meta property="og:updated_time" content="2019-08-21T15:05:23.233Z">
+<meta property="og:updated_time" content="2019-09-09T05:37:40.753Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note26">
+<meta name="twitter:title" content="笔记26">
 <meta name="twitter:description" content="Abstract: 针对 HTTP的协议基础进行了简单的学习，掌握 HTTP 相关内容， 安装 burpsuite 软件，熟练使用该软件。对 PDO模式下防止 SQL 注入的理解。">
 <meta name="twitter:image" content="http://yoursite.com/images/25bpindex.png">
     
@@ -269,7 +269,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note26
+            笔记26
         </h1>
     
     
@@ -794,7 +794,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -804,9 +804,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -859,8 +859,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -869,10 +869,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -894,7 +894,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -904,9 +904,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -915,7 +915,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -993,7 +993,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -1003,9 +1003,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1026,7 +1026,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -1036,9 +1036,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1059,7 +1059,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -1069,9 +1069,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1092,7 +1092,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1102,9 +1102,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

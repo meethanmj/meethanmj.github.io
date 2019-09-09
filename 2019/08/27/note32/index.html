@@ -6,25 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note32 - han个人博客</title>
+    <title>笔记32 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 万能密码，SQL 注入的分类以及简单的 SQL 注入\n\n\n\n\n\n\n安全搭建好环境后，关机快照，虚拟机不要留下任何关于自己的信息，禁止虚拟机和物理机的连接，虚拟机的主机名随意取，每做完一次渗透后，恢复到初始化快照。\n重视：主机名+时间+电量+剪切板\nSQL 注入万能密码1SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; AND `password`= &apos;password&apos;\n\n当用户输入 admin&#39; or 1 # 时，带入上面的语句为：\n1234SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;#多行结果，需要碰运气，在验证密码时，有一个用户密码是我们输入的密码SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;#一行结果，admin的没用，因为不知道admin密码，验证密码会失败\n\n可以明显看到后面的有关查询密码的句子被注释掉了，前面是个永真条件。即这条 SQL 语句查询的是所有用户名，登录之后只显示一条数据，有可能是第一条也有可能是其他，具体看程序如何解析。\n要想只输出一条语句可以用下面语句\n123456#1. 直接把后面全部注释掉   admin&apos; #SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; # &apos; AND `password`=&apos;password&apos;#2. 把or换成and    \t  admin&apos; and 1 #SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;#3. 加入limit限制        admin&apos; or 1 limit 0,1 #SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;\n\n做用户登录功能时，有两种实现思路，一种是像上面这样直接用用户名和密码查询，另一种是\n1SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos;;\n\n然后再用 if(查询出来的密码和输入的密码是否相等) 来判断，实现方法不同，具体的注入手段也不同，应具体问题具体分析。\nSQL 注入原理介绍当 Web 应用向后台数据库传递 SQL 语句进行数据库操作时，如果对用户输入的参数没有经过严格的过滤处理，那么攻击者就可以构造特殊 SQL 语句，直接输入数据库引擎执行，获取和修改数据库中的数据。\nSQL 注入漏洞本质：把用户输入的数据当做代码来执行，违背了 “数据与代码分离“的原则。\nSQL 注入漏洞两个关键条件：\n\n用户能控制输入的内容\nWeb 应用把用户输入的内容带入到数据库中执行\n\nSQL 注入分类根据请求不同可以分为：\n\nGET 请求方式注入\nPOST 请求方式注入\n请求头\n\n根据 SQL 注入点的类型参数分为：\n\n整型注入\n字符型注入\n\n只要有数据提交到数据库中的地方就可能存在注入点\n如何区整数型字和字符型\n\n数字-1      判断字符型和数字型\n结果不变   →     不是数字型\n\n右边加 ‘ 无数据 无 SQL 错误   →   不一定有注入\n\n右边加 ‘ # 有数据 →  有注入\n\n\n根据 SQL 注入点的反馈类型可分为：\n\n基于错误显示的 SQL 注入\nUNION 类型的 SQL 注入\n布尔类型的 SQL 注入\n基于时间的 SQL 注入\n多语句\n内联\n\n根据 Web 应用常用的数据库类型分类：\n\nMySQL 数据库注入\n\nSQLServer 数据库注入\n\nOracle 数据库注入\n\nAccess数据库注入\n\nMongoDB 数据库注入\n\n\n注入方法分类：\n\n直接页面看到数据\nUNION SELECT\n报错\n\n\n一个一个字母判断值\n布尔盲注\n时间延时注入\n内联\n\n\n多语句\n\n","dateCreated":"2019-08-27T19:15:58+08:00","dateModified":"2019-08-27T20:21:05+08:00","datePublished":"2019-08-27T19:15:58+08:00","description":"Abstract: 万能密码，SQL 注入的分类以及简单的 SQL 注入","headline":"note32","image":["https://images.unsplash.com/photo-1566545455366-bcae28fd3929?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1956&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/27/note32/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/27/note32/","keywords":"SQL注入","thumbnailUrl":"https://images.unsplash.com/photo-1566545455366-bcae28fd3929?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1956&q=80"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 万能密码，SQL 注入的分类以及简单的 SQL 注入\n\n\n\n\n\n\n安全搭建好环境后，关机快照，虚拟机不要留下任何关于自己的信息，禁止虚拟机和物理机的连接，虚拟机的主机名随意取，每做完一次渗透后，恢复到初始化快照。\n重视：主机名+时间+电量+剪切板\nSQL 注入万能密码1SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; AND `password`= &apos;password&apos;\n\n当用户输入 admin&#39; or 1 # 时，带入上面的语句为：\n1234SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;#多行结果，需要碰运气，在验证密码时，有一个用户密码是我们输入的密码SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;#一行结果，admin的没用，因为不知道admin密码，验证密码会失败\n\n可以明显看到后面的有关查询密码的句子被注释掉了，前面是个永真条件。即这条 SQL 语句查询的是所有用户名，登录之后只显示一条数据，有可能是第一条也有可能是其他，具体看程序如何解析。\n要想只输出一条语句可以用下面语句\n123456#1. 直接把后面全部注释掉   admin&apos; #SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; # &apos; AND `password`=&apos;password&apos;#2. 把or换成and    \t  admin&apos; and 1 #SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;#3. 加入limit限制        admin&apos; or 1 limit 0,1 #SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos; or 1 # &apos; AND `password`=&apos;password&apos;\n\n做用户登录功能时，有两种实现思路，一种是像上面这样直接用用户名和密码查询，另一种是\n1SELECT * FROM `TABLE_NAME` WHERE `username` = &apos;admin&apos;;\n\n然后再用 if(查询出来的密码和输入的密码是否相等) 来判断，实现方法不同，具体的注入手段也不同，应具体问题具体分析。\nSQL 注入原理介绍当 Web 应用向后台数据库传递 SQL 语句进行数据库操作时，如果对用户输入的参数没有经过严格的过滤处理，那么攻击者就可以构造特殊 SQL 语句，直接输入数据库引擎执行，获取和修改数据库中的数据。\nSQL 注入漏洞本质：把用户输入的数据当做代码来执行，违背了 “数据与代码分离“的原则。\nSQL 注入漏洞两个关键条件：\n\n用户能控制输入的内容\nWeb 应用把用户输入的内容带入到数据库中执行\n\nSQL 注入分类根据请求不同可以分为：\n\nGET 请求方式注入\nPOST 请求方式注入\n请求头\n\n根据 SQL 注入点的类型参数分为：\n\n整型注入\n字符型注入\n\n只要有数据提交到数据库中的地方就可能存在注入点\n如何区整数型字和字符型\n\n数字-1      判断字符型和数字型\n结果不变   →     不是数字型\n\n右边加 ‘ 无数据 无 SQL 错误   →   不一定有注入\n\n右边加 ‘ # 有数据 →  有注入\n\n\n根据 SQL 注入点的反馈类型可分为：\n\n基于错误显示的 SQL 注入\nUNION 类型的 SQL 注入\n布尔类型的 SQL 注入\n基于时间的 SQL 注入\n多语句\n内联\n\n根据 Web 应用常用的数据库类型分类：\n\nMySQL 数据库注入\n\nSQLServer 数据库注入\n\nOracle 数据库注入\n\nAccess数据库注入\n\nMongoDB 数据库注入\n\n\n注入方法分类：\n\n直接页面看到数据\nUNION SELECT\n报错\n\n\n一个一个字母判断值\n布尔盲注\n时间延时注入\n内联\n\n\n多语句\n\n","dateCreated":"2019-08-27T19:15:58+08:00","dateModified":"2019-09-09T13:38:23+08:00","datePublished":"2019-08-27T19:15:58+08:00","description":"Abstract: 万能密码，SQL 注入的分类以及简单的 SQL 注入","headline":"笔记32","image":["https://images.unsplash.com/photo-1566545455366-bcae28fd3929?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1956&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/27/note32/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/27/note32/","keywords":"SQL注入","thumbnailUrl":"https://images.unsplash.com/photo-1566545455366-bcae28fd3929?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1956&q=80"}</script>
     <meta name="description" content="Abstract: 万能密码，SQL 注入的分类以及简单的 SQL 注入">
 <meta name="keywords" content="SQL注入">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note32">
+<meta property="og:title" content="笔记32">
 <meta property="og:url" content="http://yoursite.com/2019/08/27/note32/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 万能密码，SQL 注入的分类以及简单的 SQL 注入">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-27T12:21:05.441Z">
+<meta property="og:updated_time" content="2019-09-09T05:38:23.318Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note32">
+<meta name="twitter:title" content="笔记32">
 <meta name="twitter:description" content="Abstract: 万能密码，SQL 注入的分类以及简单的 SQL 注入">
     
     
@@ -261,7 +261,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note32
+            笔记32
         </h1>
     
     
@@ -413,8 +413,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/27/note31/"
-                    data-tooltip="note31"
-                    aria-label="NEXT: note31"
+                    data-tooltip="笔记31"
+                    aria-label="NEXT: 笔记31"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -528,8 +528,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/27/note31/"
-                    data-tooltip="note31"
-                    aria-label="NEXT: note31"
+                    data-tooltip="笔记31"
+                    aria-label="NEXT: 笔记31"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -717,7 +717,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -727,9 +727,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -782,8 +782,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -792,10 +792,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -817,7 +817,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -827,9 +827,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -838,7 +838,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -916,7 +916,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -926,9 +926,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -949,7 +949,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -959,9 +959,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -982,7 +982,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -992,9 +992,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1015,7 +1015,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1025,9 +1025,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

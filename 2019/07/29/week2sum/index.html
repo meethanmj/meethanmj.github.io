@@ -6,26 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>week2sum - han个人博客</title>
+    <title>第二周总结 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 对第二周学习的内容进行总结\n\n\n\n\n周一Linux权限1.内容简介\nLinux权限控制\n\ngit服务器搭建与安全检查\n\ntomcat服务器搭建与安全检查\n\n\n2.几种文件类型\n[d] 是目录\n\n[-] 是文件\n\n[l] 是链接文件(link file)\n\n\n3.读写执行权限\n\n\n文件类型\n属主权限\n属组权限\n其他用户权限\n\n\n\n0\n123\n456\n789\n\n\nd\nrwx\nr-x\nr-x\n\n\n目录文件\n读写执行\n读—执行\n读—执行\n\n\n对于目录的rwx\n123* r可以显示文件夹的结构* w可以在文件夹里添加删除文件* x可以进入到文件夹\n\n权限命令：rwx在系统中对应一个个的值，r-4，w-2，x-1\nchown修改当前文件或文件夹的所属用户\n1chown root:root /tmp/tmp1\n\n1chown -R root:root /tmp/tmp1\n\nchmod修改当前文件或文件夹的权限\n语法：chmod [who] [+|-|=] [mode] 文件名\n操作对象who：\n\nu表示“用户(user)”，即文件或目录的所有者\ng表示”同组(group)用户”，即与文件属主有相同组ID的所有用户\no表示”其他(other)用户”\na表示”所有(all)用户”，它是系统默认值\n\n推荐使用数字的方式修改文件或者文件夹的权限\n操作符可以是：\n\n+添加某个权限\n\n-取消某个权限\n\n=赋予给定权限并取消其他所有权限\n*不指定用户的情况下，=只会给文件所有者加权限，+给所有者加权限\n\n\n一个网站最合理的权限是755\n4.渗透测试中常用的命令\nwhoami 查看当前用户\n\ntar 压缩和解压文件\n\nnetstat 查看网络状态\n\nnslookup 查看dns信息\n\nps 查看运行的程序\n\ntop 实时查看运行的程序\n\nservice 使用service控制服务启动关闭\n\ncurl 获取网页，可以使用输出重定向来下载文件\n\nwget 下载文件\n1more /etc/apt/sources.list\n\nsources.list是各种软件源，常用的源有阿里云、清华大学、中科院\n1sudo apt-get update\n\nNote: 推荐关机快照\n\n\n周二tomcat和git服务器搭建1.内容简介\n复习\n\ntomcat服务器搭建\n\n\n2.网络不通该如何调试先用ficonfig查看网卡信息，若正常，ping 网卡，若不正常，查看配置文件和网络环境；若网卡默认不启用，修改配置文件，onboot=yes 重启网络服务，配置文件路径：/etc/sysconfig/network-scripts/ifcfg-eth0\n123cat /etc/sysconfig/network-script/ifcfg-eth0vi /etc/sysconfig/network-script/ifcfg-eth0service network restart\n\n若网络环境是dhcp，修改上网方式为dhcp，重启网络服务\n若网络环境是静态ip，修改上网方式为static，ipaddr=, netmask=, gateway=\n能够ping通8.8.8.8\n1curl www.baidu.com\n\n若不能打开，查看dns配置文件\n1vi /etc/resolv.conf\n\n添加servername 1.1.1.1\n3.搭建tomcat服务器12345#启动防火墙systemctl start firewalld#将80端口添加到防火墙例外并重启firewall-cmd --zone=public --add-por=8080/tcp --permanentfirewall-cmd --reload\n\n防火墙=硬件+软件\n1yum apt-get -y install tomcat\n\n1vi .../apache-tomcat-8.5.43/webapps/manager/META-INF/context.xml\n\n修改tomcat配置文件为\n12345&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;Context antiResourceLocking=\"false\" privileged=\"true\"&gt;    &lt;Valve className=\"org.apache.catalina.valves.RemoteAddrValve\"           allow=\"\\d+\\.\\d+\\.\\d+\\.\\d+\" /&gt;&lt;/Context&gt;\n\n进入conf目录下修改tomcat-users.xml 用户名和密码\n1vi /usr/local/tomcat/conf/tomcat-users.xml\n\n1234567891011&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;tomcat-usersversion=\"1.0\" xsi:schemaLocation=\"http://tomcat.apache.org/xml tomcat-users.xsd\" xmlns:xsi=\"http://www/w3.org/2001/XMLSchema-instance\" xmlnx=\"http://tomcat.apache.org/xml\"&gt;    &lt;role rolename=\"manager-gui\"/&gt;    &lt;role rolename=\"manager-script\"/&gt;    &lt;role rolename=\"manager-jmx\"/&gt;    &lt;role rolename=\"manager-status\"/&gt;    &lt;role rolename=\"admin-gui\"/&gt;    &lt;role rolename=\"admin-script\"/&gt;    &lt;role rolename=\"manager-gui\"/&gt;    &lt;user roles=\"manager-gui, manager-script, manager-jmx, manager-status, admin-script\" password=\"tomcat\" username=\"tomcat\"/&gt;&lt;/tomcat-users&gt;\n\n4.git服务器搭建12345#修改yum源cat CentOS-Base.repo#[base]注释掉mirrorlist和baseurl添加以下语句baseurl=http://192.168.100.110:8000/yum/#以下三个修改为enable=0\n\n12345678910111213141516171819#下载git[root@localhost]$ yum install git#添加git用户[root@localhost]$ useradd git[root@localhost]$ cd /home/git/[root@localhost]$ lltotal 0[root@localhost]$ pwd/home/git[root@localhost]$ cd ..[root@localhost]$ su git[git@localhost]$ mkdir .ssh[git@localhost]$ cd .ssh/[git@localhost]$ touch authorized_keys[git@localhost]$ chmod 600 authorized_keys[git@localhost]$ cd /[git@localhost~]$ mkdir Project[git@localhost~]$ cd Project[git@localhost Project]$ git init --bare icq.git\n\nwin10启动powershell dir ssh\n1ssh-keygen -t rsa\n\n产生两个文件.pub是公钥\n123dir .sshtype .\\.ssh\\id_rsa.pub#获得公钥\n\n粘贴到git用户authorized_keys\n12chmod 700 .sshchmod 600 authorized_keys\n\n\n1yum install git\n\n再创建用户git //管理git中所有的项目\n\n在git用户家目录，创建.ssh文件夹，修改权限为700 //这个是因为ssh服务限制\n\n在.ssh文件夹下创建authorized_keys文件 ，修改权限为600 //这个因为ssh服务的限制，权限不正确认证会失败\n\n在git用户家目录创建project目录，用来存放git项目\n\n12#初始化一个git项目git init --bare icq.git\n\n\n\n\n\ngit客户端\n\n安装git    // git for windows   git for linux\n\nwindows 10 使用ssh创建公钥和私钥\n\nssh-keygen -t rsa 就会在家目录创建.ssh文件夹，里面就会有两个文件，将公钥(.pub结尾)写入到服务器authorized_keys文件中\n\n1git clone git@ip:/home/git/project/icq.git\n\n\n\n\n\nNote:默认情况下 ssh git@192.168.100.167可以登录虚拟机，从而产生安全问题，在虚拟机里切换到root权限修改git的shell\n1[root@localhost ~] usermod -s /sbin/nologin git\n\n这样ssh就禁止了\n5.搭建博客\n安装Github桌面版和Node.js\n\n然后cmd中\n1npm install -g hexo-cli --registry=https://registry.nom.taobao.org\n\n\n创建一个blog目录，用来存放博客\n进入到blog中，启动cmd执行命令\n\n123456#初始化hexohexo init#生成博客hexo g#搭建服务hexo s\n\n\n然后浏览器访问播客主页\n\n\n\n安装CentOs Mini，安装好后执行\n1yum groupinstall \"development tools\"\n\n周三Linux下应用的安装1.CentOS系统中有三种安装软件的方法\n通过源码安装\n./configure\n\n\nmake &amp;&amp; make install\n通过rpm安装\nrpm -ivh …\n\n\n通过yum安装\nyum search …\n\n\nyum install …\n\nrpm类型文件安装的时候，会先去读取文件内记载的设置参数内容，然后将该数据用来比对linux系统的环境，以找到是否有属性相依的软件尚未安装的问题。RPM使用自动化安装软件，比较类似windows下的.exe需要下载的安装包，但是它安装过程中会有很多依赖问题。\n\n-q: 仅查询，后面接软件名称是否有安装\n\n-qa: 列出所有，已经安装在本机linux系统上面的所有软件名称\n\n-ql: 列出该软件所有的文件与目录所在完整文件名(list)\n\n-qR: 列出与该软件有关的相依软件所在的文件(requried)\n\n\n源码安装：先阅读README文件，找到安装方法，安装相依赖的库，最后执行\n1make &amp;&amp; make install\n\n周四搭建apache+php+mysql和iptables+firewall1.昨天回顾12345yum installrpm -ivh a.rpm/http/ftp:baidu.com/a.tpm nginx.tar.gztar cat readme install./configure --help --prefix=安装路径 --with-apr=指定依赖位置make &amp;&amp; make install\n\n2.搭建apache+php+mysql环境(要求使用php5.6)\n安装httpd\n12345678#安装httpdyum install httpd httpd-devel httpd-manual mod_ssl -y#启动apachesystemctl start httpd#设置apache开机启动systemctl enable httpd#查看开放端口，检查有没有httpd服务，80和443端口是否开放ss -antlp\n\n配置防火墙，可以正常访问apache\n123firewall-cmd --zone=public --add-port=80/tcp --permanentfirewall-cmd --zone=public --add-port=433/tcp --permanentfirewall-cmd --reload\n\n安装php5.6\n12345678910rpm -Uvh https://mirror.webtatic.com/yum/el7/epel-release.rpmrpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm#卸载系统中原有的phpyum remove php-common -y#安装php5.6和php扩展yum install -y php56w php56w-opcache php56w-xml php56w-mcrypt php56w-gd php56w-mysql php56w-intl php56w-mbstring#进入网站根目录cd /var/www/html/#在网站根目录中创建index.php，写入phpinfo函数，测试网站php是否正常echo '&lt;?php phpinfo();?&gt;' &gt; index.php\n\n安装mariadb\n123456789yum install mariadb-server -y#启动mariadb-serversystemctl start mariadb#设置mariadb-server开机自启systemctl enablemariadb#初始化mysql，注意记住mysql密码mysql_secure_installation#关机+快照poweroff\n\n\n\n3.关于网站搭建：需要将网站的源代码使用工具复制到虚拟机中的网站根目录下(phpmyadmin除外)，修改网站的所有者为apache\n1chown -R apache:apache /var/www/html\n\nwordpress特性：\n​    移动网站后，网站的样式将出错，所以wordpress在安装成功后，不能移动\n​    虚拟机ip改变后，wordpress打开会卡页面，需要去数据库中修改ip\nwp_options表中\n​    siteurl: http://新ip\n​    home: http://新ip\n搭建没有提供安装引导的网站：\n​    上传网站源代码到网站根目录，找到网站的配置文件，一般是config.php\n​    再找到网站提供的sql文件，使用phpmyadmin之类工具，导入数据或直接使用mysql -uroot -p 登录数据库\n123create database database_nameuse database_namesource absolute_path/name.sql\n\n向数据库中导入内容，有多重方式，可以自行测试\n周五Linux安全检查1.防火墙功能：​    filter功能是防火墙一个重要功能，它定义数据通过是允许或者不允许\n​    filter控制数据类型分为两类：INPUT和OUTPUT\n2.Iptables命令讲解：-A 追加\n-p 指定协议类型\n123* tcp通过dport指定目标端口，sport指定源端口* udp通tcp* icmp通过--icmp-type指定类型，0是响应类型的数据包，8是请求类型的包\n\n-m 表示启动扩展功能\n​    一般和-p配合，-p指定类型后，通过-m打开此类型的扩展功能\n-j 指定如何进行处理DROP，REJECT，ACCEPT/丢弃，拒绝，通过\n1iptables -A INPUT/OUTPUT -j DROP/REJECT/ACCEPT\n\n编辑iptables的配置文件：\n​    通过编辑文件可以直接修改iptables规则，编辑文件，写入指定规则：\n123456-A INPUT -m state --state ESTABLISHED, RELATED -j ACCEPT-A INPUT -p icmp -j ACCEPT-A INPUT -i lo -j ACCEPT-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT-A INPUT -j REJECT --reject-with icmp-host-prohibited-A FORWARD -j REJECT --reject-with icmp-host-prohibited\n\n12#查看现有规则iptables -nvL\n\n12#添加80端口通过的规则firewallc-cmd --zone=public --add-port=80/tcp --permanent\n\n\n\n\n\ndrop\n默认丢弃所有包\n\n\n\n–zone\nblock\n拒绝所有外部连接，允许内部发起连接\n\n\n\npublic\n指定外部连接可以进入\n\n\n–add-port           指定添加端口     80/tcp     53/udp\n–add-service      指定常见服务      http    https    mysql     mssql      ssh\n–permanent     永久生效\n删除80端口通过的规则\n1firewall-cmd --zone=public --remove-port=80/tcp --permanent\n\n–remove-port           指定删除端口\n–remove-service      指定删除服务\n12345678910#防火墙更新规则firewall-cmd --reload#防火墙显示所有规则firewall-cmd --list-all#关闭防火墙systemctl stop firewalld#查看防火墙状态systemctl status firewalld#启动防火墙systemctl start firewalld\n\n临时加立即生效，–reload后失效，–pernament必须，–reload后才失效 \n","dateCreated":"2019-07-29T22:04:16+08:00","dateModified":"2019-07-29T22:10:35+08:00","datePublished":"2019-07-29T22:04:16+08:00","description":"Abstract: 对第二周学习的内容进行总结","headline":"week2sum","image":["http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/29/week2sum/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/29/week2sum/","keywords":"summary","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"}</script>
-    <meta name="description" content="Abstract: 对第二周学习的内容进行总结">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 对第二周学习的内容进行总结，note6-note10的笔记。\n\n\n\n\n周一Linux权限1.内容简介\nLinux权限控制\n\ngit服务器搭建与安全检查\n\ntomcat服务器搭建与安全检查\n\n\n2.几种文件类型\n[d] 是目录\n\n[-] 是文件\n\n[l] 是链接文件(link file)\n\n\n3.读写执行权限\n\n\n文件类型\n属主权限\n属组权限\n其他用户权限\n\n\n\n0\n123\n456\n789\n\n\nd\nrwx\nr-x\nr-x\n\n\n目录文件\n读写执行\n读—执行\n读—执行\n\n\n对于目录的rwx\n123* r可以显示文件夹的结构* w可以在文件夹里添加删除文件* x可以进入到文件夹\n\n权限命令：rwx在系统中对应一个个的值，r-4，w-2，x-1\nchown修改当前文件或文件夹的所属用户\n1chown root:root /tmp/tmp1\n\n1chown -R root:root /tmp/tmp1\n\nchmod修改当前文件或文件夹的权限\n语法：chmod [who] [+|-|=] [mode] 文件名\n操作对象who：\n\nu表示“用户(user)”，即文件或目录的所有者\ng表示”同组(group)用户”，即与文件属主有相同组ID的所有用户\no表示”其他(other)用户”\na表示”所有(all)用户”，它是系统默认值\n\n推荐使用数字的方式修改文件或者文件夹的权限\n操作符可以是：\n\n+添加某个权限\n\n-取消某个权限\n\n=赋予给定权限并取消其他所有权限\n*不指定用户的情况下，=只会给文件所有者加权限，+给所有者加权限\n\n\n一个网站最合理的权限是755\n4.渗透测试中常用的命令\nwhoami 查看当前用户\n\ntar 压缩和解压文件\n\nnetstat 查看网络状态\n\nnslookup 查看dns信息\n\nps 查看运行的程序\n\ntop 实时查看运行的程序\n\nservice 使用service控制服务启动关闭\n\ncurl 获取网页，可以使用输出重定向来下载文件\n\nwget 下载文件\n1more /etc/apt/sources.list\n\nsources.list是各种软件源，常用的源有阿里云、清华大学、中科院\n1sudo apt-get update\n\nNote: 推荐关机快照\n\n\n周二tomcat和git服务器搭建1.内容简介\n复习\n\ntomcat服务器搭建\n\n\n2.网络不通该如何调试先用ficonfig查看网卡信息，若正常，ping 网卡，若不正常，查看配置文件和网络环境；若网卡默认不启用，修改配置文件，onboot=yes 重启网络服务，配置文件路径：/etc/sysconfig/network-scripts/ifcfg-eth0\n123cat /etc/sysconfig/network-script/ifcfg-eth0vi /etc/sysconfig/network-script/ifcfg-eth0service network restart\n\n若网络环境是dhcp，修改上网方式为dhcp，重启网络服务\n若网络环境是静态ip，修改上网方式为static，ipaddr=, netmask=, gateway=\n能够ping通8.8.8.8\n1curl www.baidu.com\n\n若不能打开，查看dns配置文件\n1vi /etc/resolv.conf\n\n添加servername 1.1.1.1\n3.搭建tomcat服务器12345#启动防火墙systemctl start firewalld#将80端口添加到防火墙例外并重启firewall-cmd --zone=public --add-por=8080/tcp --permanentfirewall-cmd --reload\n\n防火墙=硬件+软件\n1yum apt-get -y install tomcat\n\n1vi .../apache-tomcat-8.5.43/webapps/manager/META-INF/context.xml\n\n修改tomcat配置文件为\n12345&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;Context antiResourceLocking=\"false\" privileged=\"true\"&gt;    &lt;Valve className=\"org.apache.catalina.valves.RemoteAddrValve\"           allow=\"\\d+\\.\\d+\\.\\d+\\.\\d+\" /&gt;&lt;/Context&gt;\n\n进入conf目录下修改tomcat-users.xml 用户名和密码\n1vi /usr/local/tomcat/conf/tomcat-users.xml\n\n1234567891011&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;tomcat-usersversion=\"1.0\" xsi:schemaLocation=\"http://tomcat.apache.org/xml tomcat-users.xsd\" xmlns:xsi=\"http://www/w3.org/2001/XMLSchema-instance\" xmlnx=\"http://tomcat.apache.org/xml\"&gt;    &lt;role rolename=\"manager-gui\"/&gt;    &lt;role rolename=\"manager-script\"/&gt;    &lt;role rolename=\"manager-jmx\"/&gt;    &lt;role rolename=\"manager-status\"/&gt;    &lt;role rolename=\"admin-gui\"/&gt;    &lt;role rolename=\"admin-script\"/&gt;    &lt;role rolename=\"manager-gui\"/&gt;    &lt;user roles=\"manager-gui, manager-script, manager-jmx, manager-status, admin-script\" password=\"tomcat\" username=\"tomcat\"/&gt;&lt;/tomcat-users&gt;\n\n4.git服务器搭建12345#修改yum源cat CentOS-Base.repo#[base]注释掉mirrorlist和baseurl添加以下语句baseurl=http://192.168.100.110:8000/yum/#以下三个修改为enable=0\n\n12345678910111213141516171819#下载git[root@localhost]$ yum install git#添加git用户[root@localhost]$ useradd git[root@localhost]$ cd /home/git/[root@localhost]$ lltotal 0[root@localhost]$ pwd/home/git[root@localhost]$ cd ..[root@localhost]$ su git[git@localhost]$ mkdir .ssh[git@localhost]$ cd .ssh/[git@localhost]$ touch authorized_keys[git@localhost]$ chmod 600 authorized_keys[git@localhost]$ cd /[git@localhost~]$ mkdir Project[git@localhost~]$ cd Project[git@localhost Project]$ git init --bare icq.git\n\nwin10启动powershell dir ssh\n1ssh-keygen -t rsa\n\n产生两个文件.pub是公钥\n123dir .sshtype .\\.ssh\\id_rsa.pub#获得公钥\n\n粘贴到git用户authorized_keys\n12chmod 700 .sshchmod 600 authorized_keys\n\n\n1yum install git\n\n再创建用户git //管理git中所有的项目\n\n在git用户家目录，创建.ssh文件夹，修改权限为700 //这个是因为ssh服务限制\n\n在.ssh文件夹下创建authorized_keys文件 ，修改权限为600 //这个因为ssh服务的限制，权限不正确认证会失败\n\n在git用户家目录创建project目录，用来存放git项目\n\n12#初始化一个git项目git init --bare icq.git\n\n\n\n\n\ngit客户端\n\n安装git    // git for windows   git for linux\n\nwindows 10 使用ssh创建公钥和私钥\n\nssh-keygen -t rsa 就会在家目录创建.ssh文件夹，里面就会有两个文件，将公钥(.pub结尾)写入到服务器authorized_keys文件中\n\n1git clone git@ip:/home/git/project/icq.git\n\n\n\n\n\nNote:默认情况下 ssh git@192.168.100.167可以登录虚拟机，从而产生安全问题，在虚拟机里切换到root权限修改git的shell\n1[root@localhost ~] usermod -s /sbin/nologin git\n\n这样ssh就禁止了\n5.搭建博客\n安装Github桌面版和Node.js\n\n然后cmd中\n1npm install -g hexo-cli --registry=https://registry.nom.taobao.org\n\n\n创建一个blog目录，用来存放博客\n进入到blog中，启动cmd执行命令\n\n123456#初始化hexohexo init#生成博客hexo g#搭建服务hexo s\n\n\n然后浏览器访问播客主页\n\n\n\n安装CentOs Mini，安装好后执行\n1yum groupinstall \"development tools\"\n\n周三Linux下应用的安装1.CentOS系统中有三种安装软件的方法\n通过源码安装\n./configure\n\n\nmake &amp;&amp; make install\n通过rpm安装\nrpm -ivh …\n\n\n通过yum安装\nyum search …\n\n\nyum install …\n\nrpm类型文件安装的时候，会先去读取文件内记载的设置参数内容，然后将该数据用来比对linux系统的环境，以找到是否有属性相依的软件尚未安装的问题。RPM使用自动化安装软件，比较类似windows下的.exe需要下载的安装包，但是它安装过程中会有很多依赖问题。\n\n-q: 仅查询，后面接软件名称是否有安装\n\n-qa: 列出所有，已经安装在本机linux系统上面的所有软件名称\n\n-ql: 列出该软件所有的文件与目录所在完整文件名(list)\n\n-qR: 列出与该软件有关的相依软件所在的文件(requried)\n\n\n源码安装：先阅读README文件，找到安装方法，安装相依赖的库，最后执行\n1make &amp;&amp; make install\n\n周四搭建apache+php+mysql和iptables+firewall1.昨天回顾12345yum installrpm -ivh a.rpm/http/ftp:baidu.com/a.tpm nginx.tar.gztar cat readme install./configure --help --prefix=安装路径 --with-apr=指定依赖位置make &amp;&amp; make install\n\n2.搭建apache+php+mysql环境(要求使用php5.6)\n安装httpd\n12345678#安装httpdyum install httpd httpd-devel httpd-manual mod_ssl -y#启动apachesystemctl start httpd#设置apache开机启动systemctl enable httpd#查看开放端口，检查有没有httpd服务，80和443端口是否开放ss -antlp\n\n配置防火墙，可以正常访问apache\n123firewall-cmd --zone=public --add-port=80/tcp --permanentfirewall-cmd --zone=public --add-port=433/tcp --permanentfirewall-cmd --reload\n\n安装php5.6\n12345678910rpm -Uvh https://mirror.webtatic.com/yum/el7/epel-release.rpmrpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm#卸载系统中原有的phpyum remove php-common -y#安装php5.6和php扩展yum install -y php56w php56w-opcache php56w-xml php56w-mcrypt php56w-gd php56w-mysql php56w-intl php56w-mbstring#进入网站根目录cd /var/www/html/#在网站根目录中创建index.php，写入phpinfo函数，测试网站php是否正常echo '&lt;?php phpinfo();?&gt;' &gt; index.php\n\n安装mariadb\n123456789yum install mariadb-server -y#启动mariadb-serversystemctl start mariadb#设置mariadb-server开机自启systemctl enablemariadb#初始化mysql，注意记住mysql密码mysql_secure_installation#关机+快照poweroff\n\n\n\n3.关于网站搭建：需要将网站的源代码使用工具复制到虚拟机中的网站根目录下(phpmyadmin除外)，修改网站的所有者为apache\n1chown -R apache:apache /var/www/html\n\nwordpress特性：\n​    移动网站后，网站的样式将出错，所以wordpress在安装成功后，不能移动\n​    虚拟机ip改变后，wordpress打开会卡页面，需要去数据库中修改ip\nwp_options表中\n​    siteurl: http://新ip\n​    home: http://新ip\n搭建没有提供安装引导的网站：\n​    上传网站源代码到网站根目录，找到网站的配置文件，一般是config.php\n​    再找到网站提供的sql文件，使用phpmyadmin之类工具，导入数据或直接使用mysql -uroot -p 登录数据库\n123create database database_nameuse database_namesource absolute_path/name.sql\n\n向数据库中导入内容，有多重方式，可以自行测试\n周五Linux安全检查1.防火墙功能：​    filter功能是防火墙一个重要功能，它定义数据通过是允许或者不允许\n​    filter控制数据类型分为两类：INPUT和OUTPUT\n2.Iptables命令讲解：-A 追加\n-p 指定协议类型\n123* tcp通过dport指定目标端口，sport指定源端口* udp通tcp* icmp通过--icmp-type指定类型，0是响应类型的数据包，8是请求类型的包\n\n-m 表示启动扩展功能\n​    一般和-p配合，-p指定类型后，通过-m打开此类型的扩展功能\n-j 指定如何进行处理DROP，REJECT，ACCEPT/丢弃，拒绝，通过\n1iptables -A INPUT/OUTPUT -j DROP/REJECT/ACCEPT\n\n编辑iptables的配置文件：\n​    通过编辑文件可以直接修改iptables规则，编辑文件，写入指定规则：\n123456-A INPUT -m state --state ESTABLISHED, RELATED -j ACCEPT-A INPUT -p icmp -j ACCEPT-A INPUT -i lo -j ACCEPT-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT-A INPUT -j REJECT --reject-with icmp-host-prohibited-A FORWARD -j REJECT --reject-with icmp-host-prohibited\n\n12#查看现有规则iptables -nvL\n\n12#添加80端口通过的规则firewallc-cmd --zone=public --add-port=80/tcp --permanent\n\n\n\n\n\ndrop\n默认丢弃所有包\n\n\n\n–zone\nblock\n拒绝所有外部连接，允许内部发起连接\n\n\n\npublic\n指定外部连接可以进入\n\n\n–add-port           指定添加端口     80/tcp     53/udp\n–add-service      指定常见服务      http    https    mysql     mssql      ssh\n–permanent     永久生效\n删除80端口通过的规则\n1firewall-cmd --zone=public --remove-port=80/tcp --permanent\n\n–remove-port           指定删除端口\n–remove-service      指定删除服务\n12345678910#防火墙更新规则firewall-cmd --reload#防火墙显示所有规则firewall-cmd --list-all#关闭防火墙systemctl stop firewalld#查看防火墙状态systemctl status firewalld#启动防火墙systemctl start firewalld\n\n临时加立即生效，–reload后失效，–pernament必须，–reload后才失效 \n","dateCreated":"2019-07-29T22:04:16+08:00","dateModified":"2019-09-09T13:40:52+08:00","datePublished":"2019-07-29T22:04:16+08:00","description":"Abstract: 对第二周学习的内容进行总结，note6-note10的笔记。","headline":"第二周总结","image":["http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/07/29/week2sum/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/07/29/week2sum/","keywords":"summary","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg"}</script>
+    <meta name="description" content="Abstract: 对第二周学习的内容进行总结，note6-note10的笔记。">
 <meta name="keywords" content="summary">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="week2sum">
+<meta property="og:title" content="第二周总结">
 <meta property="og:url" content="http://yoursite.com/2019/07/29/week2sum/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="Abstract: 对第二周学习的内容进行总结">
+<meta property="og:description" content="Abstract: 对第二周学习的内容进行总结，note6-note10的笔记。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-29T14:10:35.868Z">
+<meta property="og:updated_time" content="2019-09-09T05:40:52.783Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="week2sum">
-<meta name="twitter:description" content="Abstract: 对第二周学习的内容进行总结">
+<meta name="twitter:title" content="第二周总结">
+<meta name="twitter:description" content="Abstract: 对第二周学习的内容进行总结，note6-note10的笔记。">
     
     
         
@@ -261,7 +261,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            week2sum
+            第二周总结
         </h1>
     
     
@@ -286,7 +286,7 @@
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p>
+            <p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p>
 <a id="more"></a>
 
 <!--export-->
@@ -641,9 +641,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/07/29/noteday11/"
-                    data-tooltip="note11"
-                    aria-label="NEXT: note11"
+                    href="/2019/07/29/note11/"
+                    data-tooltip="笔记11"
+                    aria-label="NEXT: 笔记11"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -756,9 +756,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/07/29/noteday11/"
-                    data-tooltip="note11"
-                    aria-label="NEXT: note11"
+                    href="/2019/07/29/note11/"
+                    data-tooltip="笔记11"
+                    aria-label="NEXT: 笔记11"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -946,7 +946,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -956,9 +956,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1011,8 +1011,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -1021,10 +1021,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1046,7 +1046,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1056,9 +1056,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1067,7 +1067,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -1145,7 +1145,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -1155,9 +1155,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1178,7 +1178,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -1188,9 +1188,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1211,7 +1211,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -1221,9 +1221,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1244,7 +1244,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1254,9 +1254,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

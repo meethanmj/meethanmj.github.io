@@ -6,25 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>note21 - han个人博客</title>
+    <title>笔记21 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。\n\n\n\n\n一、MySQL数据库MySQL是流行的关系型数据库管理系统。\n\n数据库：一些关联表的集合。\n数据表：是数据的矩阵。\n列：一列包含相同类型的数据，例如用户名数据。\n行：一行是一组相关数据，例如一条用户订阅的数据。\n主键：主键是唯一的，一个数据表中只能包含一个主键。可以用主键查询数据。\n外键：外键用于关联两个表。\n\n二、MySQL基础应用1. 关于数据库123456#创建数据库CREATE DATABASE mytest;#查看数据库SHOW DATABASES;#使用数据库USE mytest;\n\n2. 关于数据表1234567891011121314151617181920212223#创建一个名为user的数据表CREATE TABLE `user`(\t`id` SMALLINT,    `username` VARCHAR(20),);#查看当前数据库中所有的数据表SHOW TABLES;#查看创建数据库时的描述SHOW CREATE TABLE user;#向user表中插入一条数据INSERT user VALUES(&apos;1&apos;, &apos;admin&apos;);#向user表中插入一条记录只包含名字的信息INSERT user(`username`) VALUES(&quot;cat&quot;);#向user表中同时插入多条记录INSERT user VALUES(&apos;2&apos;, &apos;zs&apos;), (&apos;3&apos;, &apos;ww&apos;);#查看数据表中的所有记录SELECT * FROM user;#修改数据表姓名ALERT TABLE admin RENAME TO nimda;#更改数据UPDATE nimda SET `id`=4;#删除数据表DROP TABLE user;\n\n\n\n\n库名\n表名\n字段\n\n\n\n\n用户名tb_users\n名字、密码、邮箱、昵称、创建时间等\n\n\nmynews\n新闻表tb_news\n标题、内容、作者\n\n\n\n评论表tb_comment\n新闻id、评论内容、评论用户\n\n\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859#创建新的数据库CREATE DATABASES mynews;#查看数据库SHOW DATABASE;#使用mynews库USE mynews;#创建一个名为tb_users表CREATE TABLE `tb_users`(    \t#id非空自增        `id` int(10) NOT NULL AUTO_INCREMENT,    \t#用户名非空唯一        `username` VARCHAR(50) NOT NULL UNIQUE,        `password` VARCHAR(50) NOT NULL,        `email` VARCHAR(50) NULL UNIQUE,        `nickname` VARCHAR(50) NOT NULL,        `safepoint` VARCHAR(50) NULL,    \t#头像默认        `avatarimg` VARCHAR(100) DEFAULT &apos;/images/default_avatar.jpg&apos;,    \t#时间        `reg_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),        `lastlogin_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),        `lastlogin_ip` VARCHAR(255) NULL,        PRIMARY KEY(`id`));#向tb_users表插入一条数据INSERT INTO `mynews`.`tb_users`(`username`, `password`, `email`, `nickname`) VALUES (&apos;zs&apos;, &apos;zs123&apos;, &apos;zs123@icq.com&apos;, &apos;zs123&apos;)#创建一个名为tb_news表create table `tb_news`(    `id` int(0) not null auto_increment,    `title` varchar(255) not null,    `contents` text not null,    `author` varchar(50) not null,    `new_img` varchar(100) null,    `add_time` timestamp default current_timestamp(),    `hot` int(0) default 0,    primary key(`id`));#向tb_news表插入数据INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;打完宽面&apos;, &apos;吃面！吃面！&apos;, &apos;zs&apos;);INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;鸡你太美&apos;, &apos;太美！太美！&apos;, &apos;ww&apos;);#创建一个名为tb_comment表create table `tb_comment`(    `id` int(0) not null auto_increment,    `new_id` int(0) not null,    `comment_content` text not null,    `comment_user` varchar(50) not null,    `comment_time` timestamp default current_timestamp(),    primary key(`id`));#向tb_comment表插入数据INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;1&apos;, &apos;吴亦凡&apos;, &apos;ww&apos;);INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;2&apos;, &apos;坤坤&apos;, &apos;zs&apos;);#修改数据UPDATE `mynews`.`tb_news` SET `author` = &apos;ls&apos; WHERE `id` = 1;UPDATE `tb_comment` SET `comment_content` = &apos;蔡徐坤&apos; WHERE `id` = 2;ALTER TABLE `mynews`.`tb_users` ADD UNIQUE (`username`);\n\n三、information_schemainformation_schema这个数据库中保存了MySQL服务器所有数据库的信息。如数据库名，数据库的表，表中的数据类型与访问权限等。\n\n\n\n表名\n字段作用\n\n\n\nschemata\nschema_name记录了所有数据库的名字\n\n\ntables\ntable_schema记录了所有数据库的名字\n\n\ntables\ntable_name记录了所有数据库的表的名字\n\n\ncolumns\ntable_schema记录了所有数据库的名字\n\n\ncolumns\ntable_name记录了所有数据库的表名字\n\n\ncolumns\ncolumn_name记录了所有数据库的表的列的名字\n\n\n查询数据核心语法：\n\n\n\n功能名称\n查询语句\n\n\n\n查库\nSELECT schema_name FROM information_schema.schemata\n\n\n查表\nSELECT table_name FROM information_schema.tables WHERE table_schema=库名\n\n\n查列\nSELECT column_name FROM information_schema.columns WHERE table_name=表明\n\n\n查数据\nSELECT 列名 FROM 库名.表名\n\n\n12mysql -uroot -p mynews &lt; pathmysqldump -uroot -p mysql &gt; path\n\n","dateCreated":"2019-08-12T22:19:08+08:00","dateModified":"2019-08-13T23:38:12+08:00","datePublished":"2019-08-12T22:19:08+08:00","description":"Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。","headline":"note21","image":["https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/12/note21/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/12/note21/","keywords":"MySQL","thumbnailUrl":"https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。\n\n\n\n\n一、MySQL数据库MySQL是流行的关系型数据库管理系统。\n\n数据库：一些关联表的集合。\n数据表：是数据的矩阵。\n列：一列包含相同类型的数据，例如用户名数据。\n行：一行是一组相关数据，例如一条用户订阅的数据。\n主键：主键是唯一的，一个数据表中只能包含一个主键。可以用主键查询数据。\n外键：外键用于关联两个表。\n\n二、MySQL基础应用1. 关于数据库123456#创建数据库CREATE DATABASE mytest;#查看数据库SHOW DATABASES;#使用数据库USE mytest;\n\n2. 关于数据表1234567891011121314151617181920212223#创建一个名为user的数据表CREATE TABLE `user`(\t`id` SMALLINT,    `username` VARCHAR(20),);#查看当前数据库中所有的数据表SHOW TABLES;#查看创建数据库时的描述SHOW CREATE TABLE user;#向user表中插入一条数据INSERT user VALUES(&apos;1&apos;, &apos;admin&apos;);#向user表中插入一条记录只包含名字的信息INSERT user(`username`) VALUES(&quot;cat&quot;);#向user表中同时插入多条记录INSERT user VALUES(&apos;2&apos;, &apos;zs&apos;), (&apos;3&apos;, &apos;ww&apos;);#查看数据表中的所有记录SELECT * FROM user;#修改数据表姓名ALERT TABLE admin RENAME TO nimda;#更改数据UPDATE nimda SET `id`=4;#删除数据表DROP TABLE user;\n\n\n\n\n库名\n表名\n字段\n\n\n\n\n用户名tb_users\n名字、密码、邮箱、昵称、创建时间等\n\n\nmynews\n新闻表tb_news\n标题、内容、作者\n\n\n\n评论表tb_comment\n新闻id、评论内容、评论用户\n\n\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859#创建新的数据库CREATE DATABASES mynews;#查看数据库SHOW DATABASE;#使用mynews库USE mynews;#创建一个名为tb_users表CREATE TABLE `tb_users`(    \t#id非空自增        `id` int(10) NOT NULL AUTO_INCREMENT,    \t#用户名非空唯一        `username` VARCHAR(50) NOT NULL UNIQUE,        `password` VARCHAR(50) NOT NULL,        `email` VARCHAR(50) NULL UNIQUE,        `nickname` VARCHAR(50) NOT NULL,        `safepoint` VARCHAR(50) NULL,    \t#头像默认        `avatarimg` VARCHAR(100) DEFAULT &apos;/images/default_avatar.jpg&apos;,    \t#时间        `reg_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),        `lastlogin_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),        `lastlogin_ip` VARCHAR(255) NULL,        PRIMARY KEY(`id`));#向tb_users表插入一条数据INSERT INTO `mynews`.`tb_users`(`username`, `password`, `email`, `nickname`) VALUES (&apos;zs&apos;, &apos;zs123&apos;, &apos;zs123@icq.com&apos;, &apos;zs123&apos;)#创建一个名为tb_news表create table `tb_news`(    `id` int(0) not null auto_increment,    `title` varchar(255) not null,    `contents` text not null,    `author` varchar(50) not null,    `new_img` varchar(100) null,    `add_time` timestamp default current_timestamp(),    `hot` int(0) default 0,    primary key(`id`));#向tb_news表插入数据INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;打完宽面&apos;, &apos;吃面！吃面！&apos;, &apos;zs&apos;);INSERT INTO `mynews`.`tb_news`(`title`, `contents`, `author`) VALUES (&apos;鸡你太美&apos;, &apos;太美！太美！&apos;, &apos;ww&apos;);#创建一个名为tb_comment表create table `tb_comment`(    `id` int(0) not null auto_increment,    `new_id` int(0) not null,    `comment_content` text not null,    `comment_user` varchar(50) not null,    `comment_time` timestamp default current_timestamp(),    primary key(`id`));#向tb_comment表插入数据INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;1&apos;, &apos;吴亦凡&apos;, &apos;ww&apos;);INSERT INTO `mynews`.`tb_comment`(`new_id`, `comment_content`, `comment_user`) VALUES (&apos;2&apos;, &apos;坤坤&apos;, &apos;zs&apos;);#修改数据UPDATE `mynews`.`tb_news` SET `author` = &apos;ls&apos; WHERE `id` = 1;UPDATE `tb_comment` SET `comment_content` = &apos;蔡徐坤&apos; WHERE `id` = 2;ALTER TABLE `mynews`.`tb_users` ADD UNIQUE (`username`);\n\n三、information_schemainformation_schema这个数据库中保存了MySQL服务器所有数据库的信息。如数据库名，数据库的表，表中的数据类型与访问权限等。\n\n\n\n表名\n字段作用\n\n\n\nschemata\nschema_name记录了所有数据库的名字\n\n\ntables\ntable_schema记录了所有数据库的名字\n\n\ntables\ntable_name记录了所有数据库的表的名字\n\n\ncolumns\ntable_schema记录了所有数据库的名字\n\n\ncolumns\ntable_name记录了所有数据库的表名字\n\n\ncolumns\ncolumn_name记录了所有数据库的表的列的名字\n\n\n查询数据核心语法：\n\n\n\n功能名称\n查询语句\n\n\n\n查库\nSELECT schema_name FROM information_schema.schemata\n\n\n查表\nSELECT table_name FROM information_schema.tables WHERE table_schema=库名\n\n\n查列\nSELECT column_name FROM information_schema.columns WHERE table_name=表明\n\n\n查数据\nSELECT 列名 FROM 库名.表名\n\n\n12mysql -uroot -p mynews &lt; pathmysqldump -uroot -p mysql &gt; path\n\n","dateCreated":"2019-08-12T22:19:08+08:00","dateModified":"2019-09-09T13:37:04+08:00","datePublished":"2019-08-12T22:19:08+08:00","description":"Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。","headline":"笔记21","image":["https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/08/12/note21/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/08/12/note21/","keywords":"MySQL","thumbnailUrl":"https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"}</script>
     <meta name="description" content="Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。">
 <meta name="keywords" content="MySQL">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="note21">
+<meta property="og:title" content="笔记21">
 <meta property="og:url" content="http://yoursite.com/2019/08/12/note21/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-13T15:38:12.071Z">
+<meta property="og:updated_time" content="2019-09-09T05:37:04.364Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="note21">
+<meta name="twitter:title" content="笔记21">
 <meta name="twitter:description" content="Abstract: 对MySQL数据库的简单介绍和基本操作包括创建数据库，读取数据库信息，创建表，对表中的数据进行增删改查。以及对information_schema表的理解。">
     
     
@@ -261,7 +261,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            note21
+            笔记21
         </h1>
     
     
@@ -733,7 +733,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
                         </a>
@@ -743,9 +743,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/28/dvwa-deploy/"
-                            aria-label=": dvwa-deploy"
+                            aria-label=": dvwa 在 CentOS 部署"
                         >
-                            <h3 class="media-heading">dvwa-deploy</h3>
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -798,8 +798,8 @@
                     <div class="media-left">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
                         </a>
@@ -808,10 +808,10 @@
                     <div class="media-body">
                         <a
                             class="link-unstyled"
-                            href="http://yoursite.com/2019/07/29/noteday11/"
-                            aria-label=": note11"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
                         >
-                            <h3 class="media-heading">note11</h3>
+                            <h3 class="media-heading">笔记11</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -833,7 +833,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -843,9 +843,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/29/week2sum/"
-                            aria-label=": week2sum"
+                            aria-label=": 第二周总结"
                         >
-                            <h3 class="media-heading">week2sum</h3>
+                            <h3 class="media-heading">第二周总结</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -854,7 +854,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结</p></div>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -932,7 +932,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
                         </a>
@@ -942,9 +942,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/07/30/note12/"
-                            aria-label=": note12"
+                            aria-label=": 笔记12"
                         >
-                            <h3 class="media-heading">note12</h3>
+                            <h3 class="media-heading">笔记12</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -965,7 +965,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
                             <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
                         </a>
@@ -975,9 +975,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note13/"
-                            aria-label=": note13"
+                            aria-label=": 笔记13"
                         >
-                            <h3 class="media-heading">note13</h3>
+                            <h3 class="media-heading">笔记13</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -998,7 +998,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
                             <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
                         </a>
@@ -1008,9 +1008,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/01/note14/"
-                            aria-label=": note14"
+                            aria-label=": 笔记14"
                         >
-                            <h3 class="media-heading">note14</h3>
+                            <h3 class="media-heading">笔记14</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -1031,7 +1031,7 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
                             <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
                         </a>
@@ -1041,9 +1041,9 @@
                         <a
                             class="link-unstyled"
                             href="http://yoursite.com/2019/08/03/note15/"
-                            aria-label=": note15"
+                            aria-label=": 笔记15"
                         >
-                            <h3 class="media-heading">note15</h3>
+                            <h3 class="media-heading">笔记15</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
