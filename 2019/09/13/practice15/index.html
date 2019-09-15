@@ -1,0 +1,1332 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>练习15-文件后缀解析漏洞 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: upload-labs 中的 Pass-03 - Pass12 文件后缀解析漏洞。\n\n\n\n\n\n\n文件上传漏洞总结文件上传分类\n如何判断上传漏洞类型\n根据不同类型选择不同方式\nPass-03先判断上传漏洞的类型打开第三关首页，寻找上传点，我们可以很容易找到上传点。\n\n先选择一个 404.txt 文件上传，\n\n发现可以上传成功，右击复制图片地址，可以查看文件内容。\n\n返回首页，选择 shell.php 文件上传，发现上传失败。\n\n根据以上操作，可以发现该判断机制为后缀的黑名单判断。除此之外，通过 Wappalyzer 插件可以搜集到很多信息。\n\n根据已知信息构造后缀绕过检查根据提示可知 .php 文件是不允许的，那么可以通过修改后缀名来绕过后缀名检查。可以新建一个 2.phtml \n\n然后直接上传 2.phtml 文件绕过后缀名检查。\n\n也可以打开 burpsuite 软件，在上传时，修改 2.php 的后缀为 2.phtml 。来绕过后缀名检查。\n\n上传成功后，右击选择复制图片地址，在新标签页打开，可以发现\n\nPass-03 代码分析核心代码：\n1234567891011&lt;?php...$deny_ext = array('.asp','.aspx','.php','.jsp');$file_name = trim($_FILES['upload_file']['name']);$file_name = deldot($file_name);//删除文件名末尾的点$file_ext = strrchr($file_name, '.');$file_ext = strtolower($file_ext); //转换为小写$file_ext = str_ireplace('::$DATA', '', $file_ext);//去除字符串::$DATA$file_ext = trim($file_ext); //收尾去空...?&gt;\n\n可以发现，黑名单中含的名单过少，所以可以通过 .phtml 绕过。由于 deldot() 、strtolower()和 trim() 函数的存在，所以无法用后缀那个加 . 或者 空格 等方法绕过。 当我们输入 2.php.空格. 时，经过 deldot() 函数后，变为 2.php.空格 ，再经过 strrchr() 函数后变为 .空格，经过 strtolower() 和 str_ireplace() 后，没有变化，最后经过 trim() 函数后，变为 .。2.php.空格. 虽然可以绕过上传成功，但是文件名为随机数加 .，无法解析。\n\nPass-04先判断上传漏洞的类型选择 1.php 点击上传，发现无法上传。\n\n选择  webshell.txt 点击上传，发现可以上传成功，\n\n右击选择复制图片地址，在新标签页中打开，可以看到上传的文件名和文件内容。\n\n发现服务器并没有对文件名进行重命名。\n\n此上传类型为不重命名的黑名单上传。\n根据已知信息构造后缀绕过检查使用 .htaccess 绕过新建 .htaccess文件，写入\n1SetHandler application/x-httpd-php\n\n\n新建 404.jpg 用记事本打开，写入一句话木马，\n1&lt;?php phpinfo();?&gt;\n\n另存为 404.jpg 文件。\n\n先上传 .htaccess 文件，使得上传的文件按 php 解析。\n\n再上传 404.jpg 文件\n\n查看图片地址，\n\n虽然是 .jpg 格式，但按照的是 php 文件的解析，所以可以成功。\n利用系统特性覆盖空的php文件windows 系统下，&lt; 等于 *，即代表任意字符。 \n参考文章：\n\n当php邂逅windows通用上传缺陷\n\n思路：利用特殊方法生成一个 php 文件，然后再利用改特性将文件覆盖。\n打开 burpsuit 软件，选择 2.php 点击上传，抓取数据包，然后发送到 Repeater 模块，这这里进行尝试，知道发现可以上传的文件后缀名为止。\n\n依次尝试文件上传思维导图中黑名单中的方法，发现当文件名为 2.php:.jpg 可以上传成功。\n\n返回到 Proxy 模块，修改文件后缀为 3.php:.jpg ，点击 Forward，\n\n右击选择复制图片地址，在新标签页中打开，由于 windows 系统会把后缀名解析为 3.php，\n\n修改文件后缀名，继续查看。\n\n发现没有内容，打开服务器，查看 3.php 发现没有内容。\n\n重新上传，用 burpsuite 修改后缀名为 3.&lt;&lt;&lt;，上传成功后，重新查看文件。\n\n发现本次可以显示内容，\n\n在服务器查看 3.php 文件。\n\nPass-04 代码分析核心代码\n1234567891011&lt;?php...$deny_ext = array(\".php\",\".php5\",\".php4\",\".php3\",\".php2\",\"php1\",\".html\",\".htm\",\".phtml\",\".pht\",\".pHp\",\".pHp5\",\".pHp4\",\".pHp3\",\".pHp2\",\"pHp1\",\".Html\",\".Htm\",\".pHtml\",\".jsp\",\".jspa\",\".jspx\",\".jsw\",\".jsv\",\".jspf\",\".jtml\",\".jSp\",\".jSpx\",\".jSpa\",\".jSw\",\".jSv\",\".jSpf\",\".jHtml\",\".asp\",\".aspx\",\".asa\",\".asax\",\".ascx\",\".ashx\",\".asmx\",\".cer\",\".aSp\",\".aSpx\",\".aSa\",\".aSax\",\".aScx\",\".aShx\",\".aSmx\",\".cEr\",\".sWf\",\".swf\");$file_name = trim($_FILES['upload_file']['name']);$file_name = deldot($file_name);//删除文件名末尾的点$file_ext = strrchr($file_name, '.');$file_ext = strtolower($file_ext); //转换为小写$file_ext = str_ireplace('::$DATA', '', $file_ext);//去除字符串::$DATA$file_ext = trim($file_ext); //收尾去空...?&gt;\n\n黑名单中名单虽多，但是并没有 .htaccess 所以可以先上传 .htaccess，之后把 404.php 另存为 404.jpg，上传 404.jpg，会以 php文件解析。 当输入为 2.php:.jpg时，经过处理后输出为 .jpg，可以绕过检测，上传至服务器上，由于 windows 特性，上传的文件名为 2.php。之后再修改文件名为 2.&lt;&lt;&lt;，系统检测到后匹配\n\n到 2.php 文件，之后把内容覆盖掉。\nPass-05先判断上传漏洞的类型选择 2.php 文件，无法上传。\n\n选择 webshell.txt ，上传成功，\n\n查看文件，\n\n该类型为黑名单的文件重命名上传。\n\n根据已知信息构造后缀绕过检查打开 burpsuite 软件，选择一个文件点击上传，用 burpsuite 抓取数据包，右击发送到 Repeater 模块。\n\n修改 2.php 为 2.pHP 发现可以上传成功，\n\n返回 Proxy 模块，修改后缀 .php 为 .pHP，\n\n查看文件\n\nPass-05 代码分析12345678910&lt;?php...$deny_ext = array(\".php\",\".php5\",\".php4\",\".php3\",\".php2\",\".html\",\".htm\",\".phtml\",\".pht\",\".pHp\",\".pHp5\",\".pHp4\",\".pHp3\",\".pHp2\",\".Html\",\".Htm\",\".pHtml\",\".jsp\",\".jspa\",\".jspx\",\".jsw\",\".jsv\",\".jspf\",\".jtml\",\".jSp\",\".jSpx\",\".jSpa\",\".jSw\",\".jSv\",\".jSpf\",\".jHtml\",\".asp\",\".aspx\",\".asa\",\".asax\",\".ascx\",\".ashx\",\".asmx\",\".cer\",\".aSp\",\".aSpx\",\".aSa\",\".aSax\",\".aScx\",\".aShx\",\".aSmx\",\".cEr\",\".sWf\",\".swf\",\".htaccess\");$file_name = trim($_FILES['upload_file']['name']);$file_name = deldot($file_name);//删除文件名末尾的点$file_ext = strrchr($file_name, '.');$file_ext = str_ireplace('::$DATA', '', $file_ext);//去除字符串::$DATA$file_ext = trim($file_ext); //首尾去空...?&gt;\n\n与 Pass-04 代码相比，可以发现，黑名单中增加了 .htaccess 后缀名。但是，缺少了 strtolower() 函数，所以可以通过大写绕过。\nPass-06先判断上传漏洞的类型上传 1.php ，提示此文件类型不能上传。\n\n上传 webshell.txt ，发现可以上传，\n\n查看文件，\n\n可以发现，文件名已经改变，故该类型为黑名单重命名上传类型。\n\n根据已知信息构造后缀绕过检测用 burpsuite 抓取数据包，在 Repeater 判断绕过的方法。\n\n多次尝试后，发现在后缀名后添加空格就可以绕过检测。\n\n返回 Proxy 模块，修改后缀名，可以上传成功，查看文件\n\nPass-06 代码分析12345678910&lt;?php...$deny_ext = array(\".php\",\".php5\",\".php4\",\".php3\",\".php2\",\".html\",\".htm\",\".phtml\",\".pht\",\".pHp\",\".pHp5\",\".pHp4\",\".pHp3\",\".pHp2\",\".Html\",\".Htm\",\".pHtml\",\".jsp\",\".jspa\",\".jspx\",\".jsw\",\".jsv\",\".jspf\",\".jtml\",\".jSp\",\".jSpx\",\".jSpa\",\".jSw\",\".jSv\",\".jSpf\",\".jHtml\",\".asp\",\".aspx\",\".asa\",\".asax\",\".ascx\",\".ashx\",\".asmx\",\".cer\",\".aSp\",\".aSpx\",\".aSa\",\".aSax\",\".aScx\",\".aShx\",\".aSmx\",\".cEr\",\".sWf\",\".swf\",\".htaccess\");$file_name = $_FILES['upload_file']['name'];$file_name = deldot($file_name);//删除文件名末尾的点$file_ext = strrchr($file_name, '.');$file_ext = strtolower($file_ext); //转换为小写$file_ext = str_ireplace('::$DATA', '', $file_ext);//去除字符串::$DATA    ...?&gt;\n\n最后缺少 trim() ，所以可以通过后缀名加空格来绕过。 \nPass-07先判断上传漏洞的类型上传 1.php 提示：此文件类型不允许上传！\n\n上传 webshell.txt ，可以上传，查看文件，\n\n可以判断该类型为黑名单不重命名的上传类型。\n根据已知信息构造后缀绕过检测用 burpsuite 抓取数据包，在 Repeater 判断绕过的方法。多次尝试后，发现把 2.php 改成 2.php. 可以绕过检测。\n\n返回 Proxy 模块，进行上传，\n\n发现可以上传成功，点击查看文件，\n\nPass-07 代码分析12345678910&lt;?php...    $deny_ext = array(\".php\",\".php5\",\".php4\",\".php3\",\".php2\",\".html\",\".htm\",\".phtml\",\".pht\",\".pHp\",\".pHp5\",\".pHp4\",\".pHp3\",\".pHp2\",\".Html\",\".Htm\",\".pHtml\",\".jsp\",\".jspa\",\".jspx\",\".jsw\",\".jsv\",\".jspf\",\".jtml\",\".jSp\",\".jSpx\",\".jSpa\",\".jSw\",\".jSv\",\".jSpf\",\".jHtml\",\".asp\",\".aspx\",\".asa\",\".asax\",\".ascx\",\".ashx\",\".asmx\",\".cer\",\".aSp\",\".aSpx\",\".aSa\",\".aSax\",\".aScx\",\".aShx\",\".aSmx\",\".cEr\",\".sWf\",\".swf\",\".htaccess\");$file_name = trim($_FILES['upload_file']['name']);$file_ext = strrchr($file_name, '.');$file_ext = strtolower($file_ext); //转换为小写$file_ext = str_ireplace('::$DATA', '', $file_ext);//去除字符串::$DATA$file_ext = trim($file_ext); //首尾去空    ...    ?&gt;\n\n程序通过对末尾 . 的处理，来取出后缀，但输入为 2.php. 的话，最后输出为 . 可以绕过检测。上传至服务器的后缀名为 .php. 由于服务器系统特性，也可以解析为 .php。\nPass-08先判断上传漏洞的类型上传 1.php ，无法上传，提示：此文件类型不允许上传。\n\n上传 webshell.txt ，上传成功，查看文件，\n\n可以看出，该类型为黑名单重命名的上传类型。\n根据已知信息构造后缀绕过检测用 burpsuite 抓取数据包，在 Repeater 判断绕过的方法。多次尝试，发现把 2.php 修改为 2.php::$DATA 可以绕过检测。\n\n返回 Proxy 模块进行上传。\n\n上传成功后，点击查看文件，\n\n把后面的 ::$data 重新上传\n\nPass-08 代码分析12345678910&lt;?php...$deny_ext = array(\".php\",\".php5\",\".php4\",\".php3\",\".php2\",\".html\",\".htm\",\".phtml\",\".pht\",\".pHp\",\".pHp5\",\".pHp4\",\".pHp3\",\".pHp2\",\".Html\",\".Htm\",\".pHtml\",\".jsp\",\".jspa\",\".jspx\",\".jsw\",\".jsv\",\".jspf\",\".jtml\",\".jSp\",\".jSpx\",\".jSpa\",\".jSw\",\".jSv\",\".jSpf\",\".jHtml\",\".asp\",\".aspx\",\".asa\",\".asax\",\".ascx\",\".ashx\",\".asmx\",\".cer\",\".aSp\",\".aSpx\",\".aSa\",\".aSax\",\".aScx\",\".aShx\",\".aSmx\",\".cEr\",\".sWf\",\".swf\",\".htaccess\");$file_name = trim($_FILES['upload_file']['name']);$file_name = deldot($file_name);//删除文件名末尾的点$file_ext = strrchr($file_name, '.');$file_ext = strtolower($file_ext); //转换为小写$file_ext = trim($file_ext); //首尾去空...?&gt;\n\n与前几篇的对比可以发现，通过 ::$DATA 绕过。\nPass-09先判断上传漏洞的类型上传 1.php ，无法上传，提示：此文件类型不允许上传。\n\n上传 webshell.txt ，可以上传成功，查看文件，\n\n可以看出，该类型为黑名单不重命名的上传类型。\n根据已知信息构造后缀绕过检测使用点空格点绕过上传 2.php 文件，同时使用 burpsuite 改包，把 2.php 修改为 2.php. .，点击 Forward ，上传成功。\n\n查看文件\n\n利用系统特性覆盖空的php文件用 burpsuite 抓取数据包，在 Repeater 判断绕过的方法。多次尝试，将 2.php 改成 2.php:jpg，可以长传成功。\n\n返回 Proxy 模块，上传文件成功，查看文件，\n\n把 :jpg 删掉，\n\n刷新网页，\n\n打开服务器，查看 2.php，发现确实没有数据，\n\n重新上传，把 2.php 修改为 2.&lt;&lt;&lt; ，\n\n查看文件，\n\n把  &lt;&lt;&lt; 改为 .php \n\n查看服务器端的 2.php 文件\n\nPass-09 代码分析1234567891011&lt;?php...$deny_ext = array(\".php\",\".php5\",\".php4\",\".php3\",\".php2\",\".html\",\".htm\",\".phtml\",\".pht\",\".pHp\",\".pHp5\",\".pHp4\",\".pHp3\",\".pHp2\",\".Html\",\".Htm\",\".pHtml\",\".jsp\",\".jspa\",\".jspx\",\".jsw\",\".jsv\",\".jspf\",\".jtml\",\".jSp\",\".jSpx\",\".jSpa\",\".jSw\",\".jSv\",\".jSpf\",\".jHtml\",\".asp\",\".aspx\",\".asa\",\".asax\",\".ascx\",\".ashx\",\".asmx\",\".cer\",\".aSp\",\".aSpx\",\".aSa\",\".aSax\",\".aScx\",\".aShx\",\".aSmx\",\".cEr\",\".sWf\",\".swf\",\".htaccess\");$file_name = trim($_FILES['upload_file']['name']);$file_name = deldot($file_name);//删除文件名末尾的点$file_ext = strrchr($file_name, '.');$file_ext = strtolower($file_ext); //转换为小写$file_ext = str_ireplace('::$DATA', '', $file_ext);//去除字符串::$DATA$file_ext = trim($file_ext); //首尾去空...    ?&gt;\n\n文件名的处理过程如图所示，\n\n当输入文件名为  1.pHP. 时，1.pHP. → 1.pHP → .pHP → .php → .php → 输出。\n当输入文件名为 1.php.空格时，1.php.空格 → 1.php. → 1.php → .php → 输出。\n当输入文件名为 1.php.空格. 时，1.php.空格. → 1.php.空格. → 1.php.空格 → .空格 → . →输出。\nPass-10先判断上传漏洞类型上传 1.php 文件，发现可以上传成功，\n\n点击查看文件，\n\n发现文件名字变为 1. ，推测有可能检测到后缀名中有 php 后就把后缀的 php 给去掉了，尝试双拼绕过。\n\n点击上传，可以上传成功，查看文件，\n\nPass-10 代码分析123456789&lt;?php...$deny_ext = array(\"php\",\"php5\",\"php4\",\"php3\",\"php2\",\"html\",\"htm\",\"phtml\",\"pht\",\"jsp\",\"jspa\",\"jspx\",\"jsw\",\"jsv\",\"jspf\",\"jtml\",\"asp\",\"aspx\",\"asa\",\"asax\",\"ascx\",\"ashx\",\"asmx\",\"cer\",\"swf\",\"htaccess\");$file_name = trim($_FILES['upload_file']['name']);$file_name = str_ireplace($deny_ext,\"\", $file_name);$temp_file = $_FILES['upload_file']['tmp_name'];...?&gt;\n\n把在黑名单中出现的后缀名替换为空，即可以通过双拼绕过。\nPass-11先判断上传漏洞类型上传 1.php 文件，没有成功，提示：只允许上传 .jpg|.png|.gif 类型文件。首先确定为白名单策略。\n\n选择图片上传，\n\n查看图片，\n\n可以判断出该类型是白名单重命名上传类型。\n根据已知信息构造后缀绕过检测用 burpsuite 抓取数据包，在 Repeater 判断绕过的方法。多次尝试，把 2.php 改成 2.php%00.jpg 。\n打开服务端，里面没有 2.php 文件。\n\n在 burpsuite 改包，\n\n上传成功后，查看\n\n查看服务端，\n\n文件名只保留 2.php，刷新页面\n\nPass-11 代码分析1234567891011121314151617181920&lt;?php$is_upload = false;$msg = null;if(isset($_POST['submit']))&#123;    $ext_arr = array('jpg','png','gif');    $file_ext = substr($_FILES['upload_file']['name'],strrpos($_FILES['upload_file']['name'],\".\")+1);    if(in_array($file_ext,$ext_arr))&#123;        $temp_file = $_FILES['upload_file']['tmp_name'];        $img_path = $_GET['save_path'].\"/\".rand(10, 99).date(\"YmdHis\").\".\".$file_ext;        if(move_uploaded_file($temp_file,$img_path))&#123;            $is_upload = true;        &#125; else &#123;            $msg = '上传出错！';        &#125;    &#125; else&#123;        $msg = \"只允许上传.jpg|.png|.gif类型文件！\";    &#125;&#125;?&gt;\n\n设置白名单，通过寻找 . 的位置，截取文件名，取出文件后缀，之后与白名单中的后缀做对比。关键问题出在可以设置保存路径上。把 save_name 设置为 /uploads/404.php%00，上传文件名为 404.jpg 后，传至服务器的文件名为 /uploads/404.php%00404.jpg由于windows特性实际上传至服务器的名字为 /uploads/404.php。\nPass-12先判断上传漏洞类型上传 1.php 文件，观察页面的报错提示。\n\n上传一个头像，\n\n此类型为白名单重命名的上传类型。\n根据已知信息构造后缀绕过检测用 burpsuite 抓取数据包，在 Repeater 判断绕过的方法。在 burpsuite 中我们可以发现，save_path 的参数通过 POST 方式发送，所以应该把它转换成 hex。\n把 404.php 保存为 404.jpg，文件内容为 &lt;?php phpinfo();?&gt;。\n\n上传 404.jpg 文件，\n\n同时使用 burpsuite 抓包，把 save_path 修改为 ../upload/404.php%00，由于 POST 方式并不进行 URL 解码，故转换成十六进制。\n\n点击 Hex，找到对应的位置做修改，\n\n返回 Raw 查看，\n\n未点击 Forward 之前，服务端没有 404.php，\n\n点击 Forward，上传成功，查看服务端，\n\n在浏览器中查看图片，\n\n只留下 404.php\n\nPass-12 代码分析与 Pass-11 主要的不同就是 save_path 传输方式。Pass-11 以 GET 方式传递，Pass-12 以 POST 方式传递。由于 POST 方式不会经过 URL 解码，所以需要在数据包中把 %00 修改为 Hex 方式。\n","dateCreated":"2019-09-13T17:02:39+08:00","dateModified":"2019-09-15T21:10:48+08:00","datePublished":"2019-09-13T17:02:39+08:00","description":"Abstract: upload-labs 中的 Pass-03 - Pass12 文件后缀解析漏洞。","headline":"练习15-文件后缀解析漏洞","image":["https://foter.com/photos/398/natural-forest-snow-mountainous.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/13/practice15/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/13/practice15/","keywords":"upload-labs, 文件后缀解析漏洞","thumbnailUrl":"https://foter.com/photos/398/natural-forest-snow-mountainous.jpg"}</script>
+    <meta name="description" content="Abstract: upload-labs 中的 Pass-03 - Pass12 文件后缀解析漏洞。">
+<meta name="keywords" content="upload-labs,文件后缀解析漏洞">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="练习15-文件后缀解析漏洞">
+<meta property="og:url" content="http://yoursite.com/2019/09/13/practice15/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: upload-labs 中的 Pass-03 - Pass12 文件后缀解析漏洞。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E.png">
+<meta property="og:image" content="http://yoursite.com/images/%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%B1%BB%E5%9E%8B.png">
+<meta property="og:image" content="http://yoursite.com/images/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_5.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_8.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_7.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_9.png">
+<meta property="og:image" content="http://yoursite.com/images/121p3_10.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_19.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_20.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_17.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_18.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_21.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_5.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_9.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_10.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_11.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_12.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_13.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_15.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_14.png">
+<meta property="og:image" content="http://yoursite.com/images/121p4_22.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_5.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_7.png">
+<meta property="og:image" content="http://yoursite.com/images/121p5_8.png">
+<meta property="og:image" content="http://yoursite.com/images/121p6_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p6_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p6_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p6_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p6_5.png">
+<meta property="og:image" content="http://yoursite.com/images/121p6_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p6_7.png">
+<meta property="og:image" content="http://yoursite.com/images/121p7_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p7_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p7_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p7_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p7_5.png">
+<meta property="og:image" content="http://yoursite.com/images/121p8_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p8_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p8_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p8_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p8_5.png">
+<meta property="og:image" content="http://yoursite.com/images/121p8_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_12.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_13.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_7.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_8.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_9.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_10.png">
+<meta property="og:image" content="http://yoursite.com/images/121p9_11.png">
+<meta property="og:image" content="http://yoursite.com/images/%E6%96%87%E4%BB%B6%E5%90%8D%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="http://yoursite.com/images/121p10_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p10_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p10_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p10_4.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_3.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_9.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_8.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_10.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_11.png">
+<meta property="og:image" content="http://yoursite.com/images/121p11_12.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_1.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_2.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_6.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_7.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_8.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_9.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_18.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_19.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_20.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_21.png">
+<meta property="og:image" content="http://yoursite.com/images/121p12_22.png">
+<meta property="og:updated_time" content="2019-09-15T13:10:48.752Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="练习15-文件后缀解析漏洞">
+<meta name="twitter:description" content="Abstract: upload-labs 中的 Pass-03 - Pass12 文件后缀解析漏洞。">
+<meta name="twitter:image" content="http://yoursite.com/images/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://foter.com/photos/398/natural-forest-snow-mountainous.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://foter.com/photos/398/natural-forest-snow-mountainous.jpg"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            练习15-文件后缀解析漏洞
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-09-13T17:02:39+08:00">
+	
+		    Sep 13, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: <code>upload-labs</code> 中的 <code>Pass-03 - Pass12</code> 文件后缀解析漏洞。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#文件上传漏洞总结"><span class="toc-text">文件上传漏洞总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文件上传分类"><span class="toc-text">文件上传分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何判断上传漏洞类型"><span class="toc-text">如何判断上传漏洞类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#根据不同类型选择不同方式"><span class="toc-text">根据不同类型选择不同方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-03"><span class="toc-text">Pass-03</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞的类型"><span class="toc-text">先判断上传漏洞的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检查"><span class="toc-text">根据已知信息构造后缀绕过检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-03-代码分析"><span class="toc-text">Pass-03 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-04"><span class="toc-text">Pass-04</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞的类型-1"><span class="toc-text">先判断上传漏洞的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检查-1"><span class="toc-text">根据已知信息构造后缀绕过检查</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#使用-htaccess-绕过"><span class="toc-text">使用 .htaccess 绕过</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用系统特性覆盖空的php文件"><span class="toc-text">利用系统特性覆盖空的php文件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-04-代码分析"><span class="toc-text">Pass-04 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-05"><span class="toc-text">Pass-05</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞的类型-2"><span class="toc-text">先判断上传漏洞的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检查-2"><span class="toc-text">根据已知信息构造后缀绕过检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-05-代码分析"><span class="toc-text">Pass-05 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-06"><span class="toc-text">Pass-06</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞的类型-3"><span class="toc-text">先判断上传漏洞的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检测"><span class="toc-text">根据已知信息构造后缀绕过检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-06-代码分析"><span class="toc-text">Pass-06 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-07"><span class="toc-text">Pass-07</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞的类型-4"><span class="toc-text">先判断上传漏洞的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检测-1"><span class="toc-text">根据已知信息构造后缀绕过检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-07-代码分析"><span class="toc-text">Pass-07 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-08"><span class="toc-text">Pass-08</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞的类型-5"><span class="toc-text">先判断上传漏洞的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检测-2"><span class="toc-text">根据已知信息构造后缀绕过检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-08-代码分析"><span class="toc-text">Pass-08 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-09"><span class="toc-text">Pass-09</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞的类型-6"><span class="toc-text">先判断上传漏洞的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检测-3"><span class="toc-text">根据已知信息构造后缀绕过检测</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#使用点空格点绕过"><span class="toc-text">使用点空格点绕过</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用系统特性覆盖空的php文件-1"><span class="toc-text">利用系统特性覆盖空的php文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Pass-09-代码分析"><span class="toc-text">Pass-09 代码分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-10"><span class="toc-text">Pass-10</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞类型"><span class="toc-text">先判断上传漏洞类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-10-代码分析"><span class="toc-text">Pass-10 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-11"><span class="toc-text">Pass-11</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞类型-1"><span class="toc-text">先判断上传漏洞类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检测-4"><span class="toc-text">根据已知信息构造后缀绕过检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-11-代码分析"><span class="toc-text">Pass-11 代码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pass-12"><span class="toc-text">Pass-12</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先判断上传漏洞类型-2"><span class="toc-text">先判断上传漏洞类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据已知信息构造后缀绕过检测-5"><span class="toc-text">根据已知信息构造后缀绕过检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pass-12-代码分析"><span class="toc-text">Pass-12 代码分析</span></a></li></ol></li></ol></li></ol>
+
+<h2 id="文件上传漏洞总结"><a href="#文件上传漏洞总结" class="headerlink" title="文件上传漏洞总结"></a>文件上传漏洞总结</h2><h3 id="文件上传分类"><a href="#文件上传分类" class="headerlink" title="文件上传分类"></a>文件上传分类</h3><p><img src="/images/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E.png" alt></p>
+<h3 id="如何判断上传漏洞类型"><a href="#如何判断上传漏洞类型" class="headerlink" title="如何判断上传漏洞类型"></a>如何判断上传漏洞类型</h3><p><img src="/images/%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E7%B1%BB%E5%9E%8B.png" alt></p>
+<h3 id="根据不同类型选择不同方式"><a href="#根据不同类型选择不同方式" class="headerlink" title="根据不同类型选择不同方式"></a>根据不同类型选择不同方式</h3><p><img src="/images/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0.png" alt></p>
+<h3 id="Pass-03"><a href="#Pass-03" class="headerlink" title="Pass-03"></a>Pass-03</h3><h4 id="先判断上传漏洞的类型"><a href="#先判断上传漏洞的类型" class="headerlink" title="先判断上传漏洞的类型"></a>先判断上传漏洞的类型</h4><p>打开第三关首页，寻找上传点，我们可以很容易找到上传点。</p>
+<p><img src="/images/121p3_1.png" alt></p>
+<p>先选择一个 <code>404.txt</code> 文件上传，</p>
+<p><img src="/images/121p3_2.png" alt></p>
+<p>发现可以上传成功，右击复制图片地址，可以查看文件内容。</p>
+<p><img src="/images/121p3_3.png" alt></p>
+<p>返回首页，选择 <code>shell.php</code> 文件上传，发现上传失败。</p>
+<p><img src="/images/121p3_4.png" alt></p>
+<p>根据以上操作，可以发现该判断机制为后缀的黑名单判断。除此之外，通过 <code>Wappalyzer</code> 插件可以搜集到很多信息。</p>
+<p><img src="/images/121p3_5.png" alt></p>
+<h4 id="根据已知信息构造后缀绕过检查"><a href="#根据已知信息构造后缀绕过检查" class="headerlink" title="根据已知信息构造后缀绕过检查"></a>根据已知信息构造后缀绕过检查</h4><p>根据提示可知 <code>.php</code> 文件是不允许的，那么可以通过修改后缀名来绕过后缀名检查。可以新建一个 <code>2.phtml</code> </p>
+<p><img src="/images/121p3_6.png" alt></p>
+<p>然后直接上传 <code>2.phtml</code> 文件绕过后缀名检查。</p>
+<p><img src="/images/121p3_8.png" alt></p>
+<p>也可以打开 <code>burpsuite</code> 软件，在上传时，修改 <code>2.php</code> 的后缀为 <code>2.phtml</code> 。来绕过后缀名检查。</p>
+<p><img src="/images/121p3_7.png" alt></p>
+<p>上传成功后，右击选择复制图片地址，在新标签页打开，可以发现</p>
+<p><img src="/images/121p3_9.png" alt></p>
+<h4 id="Pass-03-代码分析"><a href="#Pass-03-代码分析" class="headerlink" title="Pass-03 代码分析"></a>Pass-03 代码分析</h4><p>核心代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">'.asp'</span>,<span class="string">'.aspx'</span>,<span class="string">'.php'</span>,<span class="string">'.jsp'</span>);</span><br><span class="line">$file_name = trim($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]);</span><br><span class="line">$file_name = deldot($file_name);<span class="comment">//删除文件名末尾的点</span></span><br><span class="line">$file_ext = strrchr($file_name, <span class="string">'.'</span>);</span><br><span class="line">$file_ext = strtolower($file_ext); <span class="comment">//转换为小写</span></span><br><span class="line">$file_ext = str_ireplace(<span class="string">'::$DATA'</span>, <span class="string">''</span>, $file_ext);<span class="comment">//去除字符串::$DATA</span></span><br><span class="line">$file_ext = trim($file_ext); <span class="comment">//收尾去空</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以发现，黑名单中含的名单过少，所以可以通过 <code>.phtml</code> 绕过。由于 <code>deldot()</code> 、<code>strtolower()</code>和 <code>trim()</code> 函数的存在，所以无法用后缀那个加 <code>.</code> 或者 <code>空格</code> 等方法绕过。 当我们输入 <code>2.php.空格.</code> 时，经过 <code>deldot()</code> 函数后，变为 <code>2.php.空格</code> ，再经过 <code>strrchr()</code> 函数后变为 <code>.空格</code>，经过 <code>strtolower()</code> 和 <code>str_ireplace()</code> 后，没有变化，最后经过 <code>trim()</code> 函数后，变为 <code>.</code>。<code>2.php.空格.</code> 虽然可以绕过上传成功，但是文件名为随机数加 <code>.</code>，无法解析。</p>
+<p><img src="/images/121p3_10.png" alt></p>
+<h3 id="Pass-04"><a href="#Pass-04" class="headerlink" title="Pass-04"></a>Pass-04</h3><h4 id="先判断上传漏洞的类型-1"><a href="#先判断上传漏洞的类型-1" class="headerlink" title="先判断上传漏洞的类型"></a>先判断上传漏洞的类型</h4><p>选择 <code>1.php</code> 点击上传，发现无法上传。</p>
+<p><img src="/images/121p4_2.png" alt></p>
+<p>选择  <code>webshell.txt</code> 点击上传，发现可以上传成功，</p>
+<p><img src="/images/121p4_1.png" alt></p>
+<p>右击选择复制图片地址，在新标签页中打开，可以看到上传的文件名和文件内容。</p>
+<p><img src="/images/121p4_3.png" alt></p>
+<p>发现服务器并没有对文件名进行重命名。</p>
+<p><img src="/images/121p4_4.png" alt></p>
+<p>此上传类型为不重命名的黑名单上传。</p>
+<h4 id="根据已知信息构造后缀绕过检查-1"><a href="#根据已知信息构造后缀绕过检查-1" class="headerlink" title="根据已知信息构造后缀绕过检查"></a>根据已知信息构造后缀绕过检查</h4><h5 id="使用-htaccess-绕过"><a href="#使用-htaccess-绕过" class="headerlink" title="使用 .htaccess 绕过"></a>使用 .htaccess 绕过</h5><p>新建 <code>.htaccess</code>文件，写入</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SetHandler application/x-httpd-php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/121p4_19.png" alt></p>
+<p>新建 <code>404.jpg</code> 用记事本打开，写入一句话木马，</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> phpinfo();<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>另存为 <code>404.jpg</code> 文件。</p>
+<p><img src="/images/121p4_20.png" alt></p>
+<p>先上传 <code>.htaccess</code> 文件，使得上传的文件按 <code>php</code> 解析。</p>
+<p><img src="/images/121p4_17.png" alt></p>
+<p>再上传 <code>404.jpg</code> 文件</p>
+<p><img src="/images/121p4_18.png" alt></p>
+<p>查看图片地址，</p>
+<p><img src="/images/121p4_21.png" alt></p>
+<p>虽然是 <code>.jpg</code> 格式，但按照的是 <code>php</code> 文件的解析，所以可以成功。</p>
+<h5 id="利用系统特性覆盖空的php文件"><a href="#利用系统特性覆盖空的php文件" class="headerlink" title="利用系统特性覆盖空的php文件"></a>利用系统特性覆盖空的php文件</h5><p><code>windows</code> 系统下，<code>&lt;</code> 等于 <code>*</code>，即代表任意字符。 </p>
+<p><em>参考文章</em>：</p>
+<blockquote>
+<p><a href="https://www.waitalone.cn/php-windows-upload.html" target="_blank" rel="noopener">当php邂逅windows通用上传缺陷</a></p>
+</blockquote>
+<p>思路：利用特殊方法生成一个 <code>php</code> 文件，然后再利用改特性将文件覆盖。</p>
+<p>打开 <code>burpsuit</code> 软件，选择 <code>2.php</code> 点击上传，抓取数据包，然后发送到 <code>Repeater</code> 模块，这这里进行尝试，知道发现可以上传的文件后缀名为止。</p>
+<p><img src="/images/121p4_5.png" alt></p>
+<p>依次尝试文件上传思维导图中黑名单中的方法，发现当文件名为 <code>2.php:.jpg</code> 可以上传成功。</p>
+<p><img src="/images/121p4_6.png" alt></p>
+<p>返回到 <code>Proxy</code> 模块，修改文件后缀为 <code>3.php:.jpg</code> ，点击 <code>Forward</code>，</p>
+<p><img src="/images/121p4_9.png" alt></p>
+<p>右击选择复制图片地址，在新标签页中打开，由于 <code>windows</code> 系统会把后缀名解析为 <code>3.php</code>，</p>
+<p><img src="/images/121p4_10.png" alt></p>
+<p>修改文件后缀名，继续查看。</p>
+<p><img src="/images/121p4_11.png" alt></p>
+<p>发现没有内容，打开服务器，查看 <code>3.php</code> 发现没有内容。</p>
+<p><img src="/images/121p4_12.png" alt></p>
+<p>重新上传，用 <code>burpsuite</code> 修改后缀名为 <code>3.&lt;&lt;&lt;</code>，上传成功后，重新查看文件。</p>
+<p><img src="/images/121p4_13.png" alt></p>
+<p>发现本次可以显示内容，</p>
+<p><img src="/images/121p4_15.png" alt></p>
+<p>在服务器查看 <code>3.php</code> 文件。</p>
+<p><img src="/images/121p4_14.png" alt></p>
+<h4 id="Pass-04-代码分析"><a href="#Pass-04-代码分析" class="headerlink" title="Pass-04 代码分析"></a>Pass-04 代码分析</h4><p>核心代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">".php"</span>,<span class="string">".php5"</span>,<span class="string">".php4"</span>,<span class="string">".php3"</span>,<span class="string">".php2"</span>,<span class="string">"php1"</span>,<span class="string">".html"</span>,<span class="string">".htm"</span>,<span class="string">".phtml"</span>,<span class="string">".pht"</span>,<span class="string">".pHp"</span>,<span class="string">".pHp5"</span>,<span class="string">".pHp4"</span>,<span class="string">".pHp3"</span>,<span class="string">".pHp2"</span>,<span class="string">"pHp1"</span>,<span class="string">".Html"</span>,<span class="string">".Htm"</span>,<span class="string">".pHtml"</span>,<span class="string">".jsp"</span>,<span class="string">".jspa"</span>,<span class="string">".jspx"</span>,<span class="string">".jsw"</span>,<span class="string">".jsv"</span>,<span class="string">".jspf"</span>,<span class="string">".jtml"</span>,<span class="string">".jSp"</span>,<span class="string">".jSpx"</span>,<span class="string">".jSpa"</span>,<span class="string">".jSw"</span>,<span class="string">".jSv"</span>,<span class="string">".jSpf"</span>,<span class="string">".jHtml"</span>,<span class="string">".asp"</span>,<span class="string">".aspx"</span>,<span class="string">".asa"</span>,<span class="string">".asax"</span>,<span class="string">".ascx"</span>,<span class="string">".ashx"</span>,<span class="string">".asmx"</span>,<span class="string">".cer"</span>,<span class="string">".aSp"</span>,<span class="string">".aSpx"</span>,<span class="string">".aSa"</span>,<span class="string">".aSax"</span>,<span class="string">".aScx"</span>,<span class="string">".aShx"</span>,<span class="string">".aSmx"</span>,<span class="string">".cEr"</span>,<span class="string">".sWf"</span>,<span class="string">".swf"</span>);</span><br><span class="line">$file_name = trim($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]);</span><br><span class="line">$file_name = deldot($file_name);<span class="comment">//删除文件名末尾的点</span></span><br><span class="line">$file_ext = strrchr($file_name, <span class="string">'.'</span>);</span><br><span class="line">$file_ext = strtolower($file_ext); <span class="comment">//转换为小写</span></span><br><span class="line">$file_ext = str_ireplace(<span class="string">'::$DATA'</span>, <span class="string">''</span>, $file_ext);<span class="comment">//去除字符串::$DATA</span></span><br><span class="line">$file_ext = trim($file_ext); <span class="comment">//收尾去空</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>黑名单中名单虽多，但是并没有 <code>.htaccess</code> 所以可以先上传 <code>.htaccess</code>，之后把 <code>404.php</code> 另存为 <code>404.jpg</code>，上传 <code>404.jpg</code>，会以 <code>php</code>文件解析。 当输入为 <code>2.php:.jpg</code>时，经过处理后输出为 <code>.jpg</code>，可以绕过检测，上传至服务器上，由于 <code>windows</code> 特性，上传的文件名为 <code>2.php</code>。之后再修改文件名为 <code>2.&lt;&lt;&lt;</code>，系统检测到后匹配</p>
+<p><img src="/images/121p4_22.png" alt></p>
+<p>到 <code>2.php</code> 文件，之后把内容覆盖掉。</p>
+<h3 id="Pass-05"><a href="#Pass-05" class="headerlink" title="Pass-05"></a>Pass-05</h3><h4 id="先判断上传漏洞的类型-2"><a href="#先判断上传漏洞的类型-2" class="headerlink" title="先判断上传漏洞的类型"></a>先判断上传漏洞的类型</h4><p>选择 <code>2.php</code> 文件，无法上传。</p>
+<p><img src="/images/121p5_3.png" alt></p>
+<p>选择 <code>webshell.txt</code> ，上传成功，</p>
+<p><img src="/images/121p5_1.png" alt></p>
+<p>查看文件，</p>
+<p><img src="/images/121p5_2.png" alt></p>
+<p>该类型为黑名单的文件重命名上传。</p>
+<p><img src="/images/121p5_4.png" alt></p>
+<h4 id="根据已知信息构造后缀绕过检查-2"><a href="#根据已知信息构造后缀绕过检查-2" class="headerlink" title="根据已知信息构造后缀绕过检查"></a>根据已知信息构造后缀绕过检查</h4><p>打开 <code>burpsuite</code> 软件，选择一个文件点击上传，用 <code>burpsuite</code> 抓取数据包，右击发送到 <code>Repeater</code> 模块。</p>
+<p><img src="/images/121p5_5.png" alt></p>
+<p>修改 <code>2.php</code> 为 <code>2.pHP</code> 发现可以上传成功，</p>
+<p><img src="/images/121p5_6.png" alt></p>
+<p>返回 <code>Proxy</code> 模块，修改后缀 <code>.php</code> 为 <code>.pHP</code>，</p>
+<p><img src="/images/121p5_7.png" alt></p>
+<p>查看文件</p>
+<p><img src="/images/121p5_8.png" alt></p>
+<h4 id="Pass-05-代码分析"><a href="#Pass-05-代码分析" class="headerlink" title="Pass-05 代码分析"></a>Pass-05 代码分析</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">".php"</span>,<span class="string">".php5"</span>,<span class="string">".php4"</span>,<span class="string">".php3"</span>,<span class="string">".php2"</span>,<span class="string">".html"</span>,<span class="string">".htm"</span>,<span class="string">".phtml"</span>,<span class="string">".pht"</span>,<span class="string">".pHp"</span>,<span class="string">".pHp5"</span>,<span class="string">".pHp4"</span>,<span class="string">".pHp3"</span>,<span class="string">".pHp2"</span>,<span class="string">".Html"</span>,<span class="string">".Htm"</span>,<span class="string">".pHtml"</span>,<span class="string">".jsp"</span>,<span class="string">".jspa"</span>,<span class="string">".jspx"</span>,<span class="string">".jsw"</span>,<span class="string">".jsv"</span>,<span class="string">".jspf"</span>,<span class="string">".jtml"</span>,<span class="string">".jSp"</span>,<span class="string">".jSpx"</span>,<span class="string">".jSpa"</span>,<span class="string">".jSw"</span>,<span class="string">".jSv"</span>,<span class="string">".jSpf"</span>,<span class="string">".jHtml"</span>,<span class="string">".asp"</span>,<span class="string">".aspx"</span>,<span class="string">".asa"</span>,<span class="string">".asax"</span>,<span class="string">".ascx"</span>,<span class="string">".ashx"</span>,<span class="string">".asmx"</span>,<span class="string">".cer"</span>,<span class="string">".aSp"</span>,<span class="string">".aSpx"</span>,<span class="string">".aSa"</span>,<span class="string">".aSax"</span>,<span class="string">".aScx"</span>,<span class="string">".aShx"</span>,<span class="string">".aSmx"</span>,<span class="string">".cEr"</span>,<span class="string">".sWf"</span>,<span class="string">".swf"</span>,<span class="string">".htaccess"</span>);</span><br><span class="line">$file_name = trim($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]);</span><br><span class="line">$file_name = deldot($file_name);<span class="comment">//删除文件名末尾的点</span></span><br><span class="line">$file_ext = strrchr($file_name, <span class="string">'.'</span>);</span><br><span class="line">$file_ext = str_ireplace(<span class="string">'::$DATA'</span>, <span class="string">''</span>, $file_ext);<span class="comment">//去除字符串::$DATA</span></span><br><span class="line">$file_ext = trim($file_ext); <span class="comment">//首尾去空</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>与 <code>Pass-04</code> 代码相比，可以发现，黑名单中增加了 <code>.htaccess</code> 后缀名。但是，缺少了 <code>strtolower()</code> 函数，所以可以通过大写绕过。</p>
+<h3 id="Pass-06"><a href="#Pass-06" class="headerlink" title="Pass-06"></a>Pass-06</h3><h4 id="先判断上传漏洞的类型-3"><a href="#先判断上传漏洞的类型-3" class="headerlink" title="先判断上传漏洞的类型"></a>先判断上传漏洞的类型</h4><p>上传 <code>1.php</code> ，提示此文件类型不能上传。</p>
+<p><img src="/images/121p6_1.png" alt></p>
+<p>上传 <code>webshell.txt</code> ，发现可以上传，</p>
+<p><img src="/images/121p6_2.png" alt></p>
+<p>查看文件，</p>
+<p><img src="/images/121p6_3.png" alt></p>
+<p>可以发现，文件名已经改变，故该类型为黑名单重命名上传类型。</p>
+<p><img src="/images/121p6_4.png" alt></p>
+<h4 id="根据已知信息构造后缀绕过检测"><a href="#根据已知信息构造后缀绕过检测" class="headerlink" title="根据已知信息构造后缀绕过检测"></a>根据已知信息构造后缀绕过检测</h4><p>用 <code>burpsuite</code> 抓取数据包，在 <code>Repeater</code> 判断绕过的方法。</p>
+<p><img src="/images/121p6_5.png" alt></p>
+<p>多次尝试后，发现在后缀名后添加空格就可以绕过检测。</p>
+<p><img src="/images/121p6_6.png" alt></p>
+<p>返回 <code>Proxy</code> 模块，修改后缀名，可以上传成功，查看文件</p>
+<p><img src="/images/121p6_7.png" alt></p>
+<h4 id="Pass-06-代码分析"><a href="#Pass-06-代码分析" class="headerlink" title="Pass-06 代码分析"></a>Pass-06 代码分析</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">".php"</span>,<span class="string">".php5"</span>,<span class="string">".php4"</span>,<span class="string">".php3"</span>,<span class="string">".php2"</span>,<span class="string">".html"</span>,<span class="string">".htm"</span>,<span class="string">".phtml"</span>,<span class="string">".pht"</span>,<span class="string">".pHp"</span>,<span class="string">".pHp5"</span>,<span class="string">".pHp4"</span>,<span class="string">".pHp3"</span>,<span class="string">".pHp2"</span>,<span class="string">".Html"</span>,<span class="string">".Htm"</span>,<span class="string">".pHtml"</span>,<span class="string">".jsp"</span>,<span class="string">".jspa"</span>,<span class="string">".jspx"</span>,<span class="string">".jsw"</span>,<span class="string">".jsv"</span>,<span class="string">".jspf"</span>,<span class="string">".jtml"</span>,<span class="string">".jSp"</span>,<span class="string">".jSpx"</span>,<span class="string">".jSpa"</span>,<span class="string">".jSw"</span>,<span class="string">".jSv"</span>,<span class="string">".jSpf"</span>,<span class="string">".jHtml"</span>,<span class="string">".asp"</span>,<span class="string">".aspx"</span>,<span class="string">".asa"</span>,<span class="string">".asax"</span>,<span class="string">".ascx"</span>,<span class="string">".ashx"</span>,<span class="string">".asmx"</span>,<span class="string">".cer"</span>,<span class="string">".aSp"</span>,<span class="string">".aSpx"</span>,<span class="string">".aSa"</span>,<span class="string">".aSax"</span>,<span class="string">".aScx"</span>,<span class="string">".aShx"</span>,<span class="string">".aSmx"</span>,<span class="string">".cEr"</span>,<span class="string">".sWf"</span>,<span class="string">".swf"</span>,<span class="string">".htaccess"</span>);</span><br><span class="line">$file_name = $_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>];</span><br><span class="line">$file_name = deldot($file_name);<span class="comment">//删除文件名末尾的点</span></span><br><span class="line">$file_ext = strrchr($file_name, <span class="string">'.'</span>);</span><br><span class="line">$file_ext = strtolower($file_ext); <span class="comment">//转换为小写</span></span><br><span class="line">$file_ext = str_ireplace(<span class="string">'::$DATA'</span>, <span class="string">''</span>, $file_ext);<span class="comment">//去除字符串::$DATA    </span></span><br><span class="line">...</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>最后缺少 <code>trim()</code> ，所以可以通过后缀名加空格来绕过。 </p>
+<h3 id="Pass-07"><a href="#Pass-07" class="headerlink" title="Pass-07"></a>Pass-07</h3><h4 id="先判断上传漏洞的类型-4"><a href="#先判断上传漏洞的类型-4" class="headerlink" title="先判断上传漏洞的类型"></a>先判断上传漏洞的类型</h4><p>上传 <code>1.php</code> 提示：此文件类型不允许上传！</p>
+<p><img src="/images/121p7_1.png" alt></p>
+<p>上传 <code>webshell.txt</code> ，可以上传，查看文件，</p>
+<p><img src="/images/121p7_2.png" alt></p>
+<p>可以判断该类型为黑名单不重命名的上传类型。</p>
+<h4 id="根据已知信息构造后缀绕过检测-1"><a href="#根据已知信息构造后缀绕过检测-1" class="headerlink" title="根据已知信息构造后缀绕过检测"></a>根据已知信息构造后缀绕过检测</h4><p>用 <code>burpsuite</code> 抓取数据包，在 <code>Repeater</code> 判断绕过的方法。多次尝试后，发现把 <code>2.php</code> 改成 <code>2.php.</code> 可以绕过检测。</p>
+<p><img src="/images/121p7_3.png" alt></p>
+<p>返回 <code>Proxy</code> 模块，进行上传，</p>
+<p><img src="/images/121p7_4.png" alt></p>
+<p>发现可以上传成功，点击查看文件，</p>
+<p><img src="/images/121p7_5.png" alt></p>
+<h4 id="Pass-07-代码分析"><a href="#Pass-07-代码分析" class="headerlink" title="Pass-07 代码分析"></a>Pass-07 代码分析</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...    </span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">".php"</span>,<span class="string">".php5"</span>,<span class="string">".php4"</span>,<span class="string">".php3"</span>,<span class="string">".php2"</span>,<span class="string">".html"</span>,<span class="string">".htm"</span>,<span class="string">".phtml"</span>,<span class="string">".pht"</span>,<span class="string">".pHp"</span>,<span class="string">".pHp5"</span>,<span class="string">".pHp4"</span>,<span class="string">".pHp3"</span>,<span class="string">".pHp2"</span>,<span class="string">".Html"</span>,<span class="string">".Htm"</span>,<span class="string">".pHtml"</span>,<span class="string">".jsp"</span>,<span class="string">".jspa"</span>,<span class="string">".jspx"</span>,<span class="string">".jsw"</span>,<span class="string">".jsv"</span>,<span class="string">".jspf"</span>,<span class="string">".jtml"</span>,<span class="string">".jSp"</span>,<span class="string">".jSpx"</span>,<span class="string">".jSpa"</span>,<span class="string">".jSw"</span>,<span class="string">".jSv"</span>,<span class="string">".jSpf"</span>,<span class="string">".jHtml"</span>,<span class="string">".asp"</span>,<span class="string">".aspx"</span>,<span class="string">".asa"</span>,<span class="string">".asax"</span>,<span class="string">".ascx"</span>,<span class="string">".ashx"</span>,<span class="string">".asmx"</span>,<span class="string">".cer"</span>,<span class="string">".aSp"</span>,<span class="string">".aSpx"</span>,<span class="string">".aSa"</span>,<span class="string">".aSax"</span>,<span class="string">".aScx"</span>,<span class="string">".aShx"</span>,<span class="string">".aSmx"</span>,<span class="string">".cEr"</span>,<span class="string">".sWf"</span>,<span class="string">".swf"</span>,<span class="string">".htaccess"</span>);</span><br><span class="line">$file_name = trim($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]);</span><br><span class="line">$file_ext = strrchr($file_name, <span class="string">'.'</span>);</span><br><span class="line">$file_ext = strtolower($file_ext); <span class="comment">//转换为小写</span></span><br><span class="line">$file_ext = str_ireplace(<span class="string">'::$DATA'</span>, <span class="string">''</span>, $file_ext);<span class="comment">//去除字符串::$DATA</span></span><br><span class="line">$file_ext = trim($file_ext); <span class="comment">//首尾去空    </span></span><br><span class="line">...    </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>程序通过对末尾 <code>.</code> 的处理，来取出后缀，但输入为 <code>2.php.</code> 的话，最后输出为 <code>.</code> 可以绕过检测。上传至服务器的后缀名为 <code>.php.</code> 由于服务器系统特性，也可以解析为 <code>.php</code>。</p>
+<h3 id="Pass-08"><a href="#Pass-08" class="headerlink" title="Pass-08"></a>Pass-08</h3><h4 id="先判断上传漏洞的类型-5"><a href="#先判断上传漏洞的类型-5" class="headerlink" title="先判断上传漏洞的类型"></a>先判断上传漏洞的类型</h4><p>上传 <code>1.php</code> ，无法上传，提示：此文件类型不允许上传。</p>
+<p><img src="/images/121p8_1.png" alt></p>
+<p>上传 <code>webshell.txt</code> ，上传成功，查看文件，</p>
+<p><img src="/images/121p8_2.png" alt></p>
+<p>可以看出，该类型为黑名单重命名的上传类型。</p>
+<h4 id="根据已知信息构造后缀绕过检测-2"><a href="#根据已知信息构造后缀绕过检测-2" class="headerlink" title="根据已知信息构造后缀绕过检测"></a>根据已知信息构造后缀绕过检测</h4><p>用 <code>burpsuite</code> 抓取数据包，在 <code>Repeater</code> 判断绕过的方法。多次尝试，发现把 <code>2.php</code> 修改为 <code>2.php::$DATA</code> 可以绕过检测。</p>
+<p><img src="/images/121p8_3.png" alt></p>
+<p>返回 <code>Proxy</code> 模块进行上传。</p>
+<p><img src="/images/121p8_4.png" alt></p>
+<p>上传成功后，点击查看文件，</p>
+<p><img src="/images/121p8_5.png" alt></p>
+<p>把后面的 <code>::$data</code> 重新上传</p>
+<p><img src="/images/121p8_6.png" alt></p>
+<h4 id="Pass-08-代码分析"><a href="#Pass-08-代码分析" class="headerlink" title="Pass-08 代码分析"></a>Pass-08 代码分析</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">".php"</span>,<span class="string">".php5"</span>,<span class="string">".php4"</span>,<span class="string">".php3"</span>,<span class="string">".php2"</span>,<span class="string">".html"</span>,<span class="string">".htm"</span>,<span class="string">".phtml"</span>,<span class="string">".pht"</span>,<span class="string">".pHp"</span>,<span class="string">".pHp5"</span>,<span class="string">".pHp4"</span>,<span class="string">".pHp3"</span>,<span class="string">".pHp2"</span>,<span class="string">".Html"</span>,<span class="string">".Htm"</span>,<span class="string">".pHtml"</span>,<span class="string">".jsp"</span>,<span class="string">".jspa"</span>,<span class="string">".jspx"</span>,<span class="string">".jsw"</span>,<span class="string">".jsv"</span>,<span class="string">".jspf"</span>,<span class="string">".jtml"</span>,<span class="string">".jSp"</span>,<span class="string">".jSpx"</span>,<span class="string">".jSpa"</span>,<span class="string">".jSw"</span>,<span class="string">".jSv"</span>,<span class="string">".jSpf"</span>,<span class="string">".jHtml"</span>,<span class="string">".asp"</span>,<span class="string">".aspx"</span>,<span class="string">".asa"</span>,<span class="string">".asax"</span>,<span class="string">".ascx"</span>,<span class="string">".ashx"</span>,<span class="string">".asmx"</span>,<span class="string">".cer"</span>,<span class="string">".aSp"</span>,<span class="string">".aSpx"</span>,<span class="string">".aSa"</span>,<span class="string">".aSax"</span>,<span class="string">".aScx"</span>,<span class="string">".aShx"</span>,<span class="string">".aSmx"</span>,<span class="string">".cEr"</span>,<span class="string">".sWf"</span>,<span class="string">".swf"</span>,<span class="string">".htaccess"</span>);</span><br><span class="line">$file_name = trim($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]);</span><br><span class="line">$file_name = deldot($file_name);<span class="comment">//删除文件名末尾的点</span></span><br><span class="line">$file_ext = strrchr($file_name, <span class="string">'.'</span>);</span><br><span class="line">$file_ext = strtolower($file_ext); <span class="comment">//转换为小写</span></span><br><span class="line">$file_ext = trim($file_ext); <span class="comment">//首尾去空</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>与前几篇的对比可以发现，通过 <code>::$DATA</code> 绕过。</p>
+<h3 id="Pass-09"><a href="#Pass-09" class="headerlink" title="Pass-09"></a>Pass-09</h3><h4 id="先判断上传漏洞的类型-6"><a href="#先判断上传漏洞的类型-6" class="headerlink" title="先判断上传漏洞的类型"></a>先判断上传漏洞的类型</h4><p>上传 <code>1.php</code> ，无法上传，提示：此文件类型不允许上传。</p>
+<p><img src="/images/121p9_1.png" alt></p>
+<p>上传 <code>webshell.txt</code> ，可以上传成功，查看文件，</p>
+<p><img src="/images/121p9_2.png" alt></p>
+<p>可以看出，该类型为黑名单不重命名的上传类型。</p>
+<h4 id="根据已知信息构造后缀绕过检测-3"><a href="#根据已知信息构造后缀绕过检测-3" class="headerlink" title="根据已知信息构造后缀绕过检测"></a>根据已知信息构造后缀绕过检测</h4><h5 id="使用点空格点绕过"><a href="#使用点空格点绕过" class="headerlink" title="使用点空格点绕过"></a>使用点空格点绕过</h5><p>上传 <code>2.php</code> 文件，同时使用 <code>burpsuite</code> 改包，把 <code>2.php</code> 修改为 <code>2.php. .</code>，点击 <code>Forward</code> ，上传成功。</p>
+<p><img src="/images/121p9_12.png" alt></p>
+<p>查看文件</p>
+<p><img src="/images/121p9_13.png" alt></p>
+<h5 id="利用系统特性覆盖空的php文件-1"><a href="#利用系统特性覆盖空的php文件-1" class="headerlink" title="利用系统特性覆盖空的php文件"></a>利用系统特性覆盖空的php文件</h5><p>用 <code>burpsuite</code> 抓取数据包，在 <code>Repeater</code> 判断绕过的方法。多次尝试，将 <code>2.php</code> 改成 <code>2.php:jpg</code>，可以长传成功。</p>
+<p><img src="/images/121p9_3.png" alt></p>
+<p>返回 <code>Proxy</code> 模块，上传文件成功，查看文件，</p>
+<p><img src="/images/121p9_6.png" alt></p>
+<p>把 <code>:jpg</code> 删掉，</p>
+<p><img src="/images/121p9_6.png" alt></p>
+<p>刷新网页，</p>
+<p><img src="/images/121p9_7.png" alt></p>
+<p>打开服务器，查看 <code>2.php</code>，发现确实没有数据，</p>
+<p><img src="/images/121p9_4.png" alt></p>
+<p>重新上传，把 <code>2.php</code> 修改为 <code>2.&lt;&lt;&lt;</code> ，</p>
+<p><img src="/images/121p9_8.png" alt></p>
+<p>查看文件，</p>
+<p><img src="/images/121p9_9.png" alt></p>
+<p>把  <code>&lt;&lt;&lt;</code> 改为 <code>.php</code> </p>
+<p><img src="/images/121p9_10.png" alt></p>
+<p>查看服务器端的 <code>2.php</code> 文件</p>
+<p><img src="/images/121p9_11.png" alt></p>
+<h5 id="Pass-09-代码分析"><a href="#Pass-09-代码分析" class="headerlink" title="Pass-09 代码分析"></a>Pass-09 代码分析</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">".php"</span>,<span class="string">".php5"</span>,<span class="string">".php4"</span>,<span class="string">".php3"</span>,<span class="string">".php2"</span>,<span class="string">".html"</span>,<span class="string">".htm"</span>,<span class="string">".phtml"</span>,<span class="string">".pht"</span>,<span class="string">".pHp"</span>,<span class="string">".pHp5"</span>,<span class="string">".pHp4"</span>,<span class="string">".pHp3"</span>,<span class="string">".pHp2"</span>,<span class="string">".Html"</span>,<span class="string">".Htm"</span>,<span class="string">".pHtml"</span>,<span class="string">".jsp"</span>,<span class="string">".jspa"</span>,<span class="string">".jspx"</span>,<span class="string">".jsw"</span>,<span class="string">".jsv"</span>,<span class="string">".jspf"</span>,<span class="string">".jtml"</span>,<span class="string">".jSp"</span>,<span class="string">".jSpx"</span>,<span class="string">".jSpa"</span>,<span class="string">".jSw"</span>,<span class="string">".jSv"</span>,<span class="string">".jSpf"</span>,<span class="string">".jHtml"</span>,<span class="string">".asp"</span>,<span class="string">".aspx"</span>,<span class="string">".asa"</span>,<span class="string">".asax"</span>,<span class="string">".ascx"</span>,<span class="string">".ashx"</span>,<span class="string">".asmx"</span>,<span class="string">".cer"</span>,<span class="string">".aSp"</span>,<span class="string">".aSpx"</span>,<span class="string">".aSa"</span>,<span class="string">".aSax"</span>,<span class="string">".aScx"</span>,<span class="string">".aShx"</span>,<span class="string">".aSmx"</span>,<span class="string">".cEr"</span>,<span class="string">".sWf"</span>,<span class="string">".swf"</span>,<span class="string">".htaccess"</span>);</span><br><span class="line">$file_name = trim($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]);</span><br><span class="line">$file_name = deldot($file_name);<span class="comment">//删除文件名末尾的点</span></span><br><span class="line">$file_ext = strrchr($file_name, <span class="string">'.'</span>);</span><br><span class="line">$file_ext = strtolower($file_ext); <span class="comment">//转换为小写</span></span><br><span class="line">$file_ext = str_ireplace(<span class="string">'::$DATA'</span>, <span class="string">''</span>, $file_ext);<span class="comment">//去除字符串::$DATA</span></span><br><span class="line">$file_ext = trim($file_ext); <span class="comment">//首尾去空</span></span><br><span class="line">...    </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>文件名的处理过程如图所示，</p>
+<p><img src="/images/%E6%96%87%E4%BB%B6%E5%90%8D%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B.png" alt></p>
+<p>当输入文件名为  <code>1.pHP.</code> 时，<code>1.pHP.</code> → <code>1.pHP</code> → <code>.pHP</code> → <code>.php</code> → <code>.php</code> → 输出。</p>
+<p>当输入文件名为 <code>1.php.空格</code>时，<code>1.php.空格</code> → <code>1.php.</code> → <code>1.php</code> → <code>.php</code> → 输出。</p>
+<p>当输入文件名为 <code>1.php.空格.</code> 时，<code>1.php.空格.</code> → <code>1.php.空格.</code> → <code>1.php.空格</code> → <code>.空格</code> → <code>.</code> →输出。</p>
+<h3 id="Pass-10"><a href="#Pass-10" class="headerlink" title="Pass-10"></a>Pass-10</h3><h4 id="先判断上传漏洞类型"><a href="#先判断上传漏洞类型" class="headerlink" title="先判断上传漏洞类型"></a>先判断上传漏洞类型</h4><p>上传 <code>1.php</code> 文件，发现可以上传成功，</p>
+<p><img src="/images/121p10_1.png" alt></p>
+<p>点击查看文件，</p>
+<p><img src="/images/121p10_2.png" alt></p>
+<p>发现文件名字变为 <code>1.</code> ，推测有可能检测到后缀名中有 <code>php</code> 后就把后缀的 <code>php</code> 给去掉了，尝试双拼绕过。</p>
+<p><img src="/images/121p10_3.png" alt></p>
+<p>点击上传，可以上传成功，查看文件，</p>
+<p><img src="/images/121p10_4.png" alt></p>
+<h4 id="Pass-10-代码分析"><a href="#Pass-10-代码分析" class="headerlink" title="Pass-10 代码分析"></a>Pass-10 代码分析</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$deny_ext = <span class="keyword">array</span>(<span class="string">"php"</span>,<span class="string">"php5"</span>,<span class="string">"php4"</span>,<span class="string">"php3"</span>,<span class="string">"php2"</span>,<span class="string">"html"</span>,<span class="string">"htm"</span>,<span class="string">"phtml"</span>,<span class="string">"pht"</span>,<span class="string">"jsp"</span>,<span class="string">"jspa"</span>,<span class="string">"jspx"</span>,<span class="string">"jsw"</span>,<span class="string">"jsv"</span>,<span class="string">"jspf"</span>,<span class="string">"jtml"</span>,<span class="string">"asp"</span>,<span class="string">"aspx"</span>,<span class="string">"asa"</span>,<span class="string">"asax"</span>,<span class="string">"ascx"</span>,<span class="string">"ashx"</span>,<span class="string">"asmx"</span>,<span class="string">"cer"</span>,<span class="string">"swf"</span>,<span class="string">"htaccess"</span>);</span><br><span class="line"></span><br><span class="line">$file_name = trim($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]);</span><br><span class="line">$file_name = str_ireplace($deny_ext,<span class="string">""</span>, $file_name);</span><br><span class="line">$temp_file = $_FILES[<span class="string">'upload_file'</span>][<span class="string">'tmp_name'</span>];</span><br><span class="line">...</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>把在黑名单中出现的后缀名替换为空，即可以通过双拼绕过。</p>
+<h3 id="Pass-11"><a href="#Pass-11" class="headerlink" title="Pass-11"></a>Pass-11</h3><h4 id="先判断上传漏洞类型-1"><a href="#先判断上传漏洞类型-1" class="headerlink" title="先判断上传漏洞类型"></a>先判断上传漏洞类型</h4><p>上传 <code>1.php</code> 文件，没有成功，提示：只允许上传 <code>.jpg|.png|.gif</code> 类型文件。首先确定为白名单策略。</p>
+<p><img src="/images/121p11_1.png" alt></p>
+<p>选择图片上传，</p>
+<p><img src="/images/121p11_2.png" alt></p>
+<p>查看图片，</p>
+<p><img src="/images/121p11_3.png" alt></p>
+<p>可以判断出该类型是白名单重命名上传类型。</p>
+<h4 id="根据已知信息构造后缀绕过检测-4"><a href="#根据已知信息构造后缀绕过检测-4" class="headerlink" title="根据已知信息构造后缀绕过检测"></a>根据已知信息构造后缀绕过检测</h4><p>用 <code>burpsuite</code> 抓取数据包，在 <code>Repeater</code> 判断绕过的方法。多次尝试，把 <code>2.php</code> 改成 <code>2.php%00.jpg</code> 。</p>
+<p>打开服务端，里面没有 <code>2.php</code> 文件。</p>
+<p><img src="/images/121p11_9.png" alt></p>
+<p>在 <code>burpsuite</code> 改包，</p>
+<p><img src="/images/121p11_8.png" alt></p>
+<p>上传成功后，查看</p>
+<p><img src="/images/121p11_10.png" alt></p>
+<p>查看服务端，</p>
+<p><img src="/images/121p11_11.png" alt></p>
+<p>文件名只保留 <code>2.php</code>，刷新页面</p>
+<p><img src="/images/121p11_12.png" alt></p>
+<h4 id="Pass-11-代码分析"><a href="#Pass-11-代码分析" class="headerlink" title="Pass-11 代码分析"></a>Pass-11 代码分析</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$is_upload = <span class="keyword">false</span>;</span><br><span class="line">$msg = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_POST[<span class="string">'submit'</span>]))&#123;</span><br><span class="line">    $ext_arr = <span class="keyword">array</span>(<span class="string">'jpg'</span>,<span class="string">'png'</span>,<span class="string">'gif'</span>);</span><br><span class="line">    $file_ext = substr($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>],strrpos($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>],<span class="string">"."</span>)+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span>(in_array($file_ext,$ext_arr))&#123;</span><br><span class="line">        $temp_file = $_FILES[<span class="string">'upload_file'</span>][<span class="string">'tmp_name'</span>];</span><br><span class="line">        $img_path = $_GET[<span class="string">'save_path'</span>].<span class="string">"/"</span>.rand(<span class="number">10</span>, <span class="number">99</span>).date(<span class="string">"YmdHis"</span>).<span class="string">"."</span>.$file_ext;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(move_uploaded_file($temp_file,$img_path))&#123;</span><br><span class="line">            $is_upload = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $msg = <span class="string">'上传出错！'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">        $msg = <span class="string">"只允许上传.jpg|.png|.gif类型文件！"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>设置白名单，通过寻找 <code>.</code> 的位置，截取文件名，取出文件后缀，之后与白名单中的后缀做对比。关键问题出在可以设置保存路径上。把 <code>save_name</code> 设置为 <code>/uploads/404.php%00</code>，上传文件名为 <code>404.jpg</code> 后，传至服务器的文件名为 <code>/uploads/404.php%00404.jpg</code>由于<code>windows</code>特性实际上传至服务器的名字为 <code>/uploads/404.php</code>。</p>
+<h3 id="Pass-12"><a href="#Pass-12" class="headerlink" title="Pass-12"></a>Pass-12</h3><h4 id="先判断上传漏洞类型-2"><a href="#先判断上传漏洞类型-2" class="headerlink" title="先判断上传漏洞类型"></a>先判断上传漏洞类型</h4><p>上传 <code>1.php</code> 文件，观察页面的报错提示。</p>
+<p><img src="/images/121p12_1.png" alt></p>
+<p>上传一个头像，</p>
+<p><img src="/images/121p12_2.png" alt></p>
+<p>此类型为白名单重命名的上传类型。</p>
+<h4 id="根据已知信息构造后缀绕过检测-5"><a href="#根据已知信息构造后缀绕过检测-5" class="headerlink" title="根据已知信息构造后缀绕过检测"></a>根据已知信息构造后缀绕过检测</h4><p>用 <code>burpsuite</code> 抓取数据包，在 <code>Repeater</code> 判断绕过的方法。在 <code>burpsuite</code> 中我们可以发现，<code>save_path</code> 的参数通过 <code>POST</code> 方式发送，所以应该把它转换成 <code>hex</code>。</p>
+<p>把 <code>404.php</code> 保存为 <code>404.jpg</code>，文件内容为 <code>&lt;?php phpinfo();?&gt;</code>。</p>
+<p><img src="/images/121p12_6.png" alt></p>
+<p>上传 <code>404.jpg</code> 文件，</p>
+<p><img src="/images/121p12_7.png" alt></p>
+<p>同时使用 <code>burpsuite</code> 抓包，把 <code>save_path</code> 修改为 <code>../upload/404.php%00</code>，由于 <code>POST</code> 方式并不进行 <code>URL</code> 解码，故转换成十六进制。</p>
+<p><img src="/images/121p12_8.png" alt></p>
+<p>点击 <code>Hex</code>，找到对应的位置做修改，</p>
+<p><img src="/images/121p12_9.png" alt></p>
+<p>返回 <code>Raw</code> 查看，</p>
+<p><img src="/images/121p12_18.png" alt></p>
+<p>未点击 <code>Forward</code> 之前，服务端没有 <code>404.php</code>，</p>
+<p><img src="/images/121p12_19.png" alt></p>
+<p>点击 <code>Forward</code>，上传成功，查看服务端，</p>
+<p><img src="/images/121p12_20.png" alt></p>
+<p>在浏览器中查看图片，</p>
+<p><img src="/images/121p12_21.png" alt></p>
+<p>只留下 <code>404.php</code></p>
+<p><img src="/images/121p12_22.png" alt></p>
+<h4 id="Pass-12-代码分析"><a href="#Pass-12-代码分析" class="headerlink" title="Pass-12 代码分析"></a>Pass-12 代码分析</h4><p>与 <code>Pass-11</code> 主要的不同就是 <code>save_path</code> 传输方式。<code>Pass-11</code> 以 <code>GET</code> 方式传递，<code>Pass-12</code> 以 <code>POST</code> 方式传递。由于 <code>POST</code> 方式不会经过 <code>URL</code> 解码，所以需要在数据包中把 <code>%00</code> 修改为 <code>Hex</code> 方式。</p>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/upload-labs/">upload-labs</a> <a class="tag tag--primary tag--small t-link" href="/tags/文件后缀解析漏洞/">文件后缀解析漏洞</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/15/practice16/"
+                    data-tooltip="富文本文件上传漏洞"
+                    aria-label="PREVIOUS: 富文本文件上传漏洞"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/11/webshell/"
+                    data-tooltip="不包含字母和数字的webshell"
+                    aria-label="NEXT: 不包含字母和数字的webshell"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/13/practice15/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/13/practice15/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/13/practice15/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/15/practice16/"
+                    data-tooltip="富文本文件上传漏洞"
+                    aria-label="PREVIOUS: 富文本文件上传漏洞"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/11/webshell/"
+                    data-tooltip="不包含字母和数字的webshell"
+                    aria-label="NEXT: 不包含字母和数字的webshell"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/13/practice15/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/13/practice15/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/13/practice15/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/13/practice15/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/13/practice15/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/09/13/practice15/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa 在 CentOS 部署"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa 在 CentOS 部署"
+                        >
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin文件包含漏洞复现"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin文件包含漏洞复现"
+                        >
+                            <h3 class="media-heading">phpmyadmin文件包含漏洞复现</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
+                        >
+                            <h3 class="media-heading">笔记11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": 第二周总结"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": 第二周总结"
+                        >
+                            <h3 class="media-heading">第二周总结</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": 笔记12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": 笔记12"
+                        >
+                            <h3 class="media-heading">笔记12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": 笔记13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": 笔记13"
+                        >
+                            <h3 class="media-heading">笔记13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": 笔记14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": 笔记14"
+                        >
+                            <h3 class="media-heading">笔记14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": 笔记15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": 笔记15"
+                        >
+                            <h3 class="media-heading">笔记15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                63 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
