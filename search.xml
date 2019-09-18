@@ -2,8 +2,20 @@
 <search>
   <entry>
     <title><![CDATA[Welcome]]></title>
-    <url>%2F2019%2F09%2F18%2Fwelcome%2F</url>
+    <url>%2F2019%2F09%2F19%2Fwelcome%2F</url>
     <content type="text"><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[PHP 文件包含简单利用]]></title>
+    <url>%2F2019%2F09%2F18%2FphpInclude%2F</url>
+    <content type="text"><![CDATA[Abstract: 文件包含简单应用 文件目录12345678action| action.php| action1.php| action2.php| action3.php| index.php| news.jpg| readme.txt 服务器部署环境打开首页，收集信息。 直接包含本地包含点击 php include，进入第一关，源码已显示出来。 程序未对输入参数 action 做任何处理，修改 action=../../../../../../Windows/system.ini，观察页面变化。 可以看到已读取到 system.ini。返回首页查看图片地址， 图片马和 news.php 在同一目录下。修改 action 的值，读取图片马。 用蚁剑连接，连接成功。 远程包含注意：需设置 php.ini 文件中 allow_url_include=On。 由源码可知，未对传入参数做任何处理所以可以使用远程包含。在自己搭建的服务器上存放一个图片马，修改 action 的值。 尝试用蚁剑连接， 限制路径打开 php include 1 可以看出来，对包含的文件做了限制路径的操作。这时远程文件包含无法使用。修改 action 的值。 用蚁剑连接， 限制后缀打开php include 2， 本地包含注意：需要把 magic_quote_gpc=Off 用 burpsuite 抓包， 点击 Forward。 查看本地文件， 显示结果 远程包含 蚁剑连接 限制路径和限制后缀结合限制路径后无法使用远程包含 打开 php include 3 使用 %00 截断， 显示 news.jpg 蚁剑连接 XP 系统文件路径长度截断action2 可以截断 action3 不能截断]]></content>
+      <categories>
+        <category>Web Security</category>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>文件包含漏洞</tag>
+      </tags>
   </entry>
   <entry>
     <title><![CDATA[文件上传漏洞总结]]></title>
@@ -355,17 +367,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[练习8]]></title>
-    <url>%2F2019%2F08%2F20%2Fpractice8%2F</url>
-    <content type="text"><![CDATA[Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。 描述 HTTP 协议和 HTTPS 协议的异同点 相同点：HTTP 和 HTTPS 都采用同一个基础的协议。HTTPS并非是一种新协议，只是HTTP通信接口部分用SSL和TLS协议代替而已。HTTPS就是身披SSL协议外壳的HTTP。 不同点 名称 不同点 安全性 HTTP不安全，HTTPS安全；HTTP无需证书，无需加密，HTTPS需要证书需要加密 端口号 HTTP标准端口是80，HTTPS是443 所处层 HTTP工作与应用层，HTTPS工作与传输层 URL HTTP以http://开头，HTTPS以https://开头 通信 HTTP直接和TCP通信，HTTPS写和SSL通信，再由SSL和TCP通信。 参考文献 HTTP和HTTPS异同点 《图解HTTP》 描述 HTTP 协议中，常见头部字段信息含义。 请求首部字段 请求首部字段 含义 Accept 通知服务器，用户能够处理的媒体类型及媒体类型的相对优先级。 Accept-Charset 通知服务器用户代理支持的字符集及字符集的相对优先顺序。 Authorization 告知服务器，用户代理的认证信息。 Expect 告知服务器，期望出现的某种特定行为。 From 告知服务器使用用户代理的电子邮件地址。 Host 告知服务器，请求资源所处的互联网的主机名和端口号。 Proxy-Authorization 告知服务器认证所需要的信息。 Range 告知服务器资源的指定范围。 Referer 告知服务器请求的原始资源的URI User-Agent 将创建请求的浏览器和用户代理名称等信息传达给服务器。 响应首部字段 响应首部字段 含义 Accept-Ranges 告知客户端服务器是否能处理范围请求，以指定获取服务器端某个部分的资源。 Age 告知客户端，源服务器在多久前创建了响应。 ETag 告知客户端实体标识。 Location 响应接收方引导至某个与请求URI位置不同的资源。 Proxy-Authenticate 由代理服务器所要求的认证信息发送给客户端。 Retry-After 告知客户端应该在多久之后再次发送请求。 Server 告知客户端当前服务器上安装的HTTP服务器应用程序的信息。 Vary 可对缓存进行控制。 WWW-Authenticate 用于HTTP访问认证。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
-      <categories>
-        <category>Web Security</category>
-      </categories>
-      <tags>
-        <tag>HTTP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[IIS PUT 权限写漏洞复现]]></title>
     <url>%2F2019%2F08%2F20%2FIIS-put-bug%2F</url>
     <content type="text"><![CDATA[Abstract: IIS PUT写权限漏洞学习报告。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
@@ -374,6 +375,17 @@
       </categories>
       <tags>
         <tag>漏洞复现</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[练习8]]></title>
+    <url>%2F2019%2F08%2F20%2Fpractice8%2F</url>
+    <content type="text"><![CDATA[Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。 描述 HTTP 协议和 HTTPS 协议的异同点 相同点：HTTP 和 HTTPS 都采用同一个基础的协议。HTTPS并非是一种新协议，只是HTTP通信接口部分用SSL和TLS协议代替而已。HTTPS就是身披SSL协议外壳的HTTP。 不同点 名称 不同点 安全性 HTTP不安全，HTTPS安全；HTTP无需证书，无需加密，HTTPS需要证书需要加密 端口号 HTTP标准端口是80，HTTPS是443 所处层 HTTP工作与应用层，HTTPS工作与传输层 URL HTTP以http://开头，HTTPS以https://开头 通信 HTTP直接和TCP通信，HTTPS写和SSL通信，再由SSL和TCP通信。 参考文献 HTTP和HTTPS异同点 《图解HTTP》 描述 HTTP 协议中，常见头部字段信息含义。 请求首部字段 请求首部字段 含义 Accept 通知服务器，用户能够处理的媒体类型及媒体类型的相对优先级。 Accept-Charset 通知服务器用户代理支持的字符集及字符集的相对优先顺序。 Authorization 告知服务器，用户代理的认证信息。 Expect 告知服务器，期望出现的某种特定行为。 From 告知服务器使用用户代理的电子邮件地址。 Host 告知服务器，请求资源所处的互联网的主机名和端口号。 Proxy-Authorization 告知服务器认证所需要的信息。 Range 告知服务器资源的指定范围。 Referer 告知服务器请求的原始资源的URI User-Agent 将创建请求的浏览器和用户代理名称等信息传达给服务器。 响应首部字段 响应首部字段 含义 Accept-Ranges 告知客户端服务器是否能处理范围请求，以指定获取服务器端某个部分的资源。 Age 告知客户端，源服务器在多久前创建了响应。 ETag 告知客户端实体标识。 Location 响应接收方引导至某个与请求URI位置不同的资源。 Proxy-Authenticate 由代理服务器所要求的认证信息发送给客户端。 Retry-After 告知客户端应该在多久之后再次发送请求。 Server 告知客户端当前服务器上安装的HTTP服务器应用程序的信息。 Vary 可对缓存进行控制。 WWW-Authenticate 用于HTTP访问认证。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>HTTP</tag>
       </tags>
   </entry>
   <entry>
